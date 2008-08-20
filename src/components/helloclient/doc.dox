@@ -1,0 +1,43 @@
+/*
+ * Orca-Robotics Project: Components for robotics 
+ *               http://orca-robotics.sf.net/
+ * Copyright (c) 2007 Alexei Makarenko
+ *
+ * This copy of Orca is licensed to you under the terms described in
+ * the LICENSE file included in this distribution.
+ *
+ */
+
+/*!
+@ingroup ep_examples
+@ingroup ep_apps
+@ingroup ep_cpp
+@ingroup ep_linux
+@ingroup ep_qnx
+@ingroup ep_win
+@defgroup ep_component_helloclient HelloClient
+@brief The most basic component.
+
+@par Provides
+
+- @ref ep_interface_home
+- @ref ep_interface_status
+- @ref ep_interface_tracer
+
+@par Requires
+
+- none
+
+@image html helloclient.png
+
+Starts up, launches a thread, generates traces and status. A good starting point for a basic component. Add servers or clients to it later by copying from "real" components. It is also well suited for playing with IceGrid deployment.
+
+@par Configuration
+
+- @c HelloClient.Config.SleepIntervalMs (int)
+    - Specifies how long the main loop sleeps [ms].
+    - Usage: this will affect how responsive the component is to Ctrl-C (useful for deployment testing).
+    - Default: 1000
+
+*/
+

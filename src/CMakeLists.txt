@@ -1,0 +1,7 @@
+ADD_SUBDIRECTORY( interfaces )
+ADD_SUBDIRECTORY( libs )
+ADD_SUBDIRECTORY( utils )
+ADD_SUBDIRECTORY( components ) 
+# ADD_SUBDIRECTORY( examples )
+# ADD_SUBDIRECTORY( tests )
+# ADD_SUBDIRECTORY( sandbox )

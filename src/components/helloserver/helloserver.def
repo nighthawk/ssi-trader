@@ -1,0 +1,10 @@
+DefaultComponentTag=Brick
+
+# Provided Interfaces
+# none
+
+# Required Interfaces
+#none
+
+# Component Configuration
+Config.SleepIntervalMs.Default=1000

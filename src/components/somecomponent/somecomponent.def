@@ -1,0 +1,7 @@
+DefaultComponentTag=SomeComponent
+
+# Provided Interfaces
+
+# Required Interfaces
+#Requires.Laser.Type=Laser
+#Requires.Laser.DefaultProxy=laser@local/sicklaser

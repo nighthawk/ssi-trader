@@ -1,0 +1,10 @@
+To modify this empty-project for your needs:
+
+1) Edit CMakeLists.txt, and modify the stuff in 
+   the 'Start project customization' section.
+
+2) Add any other project-specific rules in config/proj_rules.cmake
+
+3) Go ahead and start creating new components!  
+   src/components/somecomponent is provided as a template.
+
