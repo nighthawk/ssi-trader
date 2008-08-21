@@ -2,7 +2,7 @@ ORCA_SET_COMPONENT_NAME( HelloServer )
 
 SET( build TRUE )
 # Check for human input
-GBX_REQUIRE_OPTION( build EXE ${APP_NAME} ON )
+GBX_REQUIRE_OPTION( build EXE ${APP_NAME} OFF )
 
 # libs on which our code depends would go here
 # SET( dep_libs ??? )

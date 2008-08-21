@@ -5,4 +5,4 @@ MESSAGE( STATUS "== COMPONENTS ==" )
 # when adding new directories, please maintain alphabetical order
 ADD_SUBDIRECTORY( helloclient )
 ADD_SUBDIRECTORY( helloserver )
-ADD_SUBDIRECTORY( somecomponent )
+ADD_SUBDIRECTORY( pathevaluator )

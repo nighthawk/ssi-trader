@@ -1,7 +1,7 @@
 ORCA_SET_LIBRARY_NAME( TalkerSome )
 
 SET( build TRUE )
-GBX_REQUIRE_OPTION( build LIB ${LIB_NAME} ON )
+GBX_REQUIRE_OPTION( build LIB ${LIB_NAME} OFF )
 
 IF( build )
 

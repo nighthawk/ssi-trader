@@ -1,4 +1,4 @@
-OPTION( build_SOME_UTILITY "Try to build Some Utility" ON )
+OPTION( build_SOME_UTILITY "Try to build Some Utility" OFF )
 
 IF( build_SOME_UTILITY )
 
