@@ -13,10 +13,8 @@
 
 #include <orcaice/subsystemthread.h>
 #include <orcaice/context.h>
-#include <gbxsickacfr/gbxiceutilacfr/store.h>
 #include <hydronavutil/pose.h>
 #include <orca/pathplanner2d.h>
-#include <hydroogmap/hydroogmap.h>
 #include <memory>
 #include <orcaifaceimpl/storingconsumers.h>
 
@@ -37,14 +35,8 @@ private:
     
     void initNetwork();
 
-    orca::PathPlanner2dData planPath( const hydronavutil::Pose &pose, const orca::PathFollower2dData &coarsePath );
+    orca::PathPlanner2dData planPath( orca::PathPlanner2dTask &task );
 
-    // Adjust timing: work out how long it takes to the first waypoint based on straight-line distance 
-    // and configured velocityToFirstWaypoint_. Take the max of first wp time and the computed time.
-    // Add this time to all waypoints.
-    void addTimeToReachFirstWp( const hydronavutil::Pose &pose,
-                                orca::PathFollower2dData &incomingPath );
-    
     // required interface to pathplanner
     orca::PathPlanner2dPrx pathplanner2dPrx_;
 
@@ -54,8 +46,6 @@ private:
     // If the path planner takes more than this amount of time, assume something's wrong.
     double pathPlanTimeout_;
     
-    // Velocity to get to the first waypoint
-    double velocityToFirstWaypoint_;
     orcaice::Context context_;
 
 };

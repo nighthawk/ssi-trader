@@ -42,16 +42,16 @@ namespace {
         bool isTemporary_;
     };
 
-    // Computes waypoint to start from
+    // Computes waypoint
     // This is for the pathplanner's purposes, not the pathfollower.
     // So we don't care too much about tolerances and speeds.
-    orca::Waypoint2d computeFirstWaypointForPathPlanning( const hydronavutil::Pose &pose )
+    orca::Waypoint2d createWaypoint( double x, double y, double theta )
     {
         orca::Waypoint2d wp;
 
-        wp.target.p.x = pose.x();
-        wp.target.p.y = pose.y();
-        wp.target.o   = pose.theta();
+        wp.target.p.x = x;
+        wp.target.p.y = y;
+        wp.target.o   = theta;
 
         // add bogus tolerances and speeds
         wp.distanceTolerance = (Ice::Float)0.1;
@@ -63,12 +63,8 @@ namespace {
 
         return wp;
     }
-
-    // TODO: remove?
-    double ageOf( const orca::Time &ts )
-    {
-        return orcaice::timeDiffAsDouble( orcaice::getNow(), ts );
-    }
+    
+    
 
     double distance( const hydronavutil::Pose &pose, const orca::Waypoint2d &wp )
     {
@@ -89,22 +85,18 @@ MainThread::MainThread( const orcaice::Context & context )
     Ice::PropertiesPtr prop = context_.properties();
     std::string prefix = context_.tag()+".Config.";
     pathPlanTimeout_ = orcaice::getPropertyAsDoubleWithDefault( prop, prefix+"PathPlanTimeout", 10.0 );
-    velocityToFirstWaypoint_ = orcaice::getPropertyAsDoubleWithDefault( prop, prefix+"VelocityToFirstWaypoint", 1.0 );
 }
 
 void
 MainThread::initNetwork()
 {
-    //
     // ENABLE NETWORK CONNECTIONS
     //
     // multi-try function
     orcaice::activate( context_, this, subsysName() );
 
-    //
     // REQUIRED INTERFACES: Pathplanner
     //
-
     subStatus().initialising( "Connecting to PathPlanner2d" );
     orcaice::connectToInterfaceWithTag( context_,
                                         pathplanner2dPrx_,
@@ -133,18 +125,8 @@ MainThread::initNetwork()
 }
 
 orca::PathPlanner2dData
-MainThread::planPath( const hydronavutil::Pose &pose, 
-                    const orca::PathFollower2dData &coarsePath )
+MainThread::planPath( orca::PathPlanner2dTask &task )
 {
-    // put together a task for the pathplanner
-    // add the position of the robot as the first waypoint in the path
-    orca::Waypoint2d firstWp = computeFirstWaypointForPathPlanning(pose);
-    orca::PathPlanner2dTask task;
-    task.timeStamp  = coarsePath.timeStamp;
-    task.coarsePath = coarsePath.path;
-    task.coarsePath.insert( task.coarsePath.begin(), 1, firstWp );
-    task.prx = computedPathConsumer_->consumerPrx();
-
     // send task to pathplanner
     stringstream ssSend;
     ssSend << "MainThread::"<<__func__<<": Sending task to pathplanner: " << orcaobj::toVerboseString( task );
@@ -183,11 +165,24 @@ MainThread::planPath( const hydronavutil::Pose &pose,
     if ( computedPath.result != orca::PathOk )
     {
         stringstream ss;
-        ss << "MainThread: PathPlanner could not compute.  Gave result " 
+        ss << "MainThread: PathPlanner could not compute. Gave result " 
            << ifacestring::toString( computedPath.result )<<": "<<computedPath.resultDescription;
         const bool isTemporary = true;
         throw( GoalPlanException( ss.str(), isTemporary ) );
     }
+    
+    // compute distance
+		double dist = 0.;
+		orca::Waypoint2d last = computedPath.path[0];
+		for (int i = 1; i < computedPath.path.size(); i++) {
+			orca::Waypoint2d current = computedPath.path[i];
+			dist += distance(last, current);
+		
+			last = current;
+		}
+		printf("Distance estimate is %f.\n", dist);
+    
+    cout << "waypoints: " << computedPath.path.size() << endl;
 
     assert( computedPath.path.size() > 0 );
     return computedPath;
@@ -199,8 +194,6 @@ MainThread::walk()
 {
     initNetwork();
 
-    subStatus().setMaxHeartbeatInterval( 3.0 );
-
     // main loop
     while ( !isStopping() )
     {
@@ -208,18 +201,27 @@ MainThread::walk()
         {
             context_.tracer().info("Creating new goal path");
             
-            // TODO: CHANGE THIS => setup pose and path
-            /*
-            const hydronavutil::Pose pose = new ...
-            
+            // put together a task for the pathplanner
+						orca::PathPlanner2dTask task;
 
+						task.coarsePath.push_back(createWaypoint(-1., 0., 0.));
+						task.coarsePath.push_back(createWaypoint(-9., 0., 0.));
+						task.coarsePath.push_back(createWaypoint(23., -4., 0.));
+						task.coarsePath.push_back(createWaypoint(-23., 8., 0.));
+
+						task.prx = computedPathConsumer_->consumerPrx();
+            
             stringstream ssPath;
-            ssPath << "MainThread: Received path request: " << endl << orcaobj::toVerboseString(path);
+            ssPath << "MainThread: Received path request: " << endl << orcaobj::toVerboseString(task);
             context_.tracer().debug( ssPath.str() );
 
-            orca::PathPlanner2dData  plannedPath = planPath( pose, path );
-						*/
+            // plan path
+            orca::PathPlanner2dData plannedPath = planPath( task );
 
+            ssPath << "MainThread: Generated path: " << endl << orcaobj::toVerboseString(plannedPath);
+            context_.tracer().debug( ssPath.str() );
+
+						
             subStatus().ok();
 
         } // try
