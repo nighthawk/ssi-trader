@@ -1,7 +1,7 @@
-#ifndef EMPTYPROJECT_HELLO_ICE
-#define EMPTYPROJECT_HELLO_ICE
+#ifndef TALKER_HELLO_ICE
+#define TALKER_HELLO_ICE
 
-module empty
+module talker
 {
 /*!
     @ingroup ep_interfaces

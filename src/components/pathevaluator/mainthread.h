@@ -18,6 +18,8 @@
 #include <memory>
 #include <orcaifaceimpl/storingconsumers.h>
 
+#include <talker/pathevaluator.h>
+
 namespace pathevaluator
 {
 
@@ -35,7 +37,17 @@ private:
     
     void initNetwork();
 
-    orca::PathPlanner2dData planPath( orca::PathPlanner2dTask &task );
+    float computePathCost( talker::PathTask2d start, talker::TaskList2d &tasks );
+
+		void filterTasks( talker::PathTask2d &cur, talker::TaskList2d &tasks,
+											int bundleSize, int maxBundles );
+
+		talker::BundleList2d findBundles( talker::PathTask2d &start,
+																			talker::TaskList2d &committed,
+																			talker::TaskList2d &tasks,
+																			int bundleSize,
+																			int maxBundles );
+
 
     // required interface to pathplanner
     orca::PathPlanner2dPrx pathplanner2dPrx_;
