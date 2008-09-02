@@ -1,8 +1,8 @@
 DefaultComponentTag=PathEvaluator
 
 # Provided Interfaces
-#Provides.PathEvaluator2d.Type=PathEvaluator2d
-#Provides.PathEvaluator2d.DefaultInterface=pathEvaluator2d
+Provides.PathEvaluator.Type=PathEvaluator
+Provides.PathEvaluator.DefaultInterface=PathEvaluator
 
 # Required Interfaces
 Requires.PathPlanner2d.Type=Pathplanner2d

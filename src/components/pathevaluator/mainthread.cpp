@@ -8,26 +8,26 @@
  *
  */
 
-#include <algorithm>
-
 #include <orcaice/orcaice.h>
 #include <orcaifacestring/pathplanner2d.h>
 #include <orcaobj/orcaobj.h>
 
-#include "mainthread.h"
+#include <algorithm>
+#include <queue>
 #include "combination.h"
-
+#include "mainthread.h"
 
 using namespace std;
+using namespace talker;
 
 namespace pathevaluator {
 
+// private helper functions
 namespace {
 
     // Exceptions thrown/caught internally.
     // If isTemporary we'll hopefully be able to recover soon.
-    class PlanEvalException : public std::exception
-    { 
+    class PlanEvalException : public std::exception { 
     public:
         PlanEvalException(const char *message, bool isTemporary)
             : message_(message),
@@ -48,8 +48,7 @@ namespace {
     // Computes waypoint
     // This is for the pathplanner's purposes, not the pathfollower.
     // So we don't care too much about tolerances and speeds.
-    orca::Waypoint2d createWaypoint( double x, double y, double theta )
-    {
+    orca::Waypoint2d createWaypoint( double x, double y, double theta ) {
         orca::Waypoint2d wp;
 
         wp.target.p.x = x;
@@ -66,55 +65,37 @@ namespace {
 
         return wp;
     }
-    
-    orca::Waypoint2d createWaypoint( talker::PathTask2d task )
-    {
-        orca::Waypoint2d wp;
-
-        wp.target = task.target;
-
-        // add bogus tolerances and speeds
-        wp.distanceTolerance = (Ice::Float)0.1;
-        wp.headingTolerance  = (Ice::Float)(M_PI/2.0);
-        wp.timeTarget.seconds  = 0;
-        wp.timeTarget.useconds = 0;
-        wp.maxApproachSpeed    = 2000;
-        wp.maxApproachTurnrate = (float)DEG2RAD(2000); 
-
-        return wp;
+    orca::Waypoint2d createWaypoint( Task2d task ) {
+    	return createWaypoint( task.target.p.x, task.target.p.y, task.target.o );
     }
 
-    
     // Creates a task along the path which is to be evaluated
-    talker::PathTask2d createTask( double x, double y, double theta) {
-    	talker::PathTask2d task;
+    Task2d createTask( double x, double y, double theta) {
+    	Task2d task;
     	task.target.p.x = x;
     	task.target.p.y = y;
     	task.target.o   = theta;
     	return task;
     }
     
-    // TODO: put somewhere else
-    
-
-    double distance( const hydronavutil::Pose &pose, const orca::Waypoint2d &wp )
-    {
+    double distance( const hydronavutil::Pose &pose, const orca::Waypoint2d &wp ) {
         return hypot( pose.y()-wp.target.p.y, pose.x()-wp.target.p.x );
     }
-    double distance( const orca::Waypoint2d &wp1, const orca::Waypoint2d &wp2 )
-    {
+    double distance( const orca::Waypoint2d &wp1, const orca::Waypoint2d &wp2 ) {
         return hypot( wp1.target.p.y-wp2.target.p.y, wp1.target.p.x-wp2.target.p.x );
     }
     
-    int fac(int n)
-		{
-			if(n<2)return(1);
-			return((n)*fac(n-1));
+    int fac(int n) {
+			if (n<2)
+				return (1);
+			else
+				return ((n)*fac(n-1));
 		}
 }
 
 MainThread::MainThread( const orcaice::Context & context )
     : orcaice::SubsystemThread( context.tracer(), context.status(), "MainThread" ),
+			pathEvaluatorTaskBuffer_( 100, gbxiceutilacfr::BufferTypeQueue),
       context_(context)
 {
     subStatus().setMaxHeartbeatInterval( 10.0 );
@@ -125,15 +106,8 @@ MainThread::MainThread( const orcaice::Context & context )
 }
 
 void
-MainThread::initNetwork()
-{
-    // ENABLE NETWORK CONNECTIONS
-    //
-    // multi-try function
-    orcaice::activate( context_, this, subsysName() );
-
+MainThread::initNetwork() {
     // REQUIRED INTERFACES: Pathplanner
-    //
     subStatus().initialising( "Connecting to PathPlanner2d" );
     orcaice::connectToInterfaceWithTag( context_,
                                         pathplanner2dPrx_,
@@ -144,31 +118,26 @@ MainThread::initNetwork()
     // Create consumer to receive planned paths from the path-planner
     computedPathConsumer_ = new orcaifaceimpl::StoringPathPlanner2dConsumerImpl( context_ );
 
-/*    
-    //
+
     // PROVIDED INTERFACES: pathevaluator2d
-    //
     
-    // create the proxy/buffer for incoming path
-    incomingPathI_ = new PathFollower2dI( incomingPathStore_,
-                                          activationStore_,
-                                          localNavPrx_ );
-    
-    Ice::ObjectPtr pathFollowerObj = incomingPathI_;
+    // create the proxy/buffer for incoming tasks
+    subStatus().initialising("Creating PathEvaluator Interface" );
+    pathEvaluatorI_ = new PathEvaluatorI( pathEvaluatorTaskBuffer_, context_ );
+    Ice::ObjectPtr pathEvaluatorObj = pathEvaluatorI_;
 
     // two possible exceptions will kill it here, that's what we want
-    orcaice::createInterfaceWithTag( context_, pathFollowerObj, "PathFollower2d" );
-*/
+    orcaice::createInterfaceWithTag( context_, pathEvaluatorObj, "PathEvaluator" );
 }
 
 float
-MainThread::computePathCost( talker::PathTask2d start, talker::TaskList2d &tasks )
+MainThread::computePathCost( Task2d start, TaskList2d &tasks )
 {
 		// put together a task for the pathplanner
 		orca::PathPlanner2dTask task;
 		task.coarsePath.push_back(createWaypoint( start ));
 
-		for(talker::TaskList2d::iterator it = tasks.begin(); it != tasks.end(); ++it)
+		for(TaskList2d::iterator it = tasks.begin(); it != tasks.end(); ++it)
 			task.coarsePath.push_back(createWaypoint( *it ));
 
 		task.prx = computedPathConsumer_->consumerPrx();
@@ -179,10 +148,9 @@ MainThread::computePathCost( talker::PathTask2d start, talker::TaskList2d &tasks
     ssSend << "MainThread::"<<__func__<<": Sending task to pathplanner: " << orcaobj::toVerboseString( task );
     context_.tracer().debug(ssSend.str());
     int numJobsAheadInQueue = pathplanner2dPrx_->setTask( task );
-    if ( numJobsAheadInQueue > 1 )
-    {
+    if ( numJobsAheadInQueue > 1 ) {
         stringstream ss;
-        ss << "MainThread::planPath(): path planner is busy, there are " << numJobsAheadInQueue << " ahead of us in the queue.";
+        ss << "MainThread::computePathCost: path planner is busy, there are " << numJobsAheadInQueue << " ahead of us in the queue.";
         context_.tracer().warning( ss.str() );
     }
             
@@ -191,17 +159,14 @@ MainThread::computePathCost( talker::PathTask2d start, talker::TaskList2d &tasks
     orca::PathPlanner2dData computedPath;
     // (need a loop here so ctrlC works)
     int secWaited=0;
-    while ( !isStopping() )
-    {
+    while ( !isStopping() ) {
         int ret = computedPathConsumer_->store().getNext( computedPath, 1000 );
         if ( ret == 0 )
             break;
-        else
-        {
-            if ( ++secWaited > pathPlanTimeout_ )
-            {
+        else {
+            if ( ++secWaited > pathPlanTimeout_ ) {
                 stringstream ss;
-                ss << "Did not receive a reply from the PathPlanner, after waiting " << secWaited << "s -- something must be wrong.";
+                ss << "MainThread::computePathCost: Did not receive a reply from the PathPlanner, after waiting " << secWaited << "s -- something must be wrong.";
                 const bool isTemporary = false;
                 throw( PlanEvalException( ss.str(), isTemporary ) );
             }
@@ -209,10 +174,9 @@ MainThread::computePathCost( talker::PathTask2d start, talker::TaskList2d &tasks
     }
             
     // check result
-    if ( computedPath.result != orca::PathOk )
-    {
+    if ( computedPath.result != orca::PathOk ) {
         stringstream ss;
-        ss << "MainThread: PathPlanner could not compute. Gave result " 
+        ss << "MainThread::computePathCost: PathPlanner could not compute. Gave result " 
            << ifacestring::toString( computedPath.result )<<": "<<computedPath.resultDescription;
         const bool isTemporary = true;
         throw( PlanEvalException( ss.str(), isTemporary ) );
@@ -222,7 +186,7 @@ MainThread::computePathCost( talker::PathTask2d start, talker::TaskList2d &tasks
     // compute distance
 		float dist = 0.;
 		orca::Waypoint2d last = computedPath.path[0];
-		for (int i = 1; i < computedPath.path.size(); i++) {
+		for (unsigned int i = 1; i < computedPath.path.size(); i++) {
 			orca::Waypoint2d current = computedPath.path[i];
 			dist += distance(last, current);
 		
@@ -234,71 +198,111 @@ MainThread::computePathCost( talker::PathTask2d start, talker::TaskList2d &tasks
 
 
 void
-MainThread::filterTasks( talker::PathTask2d &cur, 
-												 talker::TaskList2d &tasks,
-												 int bundleSize,
-												 int maxBundles )
+MainThread::filterTasks( Task2d &cur, 
+												 TaskList2d &tasks,
+												 unsigned int bundleSize,
+												 unsigned int maxBundles ) 
 {
 	// TODO: implement
 }
 
 
-talker::BundleList2d
-MainThread::findBundles( talker::PathTask2d &start, 
-												 talker::TaskList2d &committed, 
-												 talker::TaskList2d &tasks,
-												 int bundleSize,
-												 int maxBundles )
+BundleList2d
+MainThread::findBundles( Task2d &start, 
+												 TaskList2d &committed, 
+												 TaskList2d &tasks,
+												 unsigned int bundleSize,
+												 unsigned int maxBundles ) 
 {
-	talker::BundleList2d bundles;
+	// queue storing all computed bundles sorted by cost
+	priority_queue<Bundle2d, BundleList2d, greater<BundleList2d::value_type> > queue;
 
+	// if bundleSize is creater than the actual size of tasks, only create
+	// subsets up to the size of the tasks
+	if (tasks.size() < bundleSize) bundleSize = tasks.size();
+	
+	// TODO: it might be better to not always start at 1 as small bundles will usually
+	// always end up with lower costs/higher priority anyway
+	
 	// for all bundle sizes less than the max
-	for(int k = 1; k <= bundleSize; k++)
+	for(unsigned int k = 1; k <= bundleSize; k++)
 	{
 		// create starting subset
-		talker::TaskList2d subset(k);
-		for(int i = 0; i < k; i++)
+		TaskList2d subset(k);
+		for(unsigned int i = 0; i < k; i++)
 		{
 			subset.at(i) = tasks.at(i);
 		}
 	
-		// iterate of k-subsets
+		// iterate over k-subsets
 		do
 		{
-			talker::TaskList2d permut(k);
+			TaskList2d permut(k);
 			permut = subset;
 			
 			// add tasks that the agent already committed to
-			for(talker::TaskList2d::iterator it = committed.begin();it!=committed.end();++it)
+			for(TaskList2d::iterator it = committed.begin();it!=committed.end();++it)
 			{
-				talker::PathTask2d t = *it;
+				Task2d t = *it;
 				permut.push_back(t);
 			}
 
-			// iterate over permutations of this subset
-			for(int j = 0; j < fac(k + committed.size()); j++)
+			// iterate over permutations of this subset, actual number of permutations
+			// has to be calculated by hand (fac...) as next_permutation might stop
+			// prematurely if we use a while(next_permutation...) loop
+			for(unsigned int j = 0; j < (unsigned int) fac(k + committed.size()); j++)
 			{
-				// find next permutation
   			next_permutation(permut.begin(), permut.end());
 
 				// create bundle and evaluate
-
-				talker::TaskBundle2d bundle;
+				Bundle2d bundle;
 				bundle.tasks = permut;
 				bundle.cost  = computePathCost(start, permut);
+				
+				queue.push(bundle);
 
-				for(talker::TaskList2d::iterator it = permut.begin();it!=permut.end();++it)
+        stringstream ss;
+        ss << "MainThread::findBundles: ";
+				for(TaskList2d::iterator it = permut.begin();it!=permut.end();++it)
 				{
-					talker::PathTask2d t = *it;
-					cout << t.target.p.x << " " << t.target.p.y << " | ";
+					Task2d t = *it;
+					ss << t.target.p.x << " " << t.target.p.y << " | ";
 				}
-				cout << bundle.cost << endl;  
-
+				ss << bundle.cost << endl;
+        context_.tracer().debug( ss.str() );
 			}
 		}
 		while( stdcomb::next_combination(tasks.begin(),	tasks.end(),
 																		 subset.begin(),subset.end()) );
 	}			
+
+	// return the cheapest $maxBundles bundles
+	BundleList2d bundles;
+	if (maxBundles > queue.size()) maxBundles = queue.size();
+	for (unsigned int i = 0; i < maxBundles; i++) {
+		bundles.push_back(queue.top());
+		queue.pop();
+	}
+	return bundles;
+}
+
+BundleList2d
+MainThread::createBundles( PathEvaluatorTask task ) {
+	// FIXME: start should actually always just be a frame2d
+	Task2d start = createTask( task.start.p.x, task.start.p.y, task.start.o);
+
+  // plan pseudo path to overcome problem of first path being screwed up
+  // FIXME: there must be a better way to handle this
+  context_.tracer().info("MainThread::createBundles: Flushing path planner with arbitrary task.");
+	findBundles(start, task.committedTasks, task.committedTasks, 1, 0);
+  context_.tracer().info("MainThread::createBundles: Done flushing path planner.");
+
+	// filter tasks
+	filterTasks(start, task.newTasks, task.bundleSize, task.maxBundles);
+	
+	// find best bundles
+	BundleList2d bundles;
+	bundles = findBundles(start, task.committedTasks, task.newTasks, task.bundleSize, task.maxBundles);	
 	
 	return bundles;
 }
@@ -306,46 +310,105 @@ MainThread::findBundles( talker::PathTask2d &start,
 void 
 MainThread::walk()
 {
-    initNetwork();
+  	orcaice::activate( context_, this, subsysName() );
+    
+		initNetwork();
+    
+		PathEvaluatorTask task;
 
-    // main loop
     while ( !isStopping() )
     {
         try
         {
-            context_.tracer().info("Waiting for tasks.");
-        		
-        		// wait for new set of tasks
-        		
+            //
+            //  ======== waiting for a task (blocking) =======
+            //
+            context_.tracer().info("MainThread: Waiting for a new task.");
+            bool haveTask=false;
+
+/*
         		// TODO - just faked here
-        		talker::TaskList2d tasks;
+        		orca::Frame2d start;
+        		start.p.x = -1.;
+        		start.p.y = 0.;
+        		start.o		= 0.;
+
+        		TaskList2d tasks;
 						tasks.push_back(createTask( -9.,  0., 0.));
         		tasks.push_back(createTask( -1.,  3., 0.));
 						tasks.push_back(createTask( 23., -4., 0.));
 						tasks.push_back(createTask(-23.,  8., 0.));
 						
-						talker::PathTask2d start = createTask( -1.,  0., 0.);
-
-        		talker::TaskList2d committed;
+        		TaskList2d committed;
 						committed.push_back(createTask( 11.,  0., 0.));
 						
-						int maxBundles = 3;
-						int bundleSize = 3;
-						
-            stringstream ssPath;
-            ssPath << "MainThread: Received " << tasks.size() << " tasks." << endl;
-            context_.tracer().debug( ssPath.str() );
+        		task.maxBundles 		= 3;
+        		task.bundleSize 		= 3;
+        		task.start 					= start;
+        		task.committedTasks = committed;
+        		task.newTasks 			= tasks;
+*/
 
-						// filter tasks
-						filterTasks(start, tasks, bundleSize, maxBundles);
-						
-						// find best bundles
-						talker::BundleList2d bundles;
-						bundles = findBundles(start, committed, tasks, bundleSize, maxBundles);
+            while ( !isStopping() )
+            {
+                int timeoutMs = 1000;
+                int ret=0;
+                try {
+                    pathEvaluatorTaskBuffer_.getAndPop( task );
+                }
+                catch ( const gbxutilacfr::Exception & e ) {
+                    ret = pathEvaluatorTaskBuffer_.getAndPopNext( task, timeoutMs );
+                }
+                if ( ret == 0 ) {
+                    haveTask = true;
+				            stringstream ssPath;
+				            ssPath << "MainThread: Received a pack with " << task.newTasks.size() << " tasks." << endl;
+                    context_.tracer().info( ssPath.str() );
+                    break;
+                }
+                subStatus().ok();
+            }
 
-            context_.tracer().info("Done processing bundles.");
-            
-            subStatus().ok();
+            // the only way of getting out of the above loop without a task
+            // is if the user pressed Ctrl+C, ie we have to quit
+            if (!haveTask) break;
+
+            //
+            // ===== process tasks and compute best bundles ========
+            //
+						BundleList2d bundles = createBundles(task);
+            context_.tracer().debug("MainThread: Done processing bundles.");
+
+
+            //
+            // ======= send result (including error code) ===============
+            //
+            context_.tracer().info("MainThread: sending off the resulting bundles.");
+    
+            // There are three methods to let other components know:
+            // 1. using the proxy
+            if (task.prx != 0)
+                task.prx->setData( bundles );
+            else
+                context_.tracer().warning( "MainThread: task.prx was zero!" );
+
+            // 2. and 3.: use getData or icestorm
+            pathEvaluatorI_->localSetData( bundles );
+    
+            // resize the pathData: future tasks might not compute a path successfully and we would resend the old path
+            // pathData.path.resize( 0 );
+    
+            int numTasksWaiting = pathEvaluatorTaskBuffer_.size();
+            if ( numTasksWaiting > 1 )
+            {
+                stringstream ss;
+                ss << "MainThread: Tasks are piling up: there are " << numTasksWaiting << " in the queue.";
+                subStatus().warning( ss.str() );
+            }
+            else
+            {
+                subStatus().ok();
+            }            
 
         } // try
         catch ( const PlanEvalException &e )
@@ -353,7 +416,7 @@ MainThread::walk()
             stringstream ss;
             if ( e.isTemporary() )
             {
-                ss << "MainThread:: Caught PlanEvalException: " << e.what() << ".  I reckon I can recover from this.";
+                ss << "MainThread: Caught PlanEvalException: " << e.what() << ".  I reckon I can recover from this.";
                 context_.tracer().warning( ss.str() );
                 subStatus().warning( ss.str() );
 
@@ -362,7 +425,7 @@ MainThread::walk()
             }
             else
             {
-                ss << "MainThread:: Caught PlanEvalException: " << e.what() << ".  Looks unrecoverable, I'm giving up.";
+                ss << "MainThread: Caught PlanEvalException: " << e.what() << ".  Looks unrecoverable, I'm giving up.";
                 context_.tracer().error( ss.str() );
                 subStatus().fault( ss.str() );
             }
@@ -370,7 +433,7 @@ MainThread::walk()
         catch ( const Ice::Exception & e )
         {
             stringstream ss;
-            ss << "MainThread:: Caught exception: " << e;
+            ss << "MainThread: Caught exception: " << e;
             context_.tracer().error( ss.str() );
             subStatus().fault( ss.str() );
         }

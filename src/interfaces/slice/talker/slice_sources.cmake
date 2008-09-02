@@ -10,6 +10,6 @@
 #
 SET( ORCA_SLICE_SOURCE_FILES
 #interfaces
-    hello.ice
+#    hello.ice
     pathevaluator.ice
 )
