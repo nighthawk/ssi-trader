@@ -33,16 +33,16 @@ public:
     virtual void subscribe(const talker::PathEvaluatorConsumerPrx&, const ::Ice::Current& = ::Ice::Current());
     virtual void unsubscribe(const talker::PathEvaluatorConsumerPrx&, const ::Ice::Current& = ::Ice::Current());
 
-    virtual talker::BundleList2d getData(const ::Ice::Current& ) const;
+    virtual talker::PathEvaluatorResult getData(const ::Ice::Current& ) const;
 
     // local calls
-    void localSetData( const talker::BundleList2d &data );
+    void localSetData( const talker::PathEvaluatorResult &data );
 
 private:
     gbxiceutilacfr::Buffer<talker::PathEvaluatorTask>& pathEvaluatorTaskBuffer_;
 
     // the driver puts the latest computed path into here using localSetData
-    gbxiceutilacfr::Store<talker::BundleList2d> pathEvaluatorDataStore_;
+    gbxiceutilacfr::Store<talker::PathEvaluatorResult> pathEvaluatorDataStore_;
 
     // The topic to which we'll publish
     IceStorm::TopicPrx topicPrx_;

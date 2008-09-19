@@ -206,7 +206,6 @@ MainThread::filterTasks( Task2d &cur,
 	// TODO: implement
 }
 
-
 BundleList2d
 MainThread::findBundles( Task2d &start, 
 												 TaskList2d &committed, 
@@ -214,6 +213,8 @@ MainThread::findBundles( Task2d &start,
 												 unsigned int bundleSize,
 												 unsigned int maxBundles ) 
 {
+	bool permutate_committed = false;
+	
 	// queue storing all computed bundles sorted by cost
 	priority_queue<Bundle2d, BundleList2d, greater<BundleList2d::value_type> > queue;
 
@@ -221,44 +222,82 @@ MainThread::findBundles( Task2d &start,
 	// subsets up to the size of the tasks
 	if (tasks.size() < bundleSize) bundleSize = tasks.size();
 	
-	// TODO: it might be better to not always start at 1 as small bundles will usually
-	// always end up with lower costs/higher priority anyway
-	
 	// for all bundle sizes less than the max
 	for(unsigned int k = 1; k <= bundleSize; k++)
 	{
 		// create starting subset
 		TaskList2d subset(k);
 		for(unsigned int i = 0; i < k; i++)
-		{
 			subset.at(i) = tasks.at(i);
-		}
 	
 		// iterate over k-subsets
-		do
-		{
+		do {
 			TaskList2d permut(k);
 			permut = subset;
 			
-			// add tasks that the agent already committed to
-			for(TaskList2d::iterator it = committed.begin();it!=committed.end();++it)
-			{
-				Task2d t = *it;
-				permut.push_back(t);
+			// add tasks that the agent already committed to for inclusion
+			// in permutations if necessary
+			if (permutate_committed) {
+				for(TaskList2d::iterator it = committed.begin();it!=committed.end();++it)
+				{
+					Task2d t = *it;
+					permut.push_back(t);
+				}
+			}
+			
+			int combinations;
+			if (permutate_committed)
+				combinations = fac(permut.size());
+			else
+				combinations = fac(committed.size() + permut.size()) / fac(committed.size());
+			
+			for (int magic = 1; magic <= combinations; magic++) {
+				TaskList2d result;
+				if (!permutate_committed)
+					result = committed;
+				
+				// add all tasks to result
+				// this adds all tasks to any possible position within _committed_
+				// tasks, keeping committed in fixed order and using all possible
+				// permutations of _tasks_
+				int n = result.size();
+				for (unsigned int i = 0; i < permut.size(); i++) {
+					int at = magic % (n + i + 1);
+					
+					TaskList2d::iterator it = result.begin();
+					result.insert(it + at, permut.at(i));
+				}
+				
+				Bundle2d bundle;
+				bundle.tasks = result;
+				bundle.cost  = computePathCost(start, bundle.tasks);
+			
+				queue.push(bundle);
+
+        stringstream ss;
+        ss << "MainThread::findBundles: ";
+				for(TaskList2d::iterator it = result.begin();it!=result.end();++it)
+				{
+					Task2d t = *it;
+					ss << t.target.p.x << " " << t.target.p.y << " | ";
+				}
+				ss << bundle.cost;
+        context_.tracer().debug( ss.str() );
 			}
 
+			/*
 			// iterate over permutations of this subset, actual number of permutations
 			// has to be calculated by hand (fac...) as next_permutation might stop
 			// prematurely if we use a while(next_permutation...) loop
-			for(unsigned int j = 0; j < (unsigned int) fac(k + committed.size()); j++)
+			for(unsigned int j = 0; j < (unsigned int) fac(permut.size()); j++)
 			{
   			next_permutation(permut.begin(), permut.end());
 
 				// create bundle and evaluate
 				Bundle2d bundle;
 				bundle.tasks = permut;
-				bundle.cost  = computePathCost(start, permut);
-				
+				bundle.cost  = computePathCost(start, bundle.tasks);
+			
 				queue.push(bundle);
 
         stringstream ss;
@@ -270,7 +309,9 @@ MainThread::findBundles( Task2d &start,
 				}
 				ss << bundle.cost << endl;
         context_.tracer().debug( ss.str() );
+
 			}
+			*/
 		}
 		while( stdcomb::next_combination(tasks.begin(),	tasks.end(),
 																		 subset.begin(),subset.end()) );
@@ -294,7 +335,8 @@ MainThread::createBundles( PathEvaluatorTask task ) {
   // plan pseudo path to overcome problem of first path being screwed up
   // FIXME: there must be a better way to handle this
   context_.tracer().info("MainThread::createBundles: Flushing path planner with arbitrary task.");
-	findBundles(start, task.committedTasks, task.committedTasks, 1, 0);
+	TaskList2d empty;
+	findBundles(start, empty, empty, 1, 0);
   context_.tracer().info("MainThread::createBundles: Done flushing path planner.");
 
 	// filter tasks
@@ -337,13 +379,13 @@ MainThread::walk()
 						tasks.push_back(createTask( -9.,  0., 0.));
         		tasks.push_back(createTask( -1.,  3., 0.));
 						tasks.push_back(createTask( 23., -4., 0.));
-						tasks.push_back(createTask(-23.,  8., 0.));
 						
         		TaskList2d committed;
 						committed.push_back(createTask( 11.,  0., 0.));
+						committed.push_back(createTask(-23.,  8., 0.));
 						
-        		task.maxBundles 		= 3;
-        		task.bundleSize 		= 3;
+        		task.maxBundles 		= 10;
+        		task.bundleSize 		= 1;
         		task.start 					= start;
         		task.committedTasks = committed;
         		task.newTasks 			= tasks;
@@ -372,7 +414,6 @@ MainThread::walk()
             // the only way of getting out of the above loop without a task
             // is if the user pressed Ctrl+C, ie we have to quit
             if (!haveTask) break;
-
             //
             // ===== process tasks and compute best bundles ========
             //
@@ -384,19 +425,22 @@ MainThread::walk()
             // ======= send result (including error code) ===============
             //
             context_.tracer().info("MainThread: sending off the resulting bundles.");
+						PathEvaluatorResult result;
+						result.id = task.id;
+						result.data = bundles;
     
             // There are three methods to let other components know:
             // 1. using the proxy
             if (task.prx != 0)
-                task.prx->setData( bundles );
+                task.prx->setData( result );
             else
                 context_.tracer().warning( "MainThread: task.prx was zero!" );
 
             // 2. and 3.: use getData or icestorm
-            pathEvaluatorI_->localSetData( bundles );
+            pathEvaluatorI_->localSetData( result );
     
-            // resize the pathData: future tasks might not compute a path successfully and we would resend the old path
-            // pathData.path.resize( 0 );
+            // resize the bundle data: future tasks might not compute a path successfully and we would resend the old ones
+						bundles.resize(0);
     
             int numTasksWaiting = pathEvaluatorTaskBuffer_.size();
             if ( numTasksWaiting > 1 )

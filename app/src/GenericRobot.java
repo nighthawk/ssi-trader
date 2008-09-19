@@ -36,29 +36,33 @@ public class GenericRobot extends Agent {
 	private final int			 MAX_WAIT_CYCLE_FOR_AUCTION_START = 5;
 	private final int			 MAX_BUNDLES = 25;
 	private final int			 BUNDLE_SIZE = 1;
-	private final Double	 CLOSE_ENOUGH_EPSILON = 0.1;
+	private final Double	 CLOSE_ENOUGH_EPSILON = 0.5;
+	private final long		 GOAL_EVAL_TIMEOUT = 3000; // 3.0s
+	private final int			 GOAL_EVAL_MAX_TRY_COUNT = 6;
+	private final long		 LOCALISER_TIMEOUT = 500; // 0.5s
 	private final String[] DEFAULT_ARGS = {"--Ice.Default.Locator=IceGrid/Locator:default -p 12000"};
-	private final String   GOAL_COORDS	= "[-23 8] [-23 1] [-21 -4] [-17 7] [-17 -2] [-17 -5] [-14 7] [-12 -5] [-10 7] [-9 0] [-7 7] [-6 -5] [-5 -1] [-2 8.5] [-1 3] [-1 0] [2 0] [2 -8] [5.8 7] [8 -8] [10 7] [11 0] [11 -8] [14 7] [14 0] [14 -5] [17 8] [20 8] [23 -4] ";
+	private final String   GOAL_COORDS	= "[-23 8] [-23 1] [-21 -4] [-17 7] [-17 -2] [-17 -5] [-14 7] [-12 -5] [-10 7] [-9 0] [-7 7] [-6 -5] [-5 -1] [-2 8.5] [-1 3] [-1 0] [2 0] [2 -8] <5.8 7> [8 -8] [10 7] [11 0] [11 -8] [14 7] [14 0] [14 -5] <17.5 8> <20 8> [23 -4] ";
 	// TODO: there are probs with
 	// 			 5.5 7 => 5.8 7
-	//			 17 7 => 17 8
+	//			 17 7 => 17.5 8
 	// 			 20 7 => 20 8
 
 	// Instance variables
 	/////////////////////////////////////////////////////////////////////////////
-	private ArrayList<AID> 		buyer_robots		= new ArrayList<AID>();
-	private ArrayList<Task2d>	tasks_for_sale	= new ArrayList<Task2d>();
-	private Bundle2d					bundle					= new Bundle2d();
-	private DEBUG 						debug_level 		= DEBUG.INFO;
-	private int								active_auction_counter	= 0;
+	private ArrayList<AID> 			buyer_robots		= new ArrayList<AID>();
+	private ArrayList<Task2d>		tasks_for_sale	= new ArrayList<Task2d>();
+	private Bundle2d						bundle					= new Bundle2d();
+	private DEBUG 							debug_level 		= DEBUG.INFO;
+	private int									active_auction_counter	= 0;
+	private orca.Frame2d				current_target	= null;
 
 	// Orca interfaces
-	private Ice.Communicator 	ic;
-	private PathEvaluatorPrx 	patheval; // used to find best bundles
-	// TODO: add => goalplanner implements path follower: send current goal(s)
-	// to make robot drive
+	private Ice.Communicator 		ic;
+	private PathEvaluatorPrx 		patheval; // used to find best bundles
+	private orca.Localise2dPrx	localiser; // used to get position of robot
+	private orca.PathFollower2dPrx follower; // used to drive robot around
 
-	// Agent methods
+	// Agent life cycle methods
 	/////////////////////////////////////////////////////////////////////////////
 
 	/**
@@ -93,8 +97,13 @@ public class GenericRobot extends Agent {
  			/************************** ADDING BEHAVIOURS **************************/
 			log(DEBUG.NOTE, "Adding behaviours.");
 			
+			// create random id
+			Random r = new Random();
+			int r1 = r.nextInt(10000) - 5000;
+			int r2 = r.nextInt(10000) - 5000;
+			
 			// TickerBehaviour which keeps track of own tasks and actions
-			addBehaviour(new RobotBehaviour(this, 30000));
+			addBehaviour(new RobotBehaviour(this, 5000));
 
 			// TickerBehaviour which checks the DF every 30 secs to update it's list of nearby agents
 			addBehaviour(new UpdateNeighbourBehaviour(this, 30000));
@@ -106,10 +115,10 @@ public class GenericRobot extends Agent {
 			addBehaviour(new TriggerBuyerBehaviour(this));
 
 			// TickerBehaviour which occasionally tries to sell it's own tasks
-			addBehaviour(new TriggerSaleBehaviour(this, 15000));
+			addBehaviour(new TriggerSaleBehaviour(this, 10000 + r1));
 			
 			// TickerBehaviour that randomly adds some new tasks to my list
-			addBehaviour(new RandomTaskGenerator(this, 60000));
+			addBehaviour(new RandomTaskGenerator(this, 90000 + r2));
 			
  			/************************** PROVIDED SERVICES **************************/
 			log(DEBUG.NOTE, "Registering with DF.");
@@ -179,9 +188,6 @@ public class GenericRobot extends Agent {
 		} 
 	}
 
-	// Internal methods
-	/////////////////////////////////////////////////////////////////////////////
-
 	/**
 	 * Initialises Ice proxies and Orca interfaces
 	 * @param robo_colour Colour of the robot used to construct interface names
@@ -190,11 +196,46 @@ public class GenericRobot extends Agent {
 		// connect to Ice
 		this.ic = Ice.Util.initialize(DEFAULT_ARGS);
 		
+		String patheval_name = "pathevaluator@vm-ubuntu/pathevaluator";
+		String localiser_name = "localise2d@vm-ubuntu/" + robo_colour + ".simlocaliser";
+		String follower_name = "pathfollower2d@vm-ubuntu/" + robo_colour + ".goalplanner";
+
 		// Interface to PathEvaluator (same for all robots)
-		Ice.ObjectPrx patheval_base = this.ic.stringToProxy("pathevaluator@vm-ubuntu/pathevaluator");
-		if (null == (this.patheval = PathEvaluatorPrxHelper.checkedCast(patheval_base)))
-			throw new Error("Invalid proxy.");
+		try {
+			Ice.ObjectPrx patheval_base = this.ic.stringToProxy(patheval_name);
+			if (null == (this.patheval = PathEvaluatorPrxHelper.checkedCast(patheval_base)))
+				throw new Error("Proxy could not be based.");
+				
+		} catch (Exception e) {
+			log(DEBUG.ERROR, "initProxies: could not connect to goal evaluator component (" + patheval_name + ").");
+			e.printStackTrace();
+		}
+
+		// Interface to Localiser (1 per robot)
+		try {
+			Ice.ObjectPrx localiser_base = this.ic.stringToProxy(localiser_name);
+			if (null == (this.localiser = orca.Localise2dPrxHelper.checkedCast(localiser_base)))
+				throw new Error("Proxy could not be based.");
+			
+		} catch (Exception e) {
+			log(DEBUG.WARNING, "initProxies: could not connect to " + robo_colour + " localiser component (" + localiser_name + ").");
+			e.printStackTrace();
+		}
+
+		// Interface to GoalPlanner, i.e. follower (1 per robot)
+		try {
+			Ice.ObjectPrx follower_base = this.ic.stringToProxy(follower_name);
+			if (null == (this.follower = orca.PathFollower2dPrxHelper.checkedCast(follower_base)))
+				throw new Error("Proxy could not be based.");
+
+		} catch (Exception e) {
+			log(DEBUG.WARNING, "initProxies: could not connect to " + robo_colour + " goal planner component (" + follower_name + ").");
+			e.printStackTrace();
+		}
 	}
+
+	// Internal methods
+	/////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Prints messages depending on debug level. Message is only printed if it's
@@ -209,17 +250,76 @@ public class GenericRobot extends Agent {
 		}
 	}
 
+	protected void drive() {
+		if (bundle.tasks != null && bundle.tasks.length > 0) {
+			// check if I need to change my goal
+			orca.Frame2d loc = getLocation();
+
+			// update my bundle (and thus immediate goal) if necessary
+			if (loc != null && closeEnough(loc, current_target)) {
+				log(DEBUG.INFO, String.format("drive: I have arrived at my current target (x:%.1f, y:%.1f)", loc.p.x, loc.p.y));
+				
+				Bundle2d new_bundle = new Bundle2d();
+				new_bundle.tasks = new Task2d[bundle.tasks.length - 1];
+				for (int i = 0; i < new_bundle.tasks.length; i++) {
+					new_bundle.tasks[i] = bundle.tasks[i+1];
+				}
+
+				Bundle2d[] bundles = getBundlesWithCosts(loc, new_bundle.tasks, new Task2d[0], 1, 1);
+				this.bundle = bundles[0];
+			}
+			
+			// update my current target if necessary
+			if (this.current_target == null || !closeEnough(this.current_target, this.bundle.tasks[0].target)) {
+				this.current_target = this.bundle.tasks[0].target;
+				log(DEBUG.INFO, String.format("drive: Heading to new target at x:%.1f, y:%.1f", current_target.p.x, current_target.p.y));
+				
+				// drive to target
+				orca.Waypoint2d waypoint = new orca.Waypoint2d();
+				waypoint.target = current_target;
+				orca.Waypoint2d[] path = {waypoint};
+				orca.PathFollower2dData target = new orca.PathFollower2dData();
+				target.path = path;
+				try {
+					follower.setData(target, true);
+				} catch (Exception e) {
+					log(DEBUG.ERROR, "drive: Path follower does not like our new target.");
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 	/**
 	 * Calls GoalEvaluator component to create bundle bids
 	 * @param tasks ArrayList of Tasks2d for which the bids are to be created
 	 * @return Array of Bundle2ds
 	 */
-	protected Bundle2d[] getBundlesWithCosts(ArrayList<Task2d> tasks) {
-		// TODO: this should get the actual location of the robot
-		//       or a default value for debugging (print warning in that case)
-		log(DEBUG.WARNING, "estimateDistance: could not read my location, using dummy value.");
-		orca.Frame2d start = createFrame(-1, 0);
+	protected Bundle2d[] getBundlesWithCosts(ArrayList<Task2d> tasks, boolean relative_costs) {
+		// simplify, i.e. remove all tasks that i am already committed to
+		for (int i = tasks.size() - 1; i >= 0; i--) {
+			if (getTaskIndex(tasks.get(i), bundle.tasks) != -1) {
+				log(DEBUG.NOTE, "getBundlesWithCosts: I already own task x:" + tasks.get(i).target.p.x + ", y:" + tasks.get(i).target.p.y);
+				tasks.remove(i);
+			}
+		}
 		
+		// return my current bundle with cost 0 if no tasks left
+		if (tasks.size() == 0) {
+			log(DEBUG.NOTE, "getBundlesWithCosts: Easy win. I already own all tasks.");
+			Bundle2d current_bundle = bundle;
+			current_bundle.cost = 0;
+			Bundle2d[] bundles = { current_bundle };
+			return bundles;
+		}
+		
+		// get my location
+		orca.Frame2d start = getLocation();
+		if (start == null) {
+			log(DEBUG.WARNING, "getBundlesWithCosts: could not retrieve my location.");
+			return new Bundle2d[0];
+		}
+
 /*
 		Task2d[] tasks = new Task2d[4];
 		tasks[0] = createTask( -9,  0);
@@ -231,45 +331,258 @@ public class GenericRobot extends Agent {
 		committed[0] = createTask( 11,  0);
 */
 
-		// set up task for goal evaluator
-		PathEvaluatorTask task = new PathEvaluatorTask();
-	  task.maxBundles 		= MAX_BUNDLES;
-	  task.bundleSize 		= BUNDLE_SIZE;
-	  task.start 					= start;
-	  task.newTasks 			= (Task2d[]) tasks.toArray(new Task2d[tasks.size()]);
-	  task.committedTasks = this.bundle.tasks;
-	
-		try {
-		  this.patheval.setTask(task);
-		
-		} catch (Ice.TimeoutException e) {
-			log(DEBUG.ERROR, "Path evaluator timed out.");
-		
-		} catch (orca.BusyException e) {
-			log(DEBUG.ERROR, "Path evaluator is too busy for us :-(");
-			
-		} catch (orca.RequiredInterfaceFailedException e) {
-			throw new Error(e.getMessage());
-		}
-		
-		// FIXME: stupid way to wait and doesn't guarantee i'm getting _my_ data
-		Bundle2d[] result;
-		while(true) {
-			try {
-				result = this.patheval.getData();
-			} catch (Ice.UnknownUserException e) {
-				continue;
-			}
-			break;
-		}
+		Bundle2d[] bundles = getBundlesWithCosts(	start,
+																							this.bundle.tasks, 
+																							(Task2d[]) tasks.toArray(new Task2d[tasks.size()]),
+																							BUNDLE_SIZE,
+																							MAX_BUNDLES);
 		
 		// adjust costs for bundles by withdrawing my current cost
 		// i.e. bid only increase in costs not total costs
-		for(int i = 0; i < result.length; i++) {
-			result[i].cost -= this.bundle.cost;
-		} 
+		if (relative_costs) {
+			for(int i = 0; i < bundles.length; i++)
+				bundles[i].cost -= this.bundle.cost;
+		}
 
-	  return result;
+	  return bundles;
+	}
+	
+	protected Bundle2d[] getBundlesWithCosts(orca.Frame2d start, Task2d[] committed, Task2d[] new_tasks, int bundle_size, int max_bundles) {
+		// set up task for goal evaluator
+		PathEvaluatorTask task = new PathEvaluatorTask();
+	  task.maxBundles 		= max_bundles;
+	  task.bundleSize 		= bundle_size;
+	  task.start 					= start;
+	  task.newTasks 			= new_tasks;
+	  task.committedTasks = committed;
+
+		// create random id
+		Random r = new Random();
+		int some_number = r.nextInt(100000);
+		task.id							= getAID().getName() + "-" + some_number;
+
+		// run goal evaluator and give it a couple of chances
+		PathEvaluatorResult result = null;
+
+		for (int i = 0; i < GOAL_EVAL_MAX_TRY_COUNT; i++) {
+			// set tasks anew on every second run
+			if (i % 2 == 0) {
+				try {
+				  this.patheval.setTask(task);
+				} catch (Ice.TimeoutException e) {
+					log(DEBUG.ERROR, "getBundlesWithCosts: Goal evaluator timed out.");
+					break;
+				} catch (orca.BusyException e) {
+					log(DEBUG.ERROR, "getBundlesWithCosts: Goal evaluator is too busy for us :-(");
+					break;
+				} catch (orca.RequiredInterfaceFailedException e) {
+					throw new Error(e.getMessage());
+				}
+			}
+
+			// wait a while for computation
+			boolean keep_looking = true;
+			long start_time = Calendar.getInstance().getTimeInMillis();
+			long now = start_time;
+
+			while(keep_looking) {
+				try {
+					result = this.patheval.getData();
+				} catch (Ice.UnknownUserException e) {
+					continue;
+/*
+				} catch (orca.DataNotExistException e) {
+					log(DEBUG.WARNING, "getBundlesWithCosts: Goal Evaluator did not find result.");
+					return new Bundle2d[0];
+*/
+				}
+
+				// we might be lucky
+				if (result != null) {
+					now = Calendar.getInstance().getTimeInMillis();
+					if (result.id.equals(task.id) || now - start_time > GOAL_EVAL_TIMEOUT)
+						keep_looking = false;
+				}
+			}
+
+			if (result.id.equals(task.id)) {
+				log(DEBUG.NOTE, String.format("getBundlesWithCosts: Goal evaluator returned result in %.1fs.", (now - start_time) / 1000.0));
+				break;
+
+			} else {
+				int wait_for = r.nextInt(5000) + 2500;
+				log(DEBUG.SPAM, String.format("getBundlesWithCosts: try %d to contact goal evaluator failed. retrying in %.1fs...", i + 1, wait_for / 1000.0));
+
+				try {
+					Thread.sleep(wait_for);
+				} catch (InterruptedException e) {
+					break;
+				}
+			}
+		}
+
+		if (result != null) {
+			log(DEBUG.SPAM, "getBundlesWithCosts: result id is " + result.id + ", I want: " + task.id);
+		}
+
+		if (result != null && result.id.equals(task.id)) {
+			return result.data;
+		} else {
+			log(DEBUG.ERROR, String.format("getBundlesWithCosts: Goal evaluator did not return any results within %.1fs. Something must be wrong.", GOAL_EVAL_TIMEOUT / 1000.0));
+			return new Bundle2d[0];
+		}
+	}
+	
+	protected orca.Frame2d getLocation() {
+		orca.Localise2dData data = null;
+		orca.Frame2d location = null;
+		
+		if (this.localiser != null) {
+			// get location of robot
+			boolean keep_looking = true;
+			long start_time = Calendar.getInstance().getTimeInMillis();
+			long now = start_time;
+
+			while(keep_looking) {
+				try {
+					data = this.localiser.getData();
+				} catch (Ice.UnknownUserException e) {
+					continue;
+				} catch (orca.DataNotExistException e) {
+					log(DEBUG.WARNING, "getLocation: localiser returned DataNotExistException");
+					return null;
+				}
+
+				// we might be lucky
+				if (data != null) {
+					now = Calendar.getInstance().getTimeInMillis();
+					if (now - start_time > LOCALISER_TIMEOUT)
+						keep_looking = false;
+				}
+			}
+
+			if (data != null && data.hypotheses.length != 0) {
+				// use value from localiser
+				location = data.hypotheses[0].mean;
+				log(DEBUG.NOTE, "getLocation: my location is x:" + location.p.x + " y:" + location.p.y);
+			}			
+
+		} else {
+			// use default value for debugging if no data found (print warning in that case)
+			location = createFrame(-1, 0);
+			log(DEBUG.WARNING, "getLocation: could not read my location, using dummy value.");
+		}
+			
+
+		return location;
+	}
+	
+	/**
+	 * Commits agent to a new bundle, which has to include all previously
+	 * committed tasks
+	 * @param new_bundle
+	 */
+	protected void setNewBundles(ArrayList<Bundle2d> new_bundles) {
+		if (new_bundles.size() != 1) {
+			log(DEBUG.WARNING, "TaskBuyerBehaviour::handleAcceptProposal: we are getting " + new_bundles.size() + " bundles assigned at once, which should never be done or synergies between my bundles won't properly be accounted for.");
+
+			// TODO: actually implement this and change level to DEBUG.INFO
+			log(DEBUG.WARNING, "TaskBuyerBehaviour::handleAcceptProposal: reselling assigned tasks. IMPLEMENT THIS!");
+
+			return;
+		}
+
+		// FIXME: we can't properly handle multiple auctions at once this way
+		// TODO: add better way for figuring out whether we need to do recalculations or not
+		//       e.g. check if every tasks in our bundle.tasks is in the new bundle we
+		Bundle2d new_bundle = new_bundles.get(0);
+		if (validateBundleConsistency(new_bundle)) {
+
+			int diff_count = new_bundle.tasks.length - bundle.tasks.length;
+			float diff_cost  = new_bundle.cost;
+			new_bundle.cost += bundle.cost;	// sum up costs
+			log(DEBUG.INFO, String.format("TaskBuyerBehaviour::handleAcceptProposal: bought %d new tasks for cost of %.2f.", diff_count, diff_cost));
+			bundle = new_bundle;
+
+		} else {
+
+			// TODO: implement this properly
+			/*				
+				// set my new bundle
+			ArrayList<Task2d> tasks = arrayToArrayList(bundle.tasks);
+			int new_count = 0;
+			for (Bundle2d b: bundles) {
+				for (Task2d t: b.tasks) {
+					tasks.add(t);
+					new_count++;
+				}
+			}
+			bundle.tasks = tasks.toArray(new Task2d[tasks.size()]);
+			log(DEBUG.NOTE, "TaskBuyerBehaviour::handleAcceptProposal: added " + new_count + " new tasks.");
+
+			// TODO: call goal evaluator to re-sort committed tasks
+			*/
+		}
+	}
+	
+	/**
+	 * Selects winning bundles from a bunch of received bids
+	 * @param bids HashMap of 1 sender => n bundles
+	 * @return HashMap of 1 sender => 1 assigned bundle
+	 */
+	protected HashMap<ACLMessage, Bundle2d> selectWinningBundles(HashMap< ACLMessage, ArrayList<Bundle2d> > bids) {
+		// process bundles and decide on which tasks to assign
+
+		// TODO: generalise for handling multiple winning bundles
+		// FIXME: for starters, use simple SSI auction
+		Bundle2d 		best_bundle = null;
+		float  			best_cost = Float.POSITIVE_INFINITY;
+		ACLMessage	best_offer = null;
+		
+		// iterate over all agents
+		Set< Map.Entry< ACLMessage, ArrayList<Bundle2d> > > set = bids.entrySet();
+		for (Map.Entry< ACLMessage, ArrayList<Bundle2d> > me : set) {
+			ACLMessage key = me.getKey();
+			log(DEBUG.SPAM, "selectWinningBundles: checking bids from " + key.getSender().getName() + ", who has " + bids.get(key).size() + " bids.");
+			
+			// iterate over all bundles in this package
+			for (Bundle2d bundle: me.getValue()) {
+				// skip bundle if not verified
+				ArrayList<Integer> task_indices = getTaskForSaleIndex(bundle);
+				if (task_indices.size() == 0) {
+					// TODO: punish agent
+					log(DEBUG.WARNING, "selectWinningBundles: Received invalid bid from " + key.getSender().getName());
+
+					// skip this bid
+					continue;
+				}
+				
+				if (bundle.cost < best_cost) {
+					best_bundle = bundle;
+					best_cost 	= bundle.cost;
+					best_offer	= key;
+				}
+			}
+		}
+		
+		HashMap<ACLMessage, Bundle2d> winners = new HashMap<ACLMessage, Bundle2d>();
+
+		// TODO: generalise for handling multiple bundles
+		if (best_bundle != null && best_bundle.tasks != null) {
+			winners.put(best_offer, best_bundle);
+
+			// remove tasks from for-sale list
+			// TODO: should probably not be done here in case message not delivered?!
+			ArrayList<Integer> task_indices;
+			while ((task_indices = getTaskForSaleIndex(best_bundle)) != null && task_indices.size() > 0) {
+				int i = task_indices.get(0).intValue();
+				tasks_for_sale.remove(i);
+				log(DEBUG.SPAM, String.format("selectWinningBundles: task #%d to %s - %d tasks still for sale.", i, best_offer.getSender().getName(), tasks_for_sale.size()));
+			}
+
+		}
+		
+		return winners;
 	}
 	
 	/**
@@ -283,8 +596,7 @@ public class GenericRobot extends Agent {
 		// TODO: implement this
 		return true;
 	}
-	
-	
+
 	// Helper methods
 	/////////////////////////////////////////////////////////////////////////////
 
@@ -298,6 +610,13 @@ public class GenericRobot extends Agent {
 	
 	private boolean closeEnough(double a, double b) {
 		return Math.abs(a - b) < CLOSE_ENOUGH_EPSILON;
+	}
+	private boolean closeEnough(orca.Frame2d a, orca.Frame2d b) {
+		return (closeEnough(a.p.x, b.p.x) && closeEnough(a.p.y, b.p.y));
+		
+	}
+	private boolean closeEnough(Task2d a, Task2d b) {
+		return closeEnough(a.target, b.target);
 	}
 
 	/**
@@ -394,6 +713,45 @@ public class GenericRobot extends Agent {
 		return results;
 	}
 	
+	/**
+	 * find index of  the tasks that are close enough in the original tasks that are to sale
+	 * functions as verification that we only sell tasks that we actually have for sale
+	 * @param Either a single needle or a bundle
+	 * @return Either a single index (or -1 if none found) or a list of indices (or empty list)
+	 */
+	private int getTaskForSaleIndex(Task2d needle) {
+		Task2d[] haystack = (Task2d[]) tasks_for_sale.toArray(new Task2d[tasks_for_sale.size()]);
+		return getTaskIndex(needle, haystack);
+	}	
+	private ArrayList<Integer> getTaskForSaleIndex(Bundle2d bundle) {
+		ArrayList<Integer> indices = new ArrayList<Integer>();
+
+		// check every task in the bundle
+		for (Task2d t: bundle.tasks) {
+			int i = getTaskForSaleIndex(t);
+			if (i != -1)
+				indices.add(new Integer(i));
+		}
+
+		// return valid task indices
+		return indices;
+	}	
+	
+	/**
+	 * find index of a task in haystack that is close enough to the needle
+	 * @param needle Tasks for which a close one will be looked for
+	 * @param haystack List of tasks to look in
+	 * @return Index of similar tasks to needle in haystack or -1 if none found
+	 */
+	private int getTaskIndex(Task2d needle, Task2d[] haystack) {
+		for (int i = 0; i < haystack.length; i++) {
+			Task2d for_sale = haystack[i];
+			if (closeEnough(for_sale, needle))
+				return i;
+		}
+		return -1;
+	}
+
 	//===========================================================================
 	// Inner class definitions
 	//===========================================================================
@@ -411,12 +769,21 @@ public class GenericRobot extends Agent {
 		}
 		
 		protected void onTick() {
-			// add random task to my tasks for sale list
+			// add random tasks to my tasks for sale list
 			Random 	r = new Random();
-			int 		i = r.nextInt(all_possible_tasks.size());
-			Task2d 	t = all_possible_tasks.get(i);
-			log(DEBUG.INFO, "RandomTaskGenerator: drawn random task (#" + i + ") x:" + t.target.p.x + " y:" + t.target.p.y);
-			tasks_for_sale.add(t);
+			
+			int 		num = r.nextInt(5) + 2;
+			for (int i = 0; i < num; i++ ) {
+				int 		k = r.nextInt(all_possible_tasks.size());
+				Task2d 	t = all_possible_tasks.get(k);
+
+				if (getTaskIndex(t, bundle.tasks) == -1 && getTaskForSaleIndex(t) == -1) {
+					log(DEBUG.INFO, "RandomTaskGenerator: drawn random task (#" + k + ") x:" + t.target.p.x + " y:" + t.target.p.y);
+					tasks_for_sale.add(t);
+				}
+				else
+					log(DEBUG.NOTE, "RandomTaskGenerator: not adding duplicate task (#" + k + ") x:" + t.target.p.x + " y:" + t.target.p.y);				
+			}
 		}
 	}
 	
@@ -435,10 +802,14 @@ public class GenericRobot extends Agent {
 		 * Do stuff.
 		 */
 		protected void onTick() {
+			// some debugging blah blah
 			if (bundle.tasks != null)
 				log(DEBUG.NOTE, "RobotBehaviour: I am currently committed to " + bundle.tasks.length + " tasks, and have " + tasks_for_sale.size() + " tasks for sale.");
 			else
 				log(DEBUG.NOTE, "RobotBehaviour: I am currently committed to no tasks, and have " + tasks_for_sale.size() + " tasks for sale.");
+			
+			// handle driver
+			drive();
 		}
 	}
 
@@ -456,7 +827,8 @@ public class GenericRobot extends Agent {
 			if (tasks.size() == 0)
 				throw new NotUnderstoodException("There are no tasks in this CFP.");
 			
-			Bundle2d[] bids = getBundlesWithCosts(tasks);
+			// get all bundles with relative costs
+			Bundle2d[] bids = getBundlesWithCosts(tasks, true);
 			
 			ACLMessage response;
 			if(bids.length > 0) {
@@ -476,46 +848,7 @@ public class GenericRobot extends Agent {
 			// extract tasks from accept-proposal message
 			ArrayList<Bundle2d> bundles = extractBundles(accept.getContent());
 			
-			if (bundles.size() != 1) {
-				log(DEBUG.WARNING, "TaskBuyerBehaviour::handleAcceptProposal: we are getting " + bundles.size() + " bundles assigned at once, which should never be done or synergies between my bundles won't properly be accounted for.");
-				
-				// TODO: actually implement this and change level to DEBUG.INFO
-				log(DEBUG.WARNING, "TaskBuyerBehaviour::handleAcceptProposal: reselling assigned tasks. IMPLEMENT THIS!");
-				
-				return null;
-			}
-			
-			// FIXME: we can't properly handle multiple auctions at once this way
-			// TODO: add better way for figuring out whether we need to do recalculations or not
-			//       e.g. check if every tasks in our bundle.tasks is in the new bundle we
-			Bundle2d new_bundle = bundles.get(0);
-			if (validateBundleConsistency(new_bundle)) {
-
-				int diff_count = new_bundle.tasks.length - bundle.tasks.length;
-				float diff_cost  = new_bundle.cost;
-				new_bundle.cost += bundle.cost;	// sum up costs
-				log(DEBUG.INFO, String.format("TaskBuyerBehaviour::handleAcceptProposal: bought %d new tasks for cost of %.2f.", diff_count, diff_cost));
-				bundle = new_bundle;
-				
-			} else {
-
-				// TODO: implement this properly
-/*				
-				// set my new bundle
-				ArrayList<Task2d> tasks = arrayToArrayList(bundle.tasks);
-				int new_count = 0;
-				for (Bundle2d b: bundles) {
-					for (Task2d t: b.tasks) {
-						tasks.add(t);
-						new_count++;
-					}
-				}
-				bundle.tasks = tasks.toArray(new Task2d[tasks.size()]);
-				log(DEBUG.NOTE, "TaskBuyerBehaviour::handleAcceptProposal: added " + new_count + " new tasks.");
-
-				// TODO: call goal evaluator to re-sort committed tasks
-*/
-			}
+			setNewBundles(bundles);
 			
 			// no message sent back
 			return null;
@@ -602,50 +935,20 @@ public class GenericRobot extends Agent {
 			}
 			log(DEBUG.NOTE, "TaskSellerBehaviour::handleAllResponses: received bids from " + bids.size() + " agents.");
 			
-			// TODO: process bundles and decide on which tasks to assign
-			// for starters, use simple SSI auction
-			Bundle2d 		best_bundle = null;
-			float  			best_cost = Float.POSITIVE_INFINITY;
-			ACLMessage	best_offer = null;
+			HashMap<ACLMessage, Bundle2d> winners = selectWinningBundles(bids);
 			
-			// iterate over all agents
-			for (ACLMessage key: bids.keySet()) {
-				log(DEBUG.SPAM, "TaskSellerBehaviour::handleAllResponses: checking bids from " + key.getSender().getName() + ", who has " + bids.get(key).size() + " bids.");
-				
-				// iterate over all bundles in this package
-				for (Bundle2d bundle: bids.get(key)) {
-					if (bundle.cost < best_cost) {
-						best_bundle = bundle;
-						best_cost 	= bundle.cost;
-						best_offer	= key;
-					}
-				}
-			}
-			
-			// find the tasks that are close enough in the original tasks that are to sale
-			// functions as verification that we only sell tasks that we actually have for sale
-			ArrayList<Integer> task_indices = verifyBundle(best_bundle);
-			if (task_indices.size() > 0) {
-				// send accept-proposals
-				ACLMessage 				accept = best_offer.createReply();
+			// send accept-proposals
+			Set< Map.Entry<ACLMessage, Bundle2d> > set = winners.entrySet();
+			for (Map.Entry<ACLMessage, Bundle2d> me : set) {
+				ACLMessage offer = me.getKey();
+				ACLMessage accept = offer.createReply();
 				accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-				Bundle2d[] accepted_bundles = {best_bundle};
+				Bundle2d[] accepted_bundles = { me.getValue() };
 				String bundle_string = createBundleString(accepted_bundles);
-				accept.setContent(createBundleString(accepted_bundles));
+				accept.setContent(bundle_string);
 				acceptances.add(accept);
-				
-				log(DEBUG.INFO, String.format("TaskSellerBehaviour::handleAllResponses: Selling the following bundle to " + best_offer.getSender().getName() + ":\n" + bundle_string));
 
-				// remove task from the tasks that i have for sale
-				for (int i = 0; i < task_indices.size(); i++) {
-					int index = task_indices.get(i).intValue();
-					tasks_for_sale.remove(index);
-					log(DEBUG.SPAM, "TaskSellerBehaviour::handleAllResponses: sold #" + index + ", " + tasks_for_sale.size() + " tasks still for sale.");
-				}
-
-			} else {
-				log(DEBUG.WARNING, "TaskSellerBehaviour::handleAllResponses: Received invalid bid from " + best_offer.getSender().getName());
-				// TODO: punish agent
+				log(DEBUG.INFO, String.format("TaskSellerBehaviour::handleAllResponses: Selling the following bundle to " + offer.getSender().getName() + ":\n" + bundle_string));
 			}
 			
 			// done
@@ -653,25 +956,6 @@ public class GenericRobot extends Agent {
 			// TODO: remove myself from behaviours?
 		}
 		
-		/**
-		 * Check if the task is actually for sale by me
-		 */
-		private ArrayList<Integer> verifyBundle(Bundle2d bundle) {
-			ArrayList<Integer> indices = new ArrayList<Integer>();
-			
-			// check every task in the bundle
-			for (Task2d t: bundle.tasks) {
-				for (int i = 0; i < tasks_for_sale.size(); i++) {
-					Task2d for_sale = tasks_for_sale.get(i);
-					if (closeEnough(for_sale.target.p.x, t.target.p.x)
-							&& closeEnough(for_sale.target.p.y, t.target.p.y))
-						indices.add(new Integer(i));
-				}
-			}
-			
-			// only return indices if every task in the bundle is alright
-			return indices;
-		}
 	}
 	
 	// CyclicBehaviour which listens for CFPs to start the TaskBuyerBehaviour

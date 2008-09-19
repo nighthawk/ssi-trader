@@ -38,20 +38,20 @@ PathEvaluatorI::setTask(const PathEvaluatorTask& task, const ::Ice::Current&) {
     return numAhead;
 }
 
-talker::BundleList2d
+talker::PathEvaluatorResult
 PathEvaluatorI::getData(const Ice::Current& current ) const  {
     // we don't need to pop the data here because we don't block on it.
     if ( pathEvaluatorDataStore_.isEmpty() )
         throw orca::DataNotExistException( "try again later." );
 
-    BundleList2d data;
+    PathEvaluatorResult data;
     pathEvaluatorDataStore_.get( data );
 
     return data;
 }
 
 void 
-PathEvaluatorI::localSetData( const BundleList2d& data ) {
+PathEvaluatorI::localSetData( const PathEvaluatorResult& data ) {
     pathEvaluatorDataStore_.set( data );
 
     // Try to push it out to IceStorm too

@@ -38,15 +38,21 @@ struct Bundle2d {
 //! List of bundles
 sequence<Bundle2d> 	BundleList2d;
 
+struct PathEvaluatorResult {
+	string				id;
+	BundleList2d	data;
+};
+
 /*!
     @brief Consumer of a planned path
 */
 interface PathEvaluatorConsumer {
     //! Transmits _all_ computed paths to the consumer
-    void setData( BundleList2d obj );
+    void setData( PathEvaluatorResult obj );
 };
 
 struct PathEvaluatorTask {
+	string			id;
 	//! maximum number of bundles to be computed
 	int					maxBundles;
 	//! maximum size of subset of tasks to be considered
@@ -61,6 +67,7 @@ struct PathEvaluatorTask {
 	PathEvaluatorConsumer* prx;
 };
 
+
 //! Interface for path evaluator.
 interface PathEvaluator
 {
@@ -70,7 +77,7 @@ interface PathEvaluator
             throws orca::BusyException, orca::RequiredInterfaceFailedException;   
 
     //! Returns the most-recently-computed computed path
-    ["cpp:const"] idempotent BundleList2d getData();
+    ["cpp:const"] idempotent PathEvaluatorResult getData();
 
     /*!
      * Mimics IceStorm's subscribe().  The implementation may choose to

@@ -13,7 +13,7 @@ IF( build )
 
     INCLUDE( ${ORCA_CMAKE_DIR}/UseComponentRules.cmake )
 
-    FILE( GLOB srcs *.cpp )
+    FILE( GLOB srcs [^.]*.cpp )
     SET( dep_libs ${ext_libs} ${int_libs} )
     
     # build stand-alone component  
