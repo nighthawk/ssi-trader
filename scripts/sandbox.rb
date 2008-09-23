@@ -37,16 +37,18 @@ def get_test_results
   start.o		= 0
 
   tasks = []
+=begin
   tasks << create_task( -9,  0, 0);
   tasks << create_task( -1,  3, 0);
   tasks << create_task( 23, -4, 0);
-  tasks << create_task(-23,  8, 0);
+=end
 
   committed = []
   committed << create_task( 11,  0, 0);
+  committed << create_task(-23,  8, 0);
 
-  task.maxBundles 		= 15;
-  task.bundleSize 		= 3;
+  task.maxBundles 		= 1;
+  task.bundleSize 		= 1;
   task.start 					= start;
   task.committedTasks = committed;
   task.newTasks 			= tasks;
@@ -56,5 +58,5 @@ def get_test_results
   return p.getData
 end
 
-get_test_results
+puts get_test_results
 

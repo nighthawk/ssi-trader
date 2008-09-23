@@ -7,3 +7,4 @@ MESSAGE( STATUS "== COMPONENTS ==" )
 #ADD_SUBDIRECTORY( helloserver )
 
 ADD_SUBDIRECTORY( pathevaluator )
+ADD_SUBDIRECTORY( simlocaliser )

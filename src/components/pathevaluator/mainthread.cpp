@@ -218,28 +218,30 @@ MainThread::findBundles( Task2d &start,
 	// queue storing all computed bundles sorted by cost
 	priority_queue<Bundle2d, BundleList2d, greater<BundleList2d::value_type> > queue;
 
-	// if bundleSize is creater than the actual size of tasks, only create
+	// if bundleSize is greater than the actual size of tasks, only create
 	// subsets up to the size of the tasks
-	if (tasks.size() < bundleSize) bundleSize = tasks.size();
+	// if (tasks.size() < bundleSize) bundleSize = tasks.size();
 	
 	// for all bundle sizes less than the max
-	for(unsigned int k = 1; k <= bundleSize; k++)
-	{
+	for(unsigned int k = 1; k <= bundleSize; k++) {
+		
+		unsigned int size = k;
+		if (size > tasks.size()) size = tasks.size();
+		
 		// create starting subset
-		TaskList2d subset(k);
-		for(unsigned int i = 0; i < k; i++)
+		TaskList2d subset(size);
+		for(unsigned int i = 0; i < size; i++)
 			subset.at(i) = tasks.at(i);
 	
 		// iterate over k-subsets
 		do {
-			TaskList2d permut(k);
+			TaskList2d permut(size);
 			permut = subset;
 			
 			// add tasks that the agent already committed to for inclusion
 			// in permutations if necessary
 			if (permutate_committed) {
-				for(TaskList2d::iterator it = committed.begin();it!=committed.end();++it)
-				{
+				for(TaskList2d::iterator it = committed.begin();it!=committed.end();++it) {
 					Task2d t = *it;
 					permut.push_back(t);
 				}
@@ -271,13 +273,12 @@ MainThread::findBundles( Task2d &start,
 				Bundle2d bundle;
 				bundle.tasks = result;
 				bundle.cost  = computePathCost(start, bundle.tasks);
-			
+
 				queue.push(bundle);
 
         stringstream ss;
         ss << "MainThread::findBundles: ";
-				for(TaskList2d::iterator it = result.begin();it!=result.end();++it)
-				{
+				for(TaskList2d::iterator it = result.begin(); it!=result.end(); ++it) {
 					Task2d t = *it;
 					ss << t.target.p.x << " " << t.target.p.y << " | ";
 				}
@@ -313,8 +314,7 @@ MainThread::findBundles( Task2d &start,
 			}
 			*/
 		}
-		while( stdcomb::next_combination(tasks.begin(),	tasks.end(),
-																		 subset.begin(),subset.end()) );
+		while( tasks.size() > 0 && subset.size() > 0 && stdcomb::next_combination(tasks.begin(),	tasks.end(), subset.begin(),subset.end()) );
 	}			
 
 	// return the cheapest $maxBundles bundles

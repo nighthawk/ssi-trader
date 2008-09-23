@@ -1,0 +1,20 @@
+DefaultComponentTag=SimLocaliser
+
+# Provided Interfaces
+Provides.Localise2d.Type=Localise2d
+Provides.Localise2d.DefaultName=localise2d
+
+# Required Interfaces
+
+# Config Parameters
+Config.Driver.UpdateInterval=0.1
+
+Config.Driver.Comment=Options are { 'static', 'stage' }
+Config.Driver.Default=static
+
+Config.Static.Pose.Comment=x[m] y[m] theta[deg]
+Config.Static.Pose.Default=0.0 0.0 0.0
+
+Config.Stage.Host.Default=localhost
+Config.Stage.Port.Default=6665
+Config.Stage.Id.Default=model1

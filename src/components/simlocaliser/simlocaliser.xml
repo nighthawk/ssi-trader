@@ -1,0 +1,33 @@
+<!-- Orca version 2.11.0 -->
+
+<icegrid>
+    <application name="OrcaApp">
+        <server-template id="simlocaliserTemplate">
+            <parameter name="platform" default="local"/>
+            <server id="${platform}.simlocaliser" exe="${application.distrib}/orca/bin/simlocaliser" activation="on-demand">
+                <adapter name="SimLocaliser" register-process="true" id="${platform}/simlocaliser"/>
+                <property name="SimLocaliser.Platform" value="local"/>
+                <property name="SimLocaliser.Component" value="simlocaliser"/>
+                <property name="SimLocaliser.Provides.Localise2d.Name" value="localise2d"/>
+                <property name="SimLocaliser.Config.Driver" value="static"/>
+                <property name="SimLocaliser.Config.Stage.Host" value="localhost"/>
+                <property name="SimLocaliser.Config.Stage.Id" value="model1"/>
+                <property name="SimLocaliser.Config.Stage.Port" value="6665"/>
+                <property name="SimLocaliser.Config.Static.Pose" value="0.0 0.0 0.0"/>
+            </server>
+        </server-template>
+        <node name="Node1">
+            <server id="local.simlocaliser" exe="simlocaliser" activation="on-demand">
+                <adapter name="SimLocaliser" register-process="true" id="local/simlocaliser"/>
+                <property name="SimLocaliser.Platform" value="local"/>
+                <property name="SimLocaliser.Component" value="simlocaliser"/>
+                <property name="SimLocaliser.Provides.Localise2d.Name" value="localise2d"/>
+                <property name="SimLocaliser.Config.Driver" value="static"/>
+                <property name="SimLocaliser.Config.Stage.Host" value="localhost"/>
+                <property name="SimLocaliser.Config.Stage.Id" value="model1"/>
+                <property name="SimLocaliser.Config.Stage.Port" value="6665"/>
+                <property name="SimLocaliser.Config.Static.Pose" value="0.0 0.0 0.0"/>
+            </server>
+        </node>
+    </application>
+</icegrid>

@@ -36,7 +36,7 @@ public class GenericRobot extends Agent {
 	private final int			 MAX_WAIT_CYCLE_FOR_AUCTION_START = 5;
 	private final int			 MAX_BUNDLES = 25;
 	private final int			 BUNDLE_SIZE = 1;
-	private final Double	 CLOSE_ENOUGH_EPSILON = 0.5;
+	private final double	 CLOSE_ENOUGH_EPSILON = 1.0;
 	private final long		 GOAL_EVAL_TIMEOUT = 3000; // 3.0s
 	private final int			 GOAL_EVAL_MAX_TRY_COUNT = 6;
 	private final long		 LOCALISER_TIMEOUT = 500; // 0.5s
@@ -251,12 +251,12 @@ public class GenericRobot extends Agent {
 	}
 
 	protected void drive() {
-		if (bundle.tasks != null && bundle.tasks.length > 0) {
+		if (this.bundle.tasks != null && this.bundle.tasks.length > 0) {
 			// check if I need to change my goal
 			orca.Frame2d loc = getLocation();
 
 			// update my bundle (and thus immediate goal) if necessary
-			if (loc != null && closeEnough(loc, current_target)) {
+			if (loc != null && this.current_target != null && closeEnough(loc, this.current_target)) {
 				log(DEBUG.INFO, String.format("drive: I have arrived at my current target (x:%.1f, y:%.1f)", loc.p.x, loc.p.y));
 				
 				Bundle2d new_bundle = new Bundle2d();
@@ -266,20 +266,33 @@ public class GenericRobot extends Agent {
 				}
 
 				Bundle2d[] bundles = getBundlesWithCosts(loc, new_bundle.tasks, new Task2d[0], 1, 1);
-				this.bundle = bundles[0];
+				if (bundles.length > 0)
+					this.bundle = bundles[0];
+				else
+					log(DEBUG.WARNING, "drive: Could not determine new destination.");
 			}
 			
 			// update my current target if necessary
-			if (this.current_target == null || !closeEnough(this.current_target, this.bundle.tasks[0].target)) {
+			if (this.current_target == null || (this.bundle.tasks != null && this.bundle.tasks.length > 0 && !closeEnough(this.current_target, this.bundle.tasks[0].target))) {
 				this.current_target = this.bundle.tasks[0].target;
 				log(DEBUG.INFO, String.format("drive: Heading to new target at x:%.1f, y:%.1f", current_target.p.x, current_target.p.y));
 				
 				// drive to target
 				orca.Waypoint2d waypoint = new orca.Waypoint2d();
 				waypoint.target = current_target;
+				
+				// we are very generous
+				// TODO: these should be set in a config file
+				waypoint.timeTarget 					= new orca.Time(15, 0); // 5 minutes to reach target
+				waypoint.distanceTolerance 		= (float) CLOSE_ENOUGH_EPSILON;  	// meters
+			  waypoint.headingTolerance 		= (float) 360.0; 	// degree
+			  waypoint.maxApproachSpeed   	= (float) 99.9; 	// m/sec
+			  waypoint.maxApproachTurnrate	= (float) 180.0;	// deg/sec
+				
 				orca.Waypoint2d[] path = {waypoint};
 				orca.PathFollower2dData target = new orca.PathFollower2dData();
 				target.path = path;
+				target.timeStamp = new orca.Time();
 				try {
 					follower.setData(target, true);
 				} catch (Exception e) {
@@ -465,7 +478,9 @@ public class GenericRobot extends Agent {
 				// use value from localiser
 				location = data.hypotheses[0].mean;
 				log(DEBUG.NOTE, "getLocation: my location is x:" + location.p.x + " y:" + location.p.y);
-			}			
+			}	else {
+				log(DEBUG.ERROR, "getLocation: localiser did not return valid hypothesis for my location.");
+			}
 
 		} else {
 			// use default value for debugging if no data found (print warning in that case)

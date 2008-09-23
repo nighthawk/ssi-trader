@@ -1,0 +1,80 @@
+/*
+ * Orca-Robotics Project: Components for robotics 
+ *               http://orca-robotics.sf.net/
+ * Copyright (c) 2004-2008 Alex Brooks, Alexei Makarenko, Tobias Kaupp
+ *
+ * This copy of Orca is licensed to you under the terms described in
+ * the LICENSE file included in this distribution.
+ *
+ */
+
+/*!
+
+@ingroup orca_components
+@ingroup orca_apps
+@ingroup orca_services
+@ingroup orca_cpp
+@ingroup orca_linux
+@ingroup orca_qnx
+@defgroup orca_component_simlocaliser SimLocaliser
+@brief Produces simulated localisation.
+
+
+@par Provides
+
+- @ref orca_interface_home
+- @ref orca_interface_localise2d [SimLocaliser.Provides.Localise2d]
+- @ref orca_interface_status
+
+@par Requires
+
+- none
+
+@image html simlocaliser.png
+
+@par Drivers
+
+- @b static @ref orca_simlocaliser_static
+- @b stage @ref orca_simlocaliser_stage (does not currently work)
+
+@par Operation
+
+This component simulates localisation information internally or talks to an external simulator.
+
+@par Configuration
+None.
+
+An example configuration file is installed into [ORCA-INSTALL-DIR]/share/orca/cfg/ directory.
+
+@section orca_simlocaliser_static Static position driver
+
+This one simply sends out the pose given in the config file with some made-up uncertainty (this may be added to the config file in the future).
+
+@par Extra configuration
+
+- @c SimLocaliser.Config.Static.Pose (Frame2d) [m,m,deg]
+    - The pose which will be reported as a single localization hypothesis.
+    - Default: [0.0 0.0 0.0]
+
+@section orca_simlocaliser_stage Stage simulator driver
+
+Talks to Stage Simulation interface. Unfortunately, this does @b NOT seem to work as of Stage 2.0.0.
+
+@par Extra configuration
+
+- @c SimLocaliser.Config.Stage.Host (string)
+    - The host that Player (or Stage) is running on
+    - Default: "localhost"
+- @c SimLocaliser.Config.Stage.Port (int)
+    - The port that PLayer (or Stage) is running on
+    - Constraints: >0
+    - Default: 6665
+- @c SimLocaliser.Config.Stage.Id (string)
+    - The ID of the Simulation object.
+    - Default: "model1"
+        
+@par Authors
+Alex Makarenko
+
+*/
+
