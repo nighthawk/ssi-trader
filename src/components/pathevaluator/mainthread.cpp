@@ -369,7 +369,7 @@ MainThread::walk()
             bool haveTask=false;
 
 /*
-        		// TODO - just faked here
+        		// Test data
         		orca::Frame2d start;
         		start.p.x = -1.;
         		start.p.y = 0.;

@@ -3,20 +3,22 @@
  * @since 2008/07
  *
  * This JADE agent is modelling a robot which is implemented using the component-based
- * Orca framework. It requires a GoalEvaluator and a GoalPlanner component.
+ * Orca framework. It requires at least a GoalEvaluator component to run in simulation
+ * mode. For running on a robot, GoalPlanner and Localiser components are required as well.
  *
  * Behaviours of this agent
  * - TickerBehaviour which checks the DF every minute to update it's list of nearby robots
- * - TODO: TickerBehaviour which keeps track of own tasks and actions
+ * - TickerBehaviour which keeps track of own tasks and actions
  * - CyclicBehaviour which listens for requests for adding new tasks
- * - TODO: ContractNetResponder which listens for CFP to try to buy new goals
- * - TODO: ContractNetInitiator triggered by TickerBehaviour to occasionally sell it's own tasks
+ * - ContractNetResponder which listens for CFP to try to buy new goals
+ * - ContractNetInitiator triggered by TickerBehaviour to occasionally sell it's own tasks
  *   executing new actions in order to achieve my goals/tasks and check whether I have
  *   recently achieved one of my goals/tasks
  */
 
 import java.util.*;
 import java.util.regex.*;
+import java.io.*;
 
 import jade.core.*;
 import jade.core.behaviours.*;
@@ -31,21 +33,38 @@ public class GenericRobot extends Agent {
 	// Constants
 	/////////////////////////////////////////////////////////////////////////////
 	enum DEBUG { SPAM, NOTE, INFO, WARNING, ERROR };
+	enum WINNER_DETERMINATION { MIN_COST, REGRET_CLEARING };
+	
+	private final String CLEAR_MESSAGE = "!clear!";
 
-	// TODO: these should probably be set some different way, e.g. config file
-	private final int			 MAX_WAIT_CYCLE_FOR_AUCTION_START = 5;
-	private final int			 MAX_BUNDLES = 25;
-	private final int			 BUNDLE_SIZE = 1;
-	private final double	 CLOSE_ENOUGH_EPSILON = 1.0;
-	private final long		 GOAL_EVAL_TIMEOUT = 3000; // 3.0s
-	private final int			 GOAL_EVAL_MAX_TRY_COUNT = 6;
-	private final long		 LOCALISER_TIMEOUT = 500; // 0.5s
-	private final String[] DEFAULT_ARGS = {"--Ice.Default.Locator=IceGrid/Locator:default -p 12000"};
-	private final String   GOAL_COORDS	= "[-23 8] [-23 1] [-21 -4] [-17 7] [-17 -2] [-17 -5] [-14 7] [-12 -5] [-10 7] [-9 0] [-7 7] [-6 -5] [-5 -1] [-2 8.5] [-1 3] [-1 0] [2 0] [2 -8] <5.8 7> [8 -8] [10 7] [11 0] [11 -8] [14 7] [14 0] [14 -5] <17.5 8> <20 8> [23 -4] ";
-	// TODO: there are probs with
-	// 			 5.5 7 => 5.8 7
-	//			 17 7 => 17.5 8
-	// 			 20 7 => 20 8
+	// Config values
+	/////////////////////////////////////////////////////////////////////////////
+	
+	private boolean	 FULL_SIMULATION_MODE;
+	private int	 		 CYCLE_TIME_RANDOM_TASK_GENERATION;
+	private int	 		 CYCLE_TIME_ROBOT_DISCOVERY;
+	private int	 		 CYCLE_TIME_ROBOT;
+	private int	 		 CYCLE_TIME_TRIGGER_SALES;
+	private int	 		 RANDOMISE_CYCLES_BY;
+	
+	private WINNER_DETERMINATION WINNER_DETERMINATION_METHOD;
+	
+	private int			 MAX_WAIT_TIME_FOR_RESPONSES_MS;
+	private int			 MAX_WAIT_CYCLE_FOR_AUCTION_START;
+	private int			 MAX_BUNDLES;
+	private int			 BUNDLE_SIZE;
+	
+	private double	 CLOSE_ENOUGH_EPSILON_M;
+	private long		 GOAL_EVAL_TIMEOUT_MS;
+	private int			 GOAL_EVAL_MAX_TRY_COUNT;
+	private long		 LOCALISER_TIMEOUT_MS;
+	private String[] DEFAULT_ARGS = {""};
+
+	private String 	 ORCA_NAME_GOAL_EVAL;
+	private String 	 ORCA_NAME_PATH_FOLLOWER;
+	private String 	 ORCA_NAME_LOCALISER;
+	
+	private String   GOAL_COORDS;
 
 	// Instance variables
 	/////////////////////////////////////////////////////////////////////////////
@@ -55,6 +74,7 @@ public class GenericRobot extends Agent {
 	private DEBUG 							debug_level 		= DEBUG.INFO;
 	private int									active_auction_counter	= 0;
 	private orca.Frame2d				current_target	= null;
+	private orca.Frame2d				location = null;
 
 	// Orca interfaces
 	private Ice.Communicator 		ic;
@@ -71,21 +91,38 @@ public class GenericRobot extends Agent {
 	protected void setup() {
 		log(DEBUG.INFO, "GenericRobot starting up.");
 		
+		if(FULL_SIMULATION_MODE)
+			log(DEBUG.WARNING, "We are running in full simulation mode. No interaction with robot drivers!");
+		
 		// check command line parameters
-		// 1: robot colour
-		// 2: debug level
+		// 1: String 	robot colour
+		// 2: DEBUG 	debug level
+		// 3: Float		start x coordinate
+		// 4: Float		start y coordinate
 		Object[] args = getArguments();
-		if (args == null || args.length != 2) {
+		if (args == null || args.length < 2) {
 			log(DEBUG.ERROR, "Necessary parameters missing.");
-			log(DEBUG.ERROR, "Please supply parameters: <robot_colour> <debug_level>");
-			log(DEBUG.ERROR, "For example: red info");
+			log(DEBUG.ERROR, "Please supply parameters: <robot_colour> <debug_level> [<start x> <start y>]");
+			log(DEBUG.ERROR, "For example: red info -1 0.2");
 			doDelete();
 			return;
 		}
 		
 		// initialise values
 		String robo_colour = (String) args[0];
-		this.debug_level = DEBUG.valueOf(((String) args[args.length - 1]).toUpperCase());
+		this.debug_level = DEBUG.valueOf(((String) args[1]).toUpperCase());
+		
+		if (args.length < 4)
+			this.location = createFrame(-1, 0);
+		else
+			this.location = createFrame(Float.valueOf((String) args[2]), Float.valueOf((String) args[3]));
+		log(DEBUG.INFO, "My default location is " + location.p.x + " " + location.p.y);
+		
+		if (!loadConfig(robo_colour)) {
+			doDelete();
+			return;
+		}
+		
 		this.bundle.tasks = new Task2d[0];
 		this.bundle.cost  = 0;
 		
@@ -97,16 +134,21 @@ public class GenericRobot extends Agent {
  			/************************** ADDING BEHAVIOURS **************************/
 			log(DEBUG.NOTE, "Adding behaviours.");
 			
-			// create random id
-			Random r = new Random();
-			int r1 = r.nextInt(10000) - 5000;
-			int r2 = r.nextInt(10000) - 5000;
+			// randomise cycles if configured
+			int r1, r2;
+			if (RANDOMISE_CYCLES_BY > 0) {
+				Random r = new Random();
+				r1 = r.nextInt(RANDOMISE_CYCLES_BY * 1000) - RANDOMISE_CYCLES_BY * 1000 / 2;
+				r2 = r.nextInt(RANDOMISE_CYCLES_BY * 1000) - RANDOMISE_CYCLES_BY * 1000 / 2;
+			} else {
+				r1 = r2 = 0;
+			}
 			
 			// TickerBehaviour which keeps track of own tasks and actions
-			addBehaviour(new RobotBehaviour(this, 5000));
+			addBehaviour(new RobotBehaviour(this, CYCLE_TIME_ROBOT * 1000));
 
 			// TickerBehaviour which checks the DF every 30 secs to update it's list of nearby agents
-			addBehaviour(new UpdateNeighbourBehaviour(this, 30000));
+			addBehaviour(new UpdateNeighbourBehaviour(this, CYCLE_TIME_ROBOT_DISCOVERY * 1000));
 			
 			// CyclicBehaviour which listens for requests of for adding new goals
 			addBehaviour(new TaskReceiverBehaviour(this));
@@ -115,10 +157,12 @@ public class GenericRobot extends Agent {
 			addBehaviour(new TriggerBuyerBehaviour(this));
 
 			// TickerBehaviour which occasionally tries to sell it's own tasks
-			addBehaviour(new TriggerSaleBehaviour(this, 10000 + r1));
+			addBehaviour(new TriggerSaleBehaviour(this, CYCLE_TIME_TRIGGER_SALES * 1000 + r1));
 			
 			// TickerBehaviour that randomly adds some new tasks to my list
-			addBehaviour(new RandomTaskGenerator(this, 90000 + r2));
+			if (CYCLE_TIME_RANDOM_TASK_GENERATION > 0) {
+				addBehaviour(new RandomTaskGenerator(this, CYCLE_TIME_RANDOM_TASK_GENERATION * 1000 + r2));
+			}
 			
  			/************************** PROVIDED SERVICES **************************/
 			log(DEBUG.NOTE, "Registering with DF.");
@@ -196,42 +240,112 @@ public class GenericRobot extends Agent {
 		// connect to Ice
 		this.ic = Ice.Util.initialize(DEFAULT_ARGS);
 		
-		String patheval_name = "pathevaluator@vm-ubuntu/pathevaluator";
-		String localiser_name = "localise2d@vm-ubuntu/" + robo_colour + ".simlocaliser";
-		String follower_name = "pathfollower2d@vm-ubuntu/" + robo_colour + ".goalplanner";
+		String patheval_name = ORCA_NAME_GOAL_EVAL.replace("<robo_colour>", robo_colour);
+		String localiser_name = ORCA_NAME_PATH_FOLLOWER.replace("<robo_colour>", robo_colour);
+		String follower_name = ORCA_NAME_LOCALISER.replace("<robo_colour>", robo_colour);
 
 		// Interface to PathEvaluator (same for all robots)
 		try {
 			Ice.ObjectPrx patheval_base = this.ic.stringToProxy(patheval_name);
 			if (null == (this.patheval = PathEvaluatorPrxHelper.checkedCast(patheval_base)))
-				throw new Error("Proxy could not be based.");
+				throw new Error("Goal Evaluator proxy could not be based.");
 				
 		} catch (Exception e) {
 			log(DEBUG.ERROR, "initProxies: could not connect to goal evaluator component (" + patheval_name + ").");
 			e.printStackTrace();
 		}
+		
+		if(!FULL_SIMULATION_MODE) {
+			// Interface to Localiser (1 per robot)
+			try {
+				Ice.ObjectPrx localiser_base = this.ic.stringToProxy(localiser_name);
+				if (null == (this.localiser = orca.Localise2dPrxHelper.checkedCast(localiser_base)))
+					throw new Error("Localiser proxy could not be based.");
 
-		// Interface to Localiser (1 per robot)
+			} catch (Exception e) {
+				log(DEBUG.WARNING, "initProxies: could not connect to " + robo_colour + " localiser component (" + localiser_name + ").");
+				e.printStackTrace();
+			}
+
+			// Interface to GoalPlanner, i.e. follower (1 per robot)
+			try {
+				Ice.ObjectPrx follower_base = this.ic.stringToProxy(follower_name);
+				if (null == (this.follower = orca.PathFollower2dPrxHelper.checkedCast(follower_base)))
+					throw new Error("Goal Planner proxy could not be based.");
+
+			} catch (Exception e) {
+				log(DEBUG.WARNING, "initProxies: could not connect to " + robo_colour + " goal planner component (" + follower_name + ").");
+				e.printStackTrace();
+			}
+		}			
+	}
+
+	/**
+	 * Loads settings from .cfg files
+	 * @param robo_colour Colour of the robot to load robot specific configuration
+	 * @return true if config successfully loaded, false otherwise
+	 */
+	protected boolean loadConfig(String robo_colour) {
+		String class_name = this.getClass().getName();
+
+		// load default config
+		Properties def = new Properties();
 		try {
-			Ice.ObjectPrx localiser_base = this.ic.stringToProxy(localiser_name);
-			if (null == (this.localiser = orca.Localise2dPrxHelper.checkedCast(localiser_base)))
-				throw new Error("Proxy could not be based.");
+			FileInputStream default_fis = new FileInputStream(class_name + ".cfg");
+			def.load(default_fis);
+		} catch (Exception e) {
+			log(DEBUG.ERROR, "Could not load default configuration file '" + class_name + ".cfg'. Terminating agent...");
+			return false;
+		}
+		
+		// load robot specific config
+		Properties prop = new Properties(def);
+		try {
+			FileInputStream prop_fis = new FileInputStream(class_name + "." + robo_colour + ".cfg");
+			prop.load(prop_fis);
+		} catch (FileNotFoundException e) {
+			log(DEBUG.WARNING, "Could not load robot specific configuration file '" + class_name + "." + robo_colour + ".cfg'. Using defaults only.");
+		} catch (IOException e) {
+			log(DEBUG.WARNING, "Error loading robot specific configuration file '" + class_name + "." + robo_colour + ".cfg'. Using defaults only.");
+		}
+
+		
+		// set variables according to config files
+		try {
+			FULL_SIMULATION_MODE = Boolean.parseBoolean(prop.getProperty("robot.full_simulation_mode"));
+
+			CYCLE_TIME_RANDOM_TASK_GENERATION = Integer.parseInt(prop.getProperty("robot.cycles.random_task_generation"));
+			CYCLE_TIME_ROBOT_DISCOVERY = Integer.parseInt(prop.getProperty("robot.cycles.robot_discovery"));
+			CYCLE_TIME_ROBOT = Integer.parseInt(prop.getProperty("robot.cycles.driving"));
+			CYCLE_TIME_TRIGGER_SALES = Integer.parseInt(prop.getProperty("robot.cycles.trigger_sales"));
 			
-		} catch (Exception e) {
-			log(DEBUG.WARNING, "initProxies: could not connect to " + robo_colour + " localiser component (" + localiser_name + ").");
-			e.printStackTrace();
-		}
+			RANDOMISE_CYCLES_BY = Integer.parseInt(prop.getProperty("robot.randomise_cycles_by"));
 
-		// Interface to GoalPlanner, i.e. follower (1 per robot)
-		try {
-			Ice.ObjectPrx follower_base = this.ic.stringToProxy(follower_name);
-			if (null == (this.follower = orca.PathFollower2dPrxHelper.checkedCast(follower_base)))
-				throw new Error("Proxy could not be based.");
+			WINNER_DETERMINATION_METHOD = WINNER_DETERMINATION.valueOf(prop.getProperty("auction.winner_determination.type").toUpperCase());
+			MAX_WAIT_TIME_FOR_RESPONSES_MS = Integer.parseInt(prop.getProperty("auction.selling.timeout_for_responses"));
+			MAX_WAIT_CYCLE_FOR_AUCTION_START = Integer.parseInt(prop.getProperty("auction.selling.max_wait_cycles_for_restart"));
+			MAX_BUNDLES = Integer.parseInt(prop.getProperty("auction.bidding.max_bundles"));
+			BUNDLE_SIZE = Integer.parseInt(prop.getProperty("auction.bidding.bundle_size"));
+
+			CLOSE_ENOUGH_EPSILON_M = Double.parseDouble(prop.getProperty("robot.close_enough_eplison"));
+			GOAL_EVAL_TIMEOUT_MS = Long.parseLong(prop.getProperty("robot.component.goal_eval.timeout"));
+			GOAL_EVAL_MAX_TRY_COUNT = Integer.parseInt(prop.getProperty("robot.component.goal_eval.retries"));
+			LOCALISER_TIMEOUT_MS = Long.parseLong(prop.getProperty("robot.component.localiser.timeout"));
+			DEFAULT_ARGS[0] = prop.getProperty("robot.ice");
+
+			GOAL_COORDS = prop.getProperty("world.config.goals");			
+
+			ORCA_NAME_GOAL_EVAL = prop.getProperty("robot.component.goal_eval.name");			
+			ORCA_NAME_PATH_FOLLOWER = prop.getProperty("robot.component.path_follower.name");			
+			ORCA_NAME_LOCALISER = prop.getProperty("robot.component.localiser.name");			
 
 		} catch (Exception e) {
-			log(DEBUG.WARNING, "initProxies: could not connect to " + robo_colour + " goal planner component (" + follower_name + ").");
+			log(DEBUG.ERROR, "Configuration files could not be parsed. Please check with example file. Terminating agent...");
 			e.printStackTrace();
+			return false;
 		}
+		
+		return true;
 	}
 
 	// Internal methods
@@ -250,6 +364,10 @@ public class GenericRobot extends Agent {
 		}
 	}
 
+	/**
+	 * Drives robot around to head target in committed bundle and updates
+	 * committed bundle upon arrival at head target.
+	 */
 	protected void drive() {
 		if (this.bundle.tasks != null && this.bundle.tasks.length > 0) {
 			// check if I need to change my goal
@@ -284,7 +402,7 @@ public class GenericRobot extends Agent {
 				// we are very generous
 				// TODO: these should be set in a config file
 				waypoint.timeTarget 					= new orca.Time(15, 0); // 5 minutes to reach target
-				waypoint.distanceTolerance 		= (float) CLOSE_ENOUGH_EPSILON;  	// meters
+				waypoint.distanceTolerance 		= (float) CLOSE_ENOUGH_EPSILON_M;  	// meters
 			  waypoint.headingTolerance 		= (float) 360.0; 	// degree
 			  waypoint.maxApproachSpeed   	= (float) 99.9; 	// m/sec
 			  waypoint.maxApproachTurnrate	= (float) 180.0;	// deg/sec
@@ -413,7 +531,7 @@ public class GenericRobot extends Agent {
 				// we might be lucky
 				if (result != null) {
 					now = Calendar.getInstance().getTimeInMillis();
-					if (result.id.equals(task.id) || now - start_time > GOAL_EVAL_TIMEOUT)
+					if (result.id.equals(task.id) || now - start_time > GOAL_EVAL_TIMEOUT_MS)
 						keep_looking = false;
 				}
 			}
@@ -441,11 +559,15 @@ public class GenericRobot extends Agent {
 		if (result != null && result.id.equals(task.id)) {
 			return result.data;
 		} else {
-			log(DEBUG.ERROR, String.format("getBundlesWithCosts: Goal evaluator did not return any results within %.1fs. Something must be wrong.", GOAL_EVAL_TIMEOUT / 1000.0));
+			log(DEBUG.ERROR, String.format("getBundlesWithCosts: Goal evaluator did not return any results within %.1fs. Something must be wrong.", GOAL_EVAL_TIMEOUT_MS / 1000.0));
 			return new Bundle2d[0];
 		}
 	}
 	
+	/**
+	 * Retrieves location of robot. 
+	 * @return Frame2d of location of robot (or constanat dummy value if in simulation mode)
+	 */
 	protected orca.Frame2d getLocation() {
 		orca.Localise2dData data = null;
 		orca.Frame2d location = null;
@@ -460,16 +582,23 @@ public class GenericRobot extends Agent {
 				try {
 					data = this.localiser.getData();
 				} catch (Ice.UnknownUserException e) {
+					// just try again
 					continue;
+					
+				} catch (Ice.NotRegisteredException e) {
+					// localiser got deregistered
+					log(DEBUG.WARNING, "getLocation: localiser no longer found through ice.");
+					break;
+					
 				} catch (orca.DataNotExistException e) {
 					log(DEBUG.WARNING, "getLocation: localiser returned DataNotExistException");
-					return null;
+					break;
 				}
 
 				// we might be lucky
 				if (data != null) {
 					now = Calendar.getInstance().getTimeInMillis();
-					if (now - start_time > LOCALISER_TIMEOUT)
+					if (now - start_time > LOCALISER_TIMEOUT_MS)
 						keep_looking = false;
 				}
 			}
@@ -482,10 +611,14 @@ public class GenericRobot extends Agent {
 				log(DEBUG.ERROR, "getLocation: localiser did not return valid hypothesis for my location.");
 			}
 
-		} else {
+		}
+		
+		if (FULL_SIMULATION_MODE && location == null) {
 			// use default value for debugging if no data found (print warning in that case)
-			location = createFrame(-1, 0);
-			log(DEBUG.WARNING, "getLocation: could not read my location, using dummy value.");
+			location = this.location;
+			
+			if(!FULL_SIMULATION_MODE)
+				log(DEBUG.WARNING, "getLocation: could not read my location, using dummy value.");
 		}
 			
 
@@ -522,6 +655,8 @@ public class GenericRobot extends Agent {
 		} else {
 
 			// TODO: implement this properly
+			log(DEBUG.WARNING, "setNewBundles: handling of inconsistent bundles has not been added yet, but this bundle is actually inconsistent.");
+			
 			/*				
 				// set my new bundle
 			ArrayList<Task2d> tasks = arrayToArrayList(bundle.tasks);
@@ -549,38 +684,93 @@ public class GenericRobot extends Agent {
 		// process bundles and decide on which tasks to assign
 
 		// TODO: generalise for handling multiple winning bundles
-		// FIXME: for starters, use simple SSI auction
-		Bundle2d 		best_bundle = null;
-		float  			best_cost = Float.POSITIVE_INFINITY;
-		ACLMessage	best_offer = null;
 		
-		// iterate over all agents
+		HashMap< Integer, PriorityQueue<Bid> > task_bid_map = new HashMap< Integer, PriorityQueue<Bid> >();
+		
+		// iterate over all agents and collect bids
 		Set< Map.Entry< ACLMessage, ArrayList<Bundle2d> > > set = bids.entrySet();
 		for (Map.Entry< ACLMessage, ArrayList<Bundle2d> > me : set) {
-			ACLMessage key = me.getKey();
-			log(DEBUG.SPAM, "selectWinningBundles: checking bids from " + key.getSender().getName() + ", who has " + bids.get(key).size() + " bids.");
+			ACLMessage bidder = me.getKey();
+			log(DEBUG.SPAM, "selectWinningBundles: checking bids from " + bidder.getSender().getName() + ", who has " + bids.get(bidder).size() + " bids.");
 			
 			// iterate over all bundles in this package
 			for (Bundle2d bundle: me.getValue()) {
 				// skip bundle if not verified
 				ArrayList<Integer> task_indices = getTaskForSaleIndex(bundle);
+
 				if (task_indices.size() == 0) {
 					// TODO: punish agent
-					log(DEBUG.WARNING, "selectWinningBundles: Received invalid bid from " + key.getSender().getName());
+					log(DEBUG.WARNING, "selectWinningBundles: Received invalid bid from " + bidder.getSender().getName());
+					continue; // skip this bid
 
-					// skip this bid
-					continue;
+				} else if (task_indices.size() > 1) {
+					// TODO: handle bundle-bids
+					log(DEBUG.ERROR, "selectWinningBundles: No support for bundle-bids implemented yet.");
+					continue; // skip this bid
 				}
 				
-				if (bundle.cost < best_cost) {
-					best_bundle = bundle;
-					best_cost 	= bundle.cost;
-					best_offer	= key;
+				// put bid into queue of bids for the task this bid is for
+				Integer task_index = task_indices.get(0);
+				if (!task_bid_map.containsKey(task_index)) {
+					task_bid_map.put(task_index, new PriorityQueue<Bid>());
 				}
+				
+				task_bid_map.get(task_index).add(new Bid(bidder, bundle));
+				
 			}
 		}
 		
+		// determine winning bundles
 		HashMap<ACLMessage, Bundle2d> winners = new HashMap<ACLMessage, Bundle2d>();
+
+		Bundle2d 		best_bundle = null;
+		ACLMessage	best_offer = null;
+		float  			best_cost;
+		
+		Set< Map.Entry< Integer, PriorityQueue<Bid> > > task_bid_set = task_bid_map.entrySet();
+
+		switch (WINNER_DETERMINATION_METHOD) {
+			case MIN_COST:
+				// the cheapest bid wins
+				best_cost = Float.POSITIVE_INFINITY;
+				
+				for (Map.Entry< Integer, PriorityQueue<Bid> > me : task_bid_set) {
+					Integer i = me.getKey();
+					Bid head = me.getValue().poll();
+					
+					if (head.bundle.cost < best_cost) {
+						best_bundle = head.bundle;
+						best_cost 	= head.bundle.cost;
+						best_offer 	= head.bidder;
+					}
+				}
+				break;
+				
+			case REGRET_CLEARING:
+				// the bid we regret the least wins, i.e. the bid that maximises the difference of
+				// the costs from the best and the second best bidders
+				best_cost = 0;
+
+				for (Map.Entry< Integer, PriorityQueue<Bid> > me : task_bid_set) {
+					Integer i 	= me.getKey();
+					Bid first 	= me.getValue().poll();
+					Bid second 	= me.getValue().poll();
+					
+					log(DEBUG.SPAM, "selectWinningBundles: diff of this is " + (second.bundle.cost - first.bundle.cost));
+					
+					if (second == null || second.bundle.cost - first.bundle.cost > best_cost) {
+						best_bundle = first.bundle;
+						best_cost 	= second.bundle.cost - first.bundle.cost;
+						best_offer 	= first.bidder;
+
+						log(DEBUG.SPAM, "selectWinningBundles: new min of " + best_cost);
+					}
+				}
+				break;
+			
+		}
+
+
 
 		// TODO: generalise for handling multiple bundles
 		if (best_bundle != null && best_bundle.tasks != null) {
@@ -609,6 +799,7 @@ public class GenericRobot extends Agent {
 	 */
 	protected boolean validateBundleConsistency(Bundle2d new_bundle) {
 		// TODO: implement this
+		log(DEBUG.WARNING, "validateBundleConsistency: not yet implemented.");
 		return true;
 	}
 
@@ -624,7 +815,7 @@ public class GenericRobot extends Agent {
 	}
 	
 	private boolean closeEnough(double a, double b) {
-		return Math.abs(a - b) < CLOSE_ENOUGH_EPSILON;
+		return Math.abs(a - b) < CLOSE_ENOUGH_EPSILON_M;
 	}
 	private boolean closeEnough(orca.Frame2d a, orca.Frame2d b) {
 		return (closeEnough(a.p.x, b.p.x) && closeEnough(a.p.y, b.p.y));
@@ -785,9 +976,15 @@ public class GenericRobot extends Agent {
 		
 		protected void onTick() {
 			// add random tasks to my tasks for sale list
+			log(DEBUG.SPAM, "RandomTaskGenerator::onTick()");
+			
 			Random 	r = new Random();
 			
 			int 		num = r.nextInt(5) + 2;
+			// TODO: just temp
+			// num = 10;
+			// while (tasks_for_sale.size() < num) {
+				
 			for (int i = 0; i < num; i++ ) {
 				int 		k = r.nextInt(all_possible_tasks.size());
 				Task2d 	t = all_possible_tasks.get(k);
@@ -799,11 +996,17 @@ public class GenericRobot extends Agent {
 				else
 					log(DEBUG.NOTE, "RandomTaskGenerator: not adding duplicate task (#" + k + ") x:" + t.target.p.x + " y:" + t.target.p.y);				
 			}
+			
+			// TODO. just temp
+			// log(DEBUG.SPAM, "Message: " + createTaskString(tasks_for_sale));
+			// tasks_for_sale.clear();
 		}
 	}
 	
 	// TickerBehaviour which keeps track of own tasks and actions
 	private class RobotBehaviour extends TickerBehaviour {
+		private int last_task_count;
+		
 		/**
 		 * Constructor
 		 * @param a 			Agent this behaviour belongs to
@@ -817,14 +1020,24 @@ public class GenericRobot extends Agent {
 		 * Do stuff.
 		 */
 		protected void onTick() {
-			// some debugging blah blah
-			if (bundle.tasks != null)
-				log(DEBUG.NOTE, "RobotBehaviour: I am currently committed to " + bundle.tasks.length + " tasks, and have " + tasks_for_sale.size() + " tasks for sale.");
-			else
-				log(DEBUG.NOTE, "RobotBehaviour: I am currently committed to no tasks, and have " + tasks_for_sale.size() + " tasks for sale.");
+			log(DEBUG.SPAM, "RobotBehaviour::onTick()");
+			
+			
+			int current_tasks = 0;
+			if (bundle.tasks != null && bundle.tasks.length > 0)
+				current_tasks = bundle.tasks.length;
+			
+			if (current_tasks != last_task_count) {
+				// some debugging blah blah
+				if (current_tasks > 0)
+					log(DEBUG.INFO, "RobotBehaviour: I am currently committed to " + bundle.tasks.length + " tasks costing " + bundle.cost + ", and have " + tasks_for_sale.size() + " tasks for sale.");
+				else
+					log(DEBUG.NOTE, "RobotBehaviour: I am currently committed to no tasks, and have " + tasks_for_sale.size() + " tasks for sale.");
+			}
 			
 			// handle driver
-			drive();
+			if(!FULL_SIMULATION_MODE)
+				drive();
 		}
 	}
 
@@ -860,6 +1073,9 @@ public class GenericRobot extends Agent {
 		}
 
 		protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
+			log(DEBUG.SPAM, "TaskBuyerBehaviour::handleAcceptProposal()");
+			
+			
 			// extract tasks from accept-proposal message
 			ArrayList<Bundle2d> bundles = extractBundles(accept.getContent());
 			
@@ -882,13 +1098,33 @@ public class GenericRobot extends Agent {
 			ACLMessage msg = myAgent.receive(mt);
 			if (msg != null) {
 				// process request message
-				log(DEBUG.NOTE, "TaskReceiverBehaviour: received a request message.");
 				String content = msg.getContent();
-				log(DEBUG.SPAM, "TaskReceiverBehaviour: content is:\n" + content);
-
-				for(Task2d t: extractTasks(content)) {
-					tasks_for_sale.add(t);
-					log(DEBUG.SPAM, "x: " + t.target.p.x + " y: " + t.target.p.y);
+				log(DEBUG.SPAM, "TaskReceiverBehaviour: Received a request message.");
+				log(DEBUG.SPAM, "TaskReceiverBehaviour: Content is:\n" + content);
+				
+				// analyse message content
+				if (content.equals(CLEAR_MESSAGE)) {
+					// received a request to clear all tasks, e.g. for re-planning
+					log(DEBUG.INFO, "TaskReceiverBehaviour: Received request to clear all my tasks.");
+					
+					// clear committed tasks and answer message with my current bundle
+					ACLMessage response = msg.createReply();
+					response.setPerformative(ACLMessage.INFORM);
+					Bundle2d[] current_bundle = {bundle};
+					response.setContent( createBundleString(current_bundle) );
+					
+					bundle = null;
+					
+				} else {
+					// check if we just got a bunch of new tasks assigned
+					ArrayList<Task2d> tasks = extractTasks(content);
+					if (tasks.size() > 0) {
+						log(DEBUG.INFO, "TaskReceiverBehaviour: Received " + tasks.size() + " new tasks.");
+						for(Task2d t: tasks) {
+							tasks_for_sale.add(t);
+							log(DEBUG.SPAM, "x: " + t.target.p.x + " y: " + t.target.p.y);
+						}
+					}
 				}
 				
 			} else {
@@ -897,6 +1133,8 @@ public class GenericRobot extends Agent {
 			}
 		}
 	}
+	
+	
 
 	// ContractNetInitiator, which sells tasks 
 	private class TaskSellerBehaviour extends ContractNetInitiator {
@@ -914,12 +1152,11 @@ public class GenericRobot extends Agent {
 		protected Vector<ACLMessage> prepareCfps(ACLMessage cfp) {
 			// create CFP message with tasks as content and send out to
 			// all buyer agents
-			// TODO: message could also include some information on bidding
-			//       scheme for verification, e.g. bundle size and stuff
 			cfp = new ACLMessage(ACLMessage.CFP);
 			String message = createTaskString(tasks_for_sale);
 			cfp.setContent(message);
 			cfp.setProtocol("fipa-contract-net");
+			cfp.setReplyByDate(new Date(System.currentTimeMillis() + MAX_WAIT_TIME_FOR_RESPONSES_MS));
 			log(DEBUG.SPAM, "TaskSellerBehaviour::prepareCfps: message for buyers is:\n" + message);
 			for (AID r: buyer_robots) {
 				cfp.addReceiver(r);
@@ -967,8 +1204,14 @@ public class GenericRobot extends Agent {
 			}
 			
 			// done
-			active_auction_counter = 0;
-			// TODO: remove myself from behaviours?
+			/*
+			if (tasks_for_sale.size() > 0 && buyer_robots.size() > 0) {
+				log(DEBUG.SPAM, "TaskSellerBehaviour::handleAllResponses: re-starting TaskSaleBehaviour");
+				active_auction_counter = MAX_WAIT_CYCLE_FOR_AUCTION_START;
+				myAgent.addBehaviour(new TaskSellerBehaviour(tasks_for_sale));
+			} else
+			*/
+				active_auction_counter = 0;
 		}
 		
 	}
@@ -1010,19 +1253,19 @@ public class GenericRobot extends Agent {
 		}
 		
 		protected void onTick() {
-			if (buyer_robots.size() == 0) {
-				log(DEBUG.WARNING, "TriggerSaleBehaviour: there are no robots to sell my tasks to.");
-			}
-			else if (--active_auction_counter < 0 && tasks_for_sale.size() > 0) {
-				log(DEBUG.SPAM, "TriggerSaleBehaviour: starting TaskSaleBehaviour");
-				active_auction_counter = MAX_WAIT_CYCLE_FOR_AUCTION_START;
-				myAgent.addBehaviour(new TaskSellerBehaviour(tasks_for_sale));
-			
-			}
-			else if (active_auction_counter >= 0 && tasks_for_sale.size() > 0) {
+			if (--active_auction_counter < 0 && tasks_for_sale.size() > 0) {
+				if (buyer_robots.size() == 0) {
+					log(DEBUG.WARNING, "TriggerSaleBehaviour: there are no robots to sell my tasks to.");
+				} else {
+					log(DEBUG.SPAM, "TriggerSaleBehaviour: starting TaskSaleBehaviour");
+					active_auction_counter = MAX_WAIT_CYCLE_FOR_AUCTION_START;
+					myAgent.addBehaviour(new TaskSellerBehaviour(tasks_for_sale));
+				}
+
+			} else if (active_auction_counter >= 0 && tasks_for_sale.size() > 0) {
 				log(DEBUG.SPAM, "TriggerSaleBehaviour: can't start new auction, as old auction still busy (counter: " + active_auction_counter + ")");
-			}
-			else {
+
+			} else {
 				active_auction_counter = 0;
 			}
 		}

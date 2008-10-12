@@ -1,4 +1,4 @@
-##### Compiling
+##### prepare
 - convert them to ruby using slice2java command
 		slice2java -I<path to find included files> <files.ice>
 	example:
@@ -8,16 +8,19 @@
 - set environment variables
 		export ICEJ_PATH=/usr/share/java
 		export CLASSPATH=$CLASSPATH:.:../lib/jade/jade.jar:$ICEJ_PATH/Ice.jar:../classes
+		
+		export ICEJ_PATH=/Volumes/vm-ubuntu/usr/share/java
 
-- compile
+
+##### compile
 		javac -d ../classes GenericRobot.java slice/orca/*.java slice/talker/*.java
 
 
-##### Running
-- set environment variables
-		export CLASSPATH=$CLASSPATH:.:../lib/jade/jade.jar:$ICEJ_PATH/Ice.jar:../classes
+##### running
 
 - run with proper options
 		java jade.Boot "<nickname>:<ClassName>(<param1> <param2> <...>)"
 	example:
-		java jade.Boot "test:GenericRobot(12000 1.3)"
+		java jade.Boot "red:GenericRobot(red info)"
+		
+		java jade.Boot -gui "red:GenericRobot(red spam) blue:GenericRobot(blue info) green:GenericRobot(green info) yellow:GenericRobot(yellow info) black:GenericRobot(black info)"
