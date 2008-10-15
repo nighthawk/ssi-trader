@@ -17,8 +17,6 @@
  */
 
 import java.util.*;
-import java.util.regex.*;
-import java.io.*;
 
 import jade.core.*;
 import jade.core.behaviours.*;
@@ -29,32 +27,20 @@ import jade.proto.*;
 
 import talker.*;
 
-public class GenericRobot extends Agent {
+public class GenericRobot extends AuctionAgent {
 	// Constants
 	/////////////////////////////////////////////////////////////////////////////
-	enum DEBUG { SPAM, NOTE, INFO, WARNING, ERROR };
-	enum WINNER_DETERMINATION { MIN_COST, REGRET_CLEARING };
-	
-	private final String CLEAR_MESSAGE = "!clear!";
 
 	// Config values
 	/////////////////////////////////////////////////////////////////////////////
 	
 	private boolean	 FULL_SIMULATION_MODE;
 	private int	 		 CYCLE_TIME_RANDOM_TASK_GENERATION;
-	private int	 		 CYCLE_TIME_ROBOT_DISCOVERY;
 	private int	 		 CYCLE_TIME_ROBOT;
-	private int	 		 CYCLE_TIME_TRIGGER_SALES;
-	private int	 		 RANDOMISE_CYCLES_BY;
 	
-	private WINNER_DETERMINATION WINNER_DETERMINATION_METHOD;
-	
-	private int			 MAX_WAIT_TIME_FOR_RESPONSES_MS;
-	private int			 MAX_WAIT_CYCLE_FOR_AUCTION_START;
 	private int			 MAX_BUNDLES;
 	private int			 BUNDLE_SIZE;
 	
-	private double	 CLOSE_ENOUGH_EPSILON_M;
 	private long		 GOAL_EVAL_TIMEOUT_MS;
 	private int			 GOAL_EVAL_MAX_TRY_COUNT;
 	private long		 LOCALISER_TIMEOUT_MS;
@@ -63,16 +49,10 @@ public class GenericRobot extends Agent {
 	private String 	 ORCA_NAME_GOAL_EVAL;
 	private String 	 ORCA_NAME_PATH_FOLLOWER;
 	private String 	 ORCA_NAME_LOCALISER;
-	
-	private String   GOAL_COORDS;
 
 	// Instance variables
 	/////////////////////////////////////////////////////////////////////////////
-	private ArrayList<AID> 			buyer_robots		= new ArrayList<AID>();
-	private ArrayList<Task2d>		tasks_for_sale	= new ArrayList<Task2d>();
 	private Bundle2d						bundle					= new Bundle2d();
-	private DEBUG 							debug_level 		= DEBUG.INFO;
-	private int									active_auction_counter	= 0;
 	private orca.Frame2d				current_target	= null;
 	private orca.Frame2d				location = null;
 
@@ -89,6 +69,8 @@ public class GenericRobot extends Agent {
 	 * Called on start by JADE
 	 */
 	protected void setup() {
+		super.setup();
+		
 		log(DEBUG.INFO, "GenericRobot starting up.");
 		
 		if(FULL_SIMULATION_MODE)
@@ -116,9 +98,11 @@ public class GenericRobot extends Agent {
 			this.location = createFrame(-1, 0);
 		else
 			this.location = createFrame(Float.valueOf((String) args[2]), Float.valueOf((String) args[3]));
+			
 		log(DEBUG.INFO, "My default location is " + location.p.x + " " + location.p.y);
 		
-		if (!loadConfig(robo_colour)) {
+		String class_name = this.getClass().getName();
+		if (!loadConfig(class_name) || !loadConfigValues()) {
 			doDelete();
 			return;
 		}
@@ -129,7 +113,10 @@ public class GenericRobot extends Agent {
 		try {
  			/**************************** ORCA PROXIES *****************************/
 			log(DEBUG.NOTE, "Connecting to Ice.");
-			initProxies(robo_colour);
+			if (!initProxies(robo_colour)) {
+				doDelete();
+				return;
+			}
 			
  			/************************** ADDING BEHAVIOURS **************************/
 			log(DEBUG.NOTE, "Adding behaviours.");
@@ -209,6 +196,8 @@ public class GenericRobot extends Agent {
 	 * Pre-death clean up called by JADE
 	 */
 	protected void takeDown() {
+		super.takeDown();
+		
 		log(DEBUG.WARNING, "Goodbye!");
 
 		try {
@@ -236,13 +225,14 @@ public class GenericRobot extends Agent {
 	 * Initialises Ice proxies and Orca interfaces
 	 * @param robo_colour Colour of the robot used to construct interface names
 	 */
-	protected void initProxies(String robo_colour) {
+	protected boolean initProxies(String robo_colour) {
 		// connect to Ice
+		log(DEBUG.SPAM, "initProxies: Ice is connecting to " + DEFAULT_ARGS[0]);
 		this.ic = Ice.Util.initialize(DEFAULT_ARGS);
 		
-		String patheval_name = ORCA_NAME_GOAL_EVAL.replace("<robo_colour>", robo_colour);
+		String patheval_name 	= ORCA_NAME_GOAL_EVAL.replace("<robo_colour>", robo_colour);
 		String localiser_name = ORCA_NAME_PATH_FOLLOWER.replace("<robo_colour>", robo_colour);
-		String follower_name = ORCA_NAME_LOCALISER.replace("<robo_colour>", robo_colour);
+		String follower_name 	= ORCA_NAME_LOCALISER.replace("<robo_colour>", robo_colour);
 
 		// Interface to PathEvaluator (same for all robots)
 		try {
@@ -253,6 +243,7 @@ public class GenericRobot extends Agent {
 		} catch (Exception e) {
 			log(DEBUG.ERROR, "initProxies: could not connect to goal evaluator component (" + patheval_name + ").");
 			e.printStackTrace();
+			return false;
 		}
 		
 		if(!FULL_SIMULATION_MODE) {
@@ -277,7 +268,9 @@ public class GenericRobot extends Agent {
 				log(DEBUG.WARNING, "initProxies: could not connect to " + robo_colour + " goal planner component (" + follower_name + ").");
 				e.printStackTrace();
 			}
-		}			
+		}
+		
+		return true;			
 	}
 
 	/**
@@ -285,59 +278,27 @@ public class GenericRobot extends Agent {
 	 * @param robo_colour Colour of the robot to load robot specific configuration
 	 * @return true if config successfully loaded, false otherwise
 	 */
-	protected boolean loadConfig(String robo_colour) {
-		String class_name = this.getClass().getName();
-
-		// load default config
-		Properties def = new Properties();
-		try {
-			FileInputStream default_fis = new FileInputStream(class_name + ".cfg");
-			def.load(default_fis);
-		} catch (Exception e) {
-			log(DEBUG.ERROR, "Could not load default configuration file '" + class_name + ".cfg'. Terminating agent...");
-			return false;
-		}
-		
-		// load robot specific config
-		Properties prop = new Properties(def);
-		try {
-			FileInputStream prop_fis = new FileInputStream(class_name + "." + robo_colour + ".cfg");
-			prop.load(prop_fis);
-		} catch (FileNotFoundException e) {
-			log(DEBUG.WARNING, "Could not load robot specific configuration file '" + class_name + "." + robo_colour + ".cfg'. Using defaults only.");
-		} catch (IOException e) {
-			log(DEBUG.WARNING, "Error loading robot specific configuration file '" + class_name + "." + robo_colour + ".cfg'. Using defaults only.");
-		}
-
+	protected boolean loadConfigValues() {
+		super.loadConfigValues();
 		
 		// set variables according to config files
 		try {
-			FULL_SIMULATION_MODE = Boolean.parseBoolean(prop.getProperty("robot.full_simulation_mode"));
+			FULL_SIMULATION_MODE = Boolean.parseBoolean(properties.getProperty("robot.full_simulation_mode"));
 
-			CYCLE_TIME_RANDOM_TASK_GENERATION = Integer.parseInt(prop.getProperty("robot.cycles.random_task_generation"));
-			CYCLE_TIME_ROBOT_DISCOVERY = Integer.parseInt(prop.getProperty("robot.cycles.robot_discovery"));
-			CYCLE_TIME_ROBOT = Integer.parseInt(prop.getProperty("robot.cycles.driving"));
-			CYCLE_TIME_TRIGGER_SALES = Integer.parseInt(prop.getProperty("robot.cycles.trigger_sales"));
+			CYCLE_TIME_RANDOM_TASK_GENERATION = Integer.parseInt(properties.getProperty("robot.cycles.random_task_generation"));
+			CYCLE_TIME_ROBOT = Integer.parseInt(properties.getProperty("robot.cycles.driving"));
+
+			MAX_BUNDLES = Integer.parseInt(properties.getProperty("auction.bidding.max_bundles"));
+			BUNDLE_SIZE = Integer.parseInt(properties.getProperty("auction.bidding.bundle_size"));
+
+			GOAL_EVAL_TIMEOUT_MS = Long.parseLong(properties.getProperty("robot.component.goal_eval.timeout"));
+			GOAL_EVAL_MAX_TRY_COUNT = Integer.parseInt(properties.getProperty("robot.component.goal_eval.retries"));
+			LOCALISER_TIMEOUT_MS = Long.parseLong(properties.getProperty("robot.component.localiser.timeout"));
+			DEFAULT_ARGS[0] = properties.getProperty("robot.ice");
 			
-			RANDOMISE_CYCLES_BY = Integer.parseInt(prop.getProperty("robot.randomise_cycles_by"));
-
-			WINNER_DETERMINATION_METHOD = WINNER_DETERMINATION.valueOf(prop.getProperty("auction.winner_determination.type").toUpperCase());
-			MAX_WAIT_TIME_FOR_RESPONSES_MS = Integer.parseInt(prop.getProperty("auction.selling.timeout_for_responses"));
-			MAX_WAIT_CYCLE_FOR_AUCTION_START = Integer.parseInt(prop.getProperty("auction.selling.max_wait_cycles_for_restart"));
-			MAX_BUNDLES = Integer.parseInt(prop.getProperty("auction.bidding.max_bundles"));
-			BUNDLE_SIZE = Integer.parseInt(prop.getProperty("auction.bidding.bundle_size"));
-
-			CLOSE_ENOUGH_EPSILON_M = Double.parseDouble(prop.getProperty("robot.close_enough_eplison"));
-			GOAL_EVAL_TIMEOUT_MS = Long.parseLong(prop.getProperty("robot.component.goal_eval.timeout"));
-			GOAL_EVAL_MAX_TRY_COUNT = Integer.parseInt(prop.getProperty("robot.component.goal_eval.retries"));
-			LOCALISER_TIMEOUT_MS = Long.parseLong(prop.getProperty("robot.component.localiser.timeout"));
-			DEFAULT_ARGS[0] = prop.getProperty("robot.ice");
-
-			GOAL_COORDS = prop.getProperty("world.config.goals");			
-
-			ORCA_NAME_GOAL_EVAL = prop.getProperty("robot.component.goal_eval.name");			
-			ORCA_NAME_PATH_FOLLOWER = prop.getProperty("robot.component.path_follower.name");			
-			ORCA_NAME_LOCALISER = prop.getProperty("robot.component.localiser.name");			
+			ORCA_NAME_GOAL_EVAL = properties.getProperty("robot.component.goal_eval.name");			
+			ORCA_NAME_PATH_FOLLOWER = properties.getProperty("robot.component.path_follower.name");			
+			ORCA_NAME_LOCALISER = properties.getProperty("robot.component.localiser.name");			
 
 		} catch (Exception e) {
 			log(DEBUG.ERROR, "Configuration files could not be parsed. Please check with example file. Terminating agent...");
@@ -350,19 +311,6 @@ public class GenericRobot extends Agent {
 
 	// Internal methods
 	/////////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * Prints messages depending on debug level. Message is only printed if it's
-	 * debug level is equal or higher than the one specified when constructing
-	 * this agent.
-	 * @param level Debug level of this message
-	 * @param message
-	 */
-	protected void log(DEBUG level, String message) {
-		if (level.compareTo(this.debug_level) >= 0) {
-			System.out.println(getAID().getName() + " " + level.toString().toLowerCase() + " - " + message);
-		}
-	}
 
 	/**
 	 * Drives robot around to head target in committed bundle and updates
@@ -496,19 +444,16 @@ public class GenericRobot extends Agent {
 		PathEvaluatorResult result = null;
 
 		for (int i = 0; i < GOAL_EVAL_MAX_TRY_COUNT; i++) {
-			// set tasks anew on every second run
-			if (i % 2 == 0) {
-				try {
-				  this.patheval.setTask(task);
-				} catch (Ice.TimeoutException e) {
-					log(DEBUG.ERROR, "getBundlesWithCosts: Goal evaluator timed out.");
-					break;
-				} catch (orca.BusyException e) {
-					log(DEBUG.ERROR, "getBundlesWithCosts: Goal evaluator is too busy for us :-(");
-					break;
-				} catch (orca.RequiredInterfaceFailedException e) {
-					throw new Error(e.getMessage());
-				}
+			try {
+			  this.patheval.setTask(task);
+			} catch (Ice.TimeoutException e) {
+				log(DEBUG.ERROR, "getBundlesWithCosts: Goal evaluator timed out.");
+				break;
+			} catch (orca.BusyException e) {
+				log(DEBUG.ERROR, "getBundlesWithCosts: Goal evaluator is too busy for us :-(");
+				break;
+			} catch (orca.RequiredInterfaceFailedException e) {
+				throw new Error(e.getMessage());
 			}
 
 			// wait a while for computation
@@ -541,7 +486,7 @@ public class GenericRobot extends Agent {
 				break;
 
 			} else {
-				int wait_for = r.nextInt(5000) + 2500;
+				int wait_for = r.nextInt(1000);
 				log(DEBUG.SPAM, String.format("getBundlesWithCosts: try %d to contact goal evaluator failed. retrying in %.1fs...", i + 1, wait_for / 1000.0));
 
 				try {
@@ -676,121 +621,6 @@ public class GenericRobot extends Agent {
 	}
 	
 	/**
-	 * Selects winning bundles from a bunch of received bids
-	 * @param bids HashMap of 1 sender => n bundles
-	 * @return HashMap of 1 sender => 1 assigned bundle
-	 */
-	protected HashMap<ACLMessage, Bundle2d> selectWinningBundles(HashMap< ACLMessage, ArrayList<Bundle2d> > bids) {
-		// process bundles and decide on which tasks to assign
-
-		// TODO: generalise for handling multiple winning bundles
-		
-		HashMap< Integer, PriorityQueue<Bid> > task_bid_map = new HashMap< Integer, PriorityQueue<Bid> >();
-		
-		// iterate over all agents and collect bids
-		Set< Map.Entry< ACLMessage, ArrayList<Bundle2d> > > set = bids.entrySet();
-		for (Map.Entry< ACLMessage, ArrayList<Bundle2d> > me : set) {
-			ACLMessage bidder = me.getKey();
-			log(DEBUG.SPAM, "selectWinningBundles: checking bids from " + bidder.getSender().getName() + ", who has " + bids.get(bidder).size() + " bids.");
-			
-			// iterate over all bundles in this package
-			for (Bundle2d bundle: me.getValue()) {
-				// skip bundle if not verified
-				ArrayList<Integer> task_indices = getTaskForSaleIndex(bundle);
-
-				if (task_indices.size() == 0) {
-					// TODO: punish agent
-					log(DEBUG.WARNING, "selectWinningBundles: Received invalid bid from " + bidder.getSender().getName());
-					continue; // skip this bid
-
-				} else if (task_indices.size() > 1) {
-					// TODO: handle bundle-bids
-					log(DEBUG.ERROR, "selectWinningBundles: No support for bundle-bids implemented yet.");
-					continue; // skip this bid
-				}
-				
-				// put bid into queue of bids for the task this bid is for
-				Integer task_index = task_indices.get(0);
-				if (!task_bid_map.containsKey(task_index)) {
-					task_bid_map.put(task_index, new PriorityQueue<Bid>());
-				}
-				
-				task_bid_map.get(task_index).add(new Bid(bidder, bundle));
-				
-			}
-		}
-		
-		// determine winning bundles
-		HashMap<ACLMessage, Bundle2d> winners = new HashMap<ACLMessage, Bundle2d>();
-
-		Bundle2d 		best_bundle = null;
-		ACLMessage	best_offer = null;
-		float  			best_cost;
-		
-		Set< Map.Entry< Integer, PriorityQueue<Bid> > > task_bid_set = task_bid_map.entrySet();
-
-		switch (WINNER_DETERMINATION_METHOD) {
-			case MIN_COST:
-				// the cheapest bid wins
-				best_cost = Float.POSITIVE_INFINITY;
-				
-				for (Map.Entry< Integer, PriorityQueue<Bid> > me : task_bid_set) {
-					Integer i = me.getKey();
-					Bid head = me.getValue().poll();
-					
-					if (head.bundle.cost < best_cost) {
-						best_bundle = head.bundle;
-						best_cost 	= head.bundle.cost;
-						best_offer 	= head.bidder;
-					}
-				}
-				break;
-				
-			case REGRET_CLEARING:
-				// the bid we regret the least wins, i.e. the bid that maximises the difference of
-				// the costs from the best and the second best bidders
-				best_cost = 0;
-
-				for (Map.Entry< Integer, PriorityQueue<Bid> > me : task_bid_set) {
-					Integer i 	= me.getKey();
-					Bid first 	= me.getValue().poll();
-					Bid second 	= me.getValue().poll();
-					
-					log(DEBUG.SPAM, "selectWinningBundles: diff of this is " + (second.bundle.cost - first.bundle.cost));
-					
-					if (second == null || second.bundle.cost - first.bundle.cost > best_cost) {
-						best_bundle = first.bundle;
-						best_cost 	= second.bundle.cost - first.bundle.cost;
-						best_offer 	= first.bidder;
-
-						log(DEBUG.SPAM, "selectWinningBundles: new min of " + best_cost);
-					}
-				}
-				break;
-			
-		}
-
-
-
-		// TODO: generalise for handling multiple bundles
-		if (best_bundle != null && best_bundle.tasks != null) {
-			winners.put(best_offer, best_bundle);
-
-			// remove tasks from for-sale list
-			// TODO: should probably not be done here in case message not delivered?!
-			ArrayList<Integer> task_indices;
-			while ((task_indices = getTaskForSaleIndex(best_bundle)) != null && task_indices.size() > 0) {
-				int i = task_indices.get(0).intValue();
-				tasks_for_sale.remove(i);
-				log(DEBUG.SPAM, String.format("selectWinningBundles: task #%d to %s - %d tasks still for sale.", i, best_offer.getSender().getName(), tasks_for_sale.size()));
-			}
-
-		}
-		
-		return winners;
-	}
-	
-	/**
 	 * Checks whether all tasks in my currently committed bundle are actually
 	 * in my new_bundle. If not: either trigger error or add not-included
 	 * tasks to my for-sale list
@@ -803,160 +633,6 @@ public class GenericRobot extends Agent {
 		return true;
 	}
 
-	// Helper methods
-	/////////////////////////////////////////////////////////////////////////////
-
-	private <T> ArrayList<T> arrayToArrayList(T[] array) {
-		ArrayList<T> al = new ArrayList<T>();
-		for(T elem: array) {
-			al.add(elem);
-		}
-		return al;
-	}
-	
-	private boolean closeEnough(double a, double b) {
-		return Math.abs(a - b) < CLOSE_ENOUGH_EPSILON_M;
-	}
-	private boolean closeEnough(orca.Frame2d a, orca.Frame2d b) {
-		return (closeEnough(a.p.x, b.p.x) && closeEnough(a.p.y, b.p.y));
-		
-	}
-	private boolean closeEnough(Task2d a, Task2d b) {
-		return closeEnough(a.target, b.target);
-	}
-
-	/**
-	 * Helper function to create an orca.Frame2d object
-	 * @param x coordinate
-	 * @param y coordinate
-	 * @return orca.Frame2d object
-	 */
-	private orca.Frame2d createFrame(float x, float y) {
-		return new orca.Frame2d(new orca.CartesianPoint2d(x, y), 0.0);
-	}
-	
-	/**
-	 * Helper function to create a talker.Task2d object
-	 * @param x coordinate
-	 * @param y coordinate
-	 * @return talker.Task2d object
-	 */
-	private Task2d createTask(float x, float y) {
-		return new Task2d(createFrame(x, y));
-	}
-	
-	/**
-	 * Creates a message like "[0 1] [10.3 7]" from a list of Task2ds
-	 * @param tasks ArrayList of Task2ds
-	 * @param String of format "[<x> <y>] [<x> <y>] ..."
-	 */
-	private String createTaskString(ArrayList<Task2d> tasks) {
-		String output = "";
-		for (Task2d t: tasks)
-			output += String.format("[%f %f] ", t.target.p.x, t.target.p.y);
-		return output;
-	}
-	
-	/**
-	 * Creates a message with lines like "56.4: [0 1] [10.3 7]"
-	 * @param bundles Array of Bundle2ds
-	 * @return String of format "<cost>: <tasks>\n<cost>: <tasks>\n..."
-	 */
-	private String createBundleString(Bundle2d[] bundles) {
-		String output = "";
-		for (Bundle2d b: bundles) {
-			output += b.cost + ": " + createTaskString(arrayToArrayList(b.tasks)) + "\n";
-		}
-		return output;
-	}
-	
-	/**
-	 * Parses a message like "[0 1] [10.3 7]" and creates a list of Task2ds
-	 * @param message String of format "[<x> <y>] [<x> <y>] ..."
-	 * @return List of Task2ds that were embedded in the message
-	 */
-	private ArrayList<Task2d> extractTasks(String message) {
-		ArrayList<Task2d> tasks = new ArrayList<Task2d>();
-		Pattern pattern = Pattern.compile("\\[(\\-?\\d+[\\.\\d]*) (\\-?\\d+[\\.\\d]*)\\]");
-		for (MatchResult r : findAll(pattern, message)) {
-			tasks.add(createTask(Float.parseFloat(r.group(1)), Float.parseFloat(r.group(2))));
-		}
-		return tasks;
-	}
-	
-	/**
-	 * Parses a message with lines like "56.4: [0 1] [10.3 7]" and creates a list
-	 * of Bundle2ds
-	 * @param message String of format "<cost>: <tasks>\n<cost>: <tasks>\n..."
-	 * @return List of Bundle2ds that were embedded in the  message
-	 */
-	private ArrayList<Bundle2d> extractBundles(String message) {
-		ArrayList<Bundle2d> bundles = new ArrayList<Bundle2d>();
-
-		// each line represents one bundle
-		String[] result = "this is a test".split("\\s");
-		for (String line: message.split("\\n")) {
-			log(DEBUG.SPAM, "extractBundles: analysing\n" + line);
-			Pattern pattern = Pattern.compile("^(\\-?\\d+[\\.\\d]*):(.*)");
-			for (MatchResult r : findAll(pattern, line)) {
-				ArrayList<Task2d> tasks = extractTasks(r.group(2));
-				bundles.add(new Bundle2d(Float.parseFloat(r.group(1)), (Task2d[]) tasks.toArray(new Task2d[tasks.size()])));
-			}
-		}
-		return bundles;
-	}
-	
-	/**
-	 * Wrapper to make Java's regex a little bit less ugly
-	 * @param pattern Pattern used to take String apart
-	 * @param text Text to be matched against a pattern
-	 * @return List of results that could be matched
-	 */
-	private List<MatchResult> findAll(Pattern pattern, String text) {
-		List<MatchResult> results = new ArrayList<MatchResult>();
-		Matcher m = pattern.matcher(text);
-		while (m.find()) results.add(m.toMatchResult());
-		return results;
-	}
-	
-	/**
-	 * find index of  the tasks that are close enough in the original tasks that are to sale
-	 * functions as verification that we only sell tasks that we actually have for sale
-	 * @param Either a single needle or a bundle
-	 * @return Either a single index (or -1 if none found) or a list of indices (or empty list)
-	 */
-	private int getTaskForSaleIndex(Task2d needle) {
-		Task2d[] haystack = (Task2d[]) tasks_for_sale.toArray(new Task2d[tasks_for_sale.size()]);
-		return getTaskIndex(needle, haystack);
-	}	
-	private ArrayList<Integer> getTaskForSaleIndex(Bundle2d bundle) {
-		ArrayList<Integer> indices = new ArrayList<Integer>();
-
-		// check every task in the bundle
-		for (Task2d t: bundle.tasks) {
-			int i = getTaskForSaleIndex(t);
-			if (i != -1)
-				indices.add(new Integer(i));
-		}
-
-		// return valid task indices
-		return indices;
-	}	
-	
-	/**
-	 * find index of a task in haystack that is close enough to the needle
-	 * @param needle Tasks for which a close one will be looked for
-	 * @param haystack List of tasks to look in
-	 * @return Index of similar tasks to needle in haystack or -1 if none found
-	 */
-	private int getTaskIndex(Task2d needle, Task2d[] haystack) {
-		for (int i = 0; i < haystack.length; i++) {
-			Task2d for_sale = haystack[i];
-			if (closeEnough(for_sale, needle))
-				return i;
-		}
-		return -1;
-	}
 
 	//===========================================================================
 	// Inner class definitions
@@ -969,37 +645,18 @@ public class GenericRobot extends Agent {
 		public RandomTaskGenerator(Agent a, long period) {
 			super(a, period);
 			
-			all_possible_tasks = extractTasks(GOAL_COORDS);
-			log(DEBUG.SPAM, "RandomTaskGenerator: loaded " + all_possible_tasks.size() + " possible tasks.");
 			onTick();
 		}
 		
 		protected void onTick() {
 			// add random tasks to my tasks for sale list
-			log(DEBUG.SPAM, "RandomTaskGenerator::onTick()");
-			
-			Random 	r = new Random();
-			
+			Random 	r = new Random();			
 			int 		num = r.nextInt(5) + 2;
-			// TODO: just temp
-			// num = 10;
-			// while (tasks_for_sale.size() < num) {
-				
-			for (int i = 0; i < num; i++ ) {
-				int 		k = r.nextInt(all_possible_tasks.size());
-				Task2d 	t = all_possible_tasks.get(k);
 
-				if (getTaskIndex(t, bundle.tasks) == -1 && getTaskForSaleIndex(t) == -1) {
-					log(DEBUG.INFO, "RandomTaskGenerator: drawn random task (#" + k + ") x:" + t.target.p.x + " y:" + t.target.p.y);
-					tasks_for_sale.add(t);
-				}
-				else
-					log(DEBUG.NOTE, "RandomTaskGenerator: not adding duplicate task (#" + k + ") x:" + t.target.p.x + " y:" + t.target.p.y);				
+			for (Task2d task: getRandomTasks(num, false)) {
+				log(DEBUG.INFO, "RandomTaskGenerator: drawn random task x:" + task.target.p.x + " y:" + task.target.p.y);
+				tasks_for_sale.add(task);
 			}
-			
-			// TODO. just temp
-			// log(DEBUG.SPAM, "Message: " + createTaskString(tasks_for_sale));
-			// tasks_for_sale.clear();
 		}
 	}
 	
@@ -1081,8 +738,10 @@ public class GenericRobot extends Agent {
 			
 			setNewBundles(bundles);
 			
-			// no message sent back
-			return null;
+			// sent confirmation back
+			ACLMessage response = new ACLMessage(ACLMessage.INFORM);
+			response.setProtocol("fipa-contract-net");
+			return response;
 		}
 	}
 	
@@ -1112,8 +771,9 @@ public class GenericRobot extends Agent {
 					response.setPerformative(ACLMessage.INFORM);
 					Bundle2d[] current_bundle = {bundle};
 					response.setContent( createBundleString(current_bundle) );
+					send(response);
 					
-					bundle = null;
+					bundle = new Bundle2d();
 					
 				} else {
 					// check if we just got a bunch of new tasks assigned
@@ -1132,88 +792,6 @@ public class GenericRobot extends Agent {
 				block();
 			}
 		}
-	}
-	
-	
-
-	// ContractNetInitiator, which sells tasks 
-	private class TaskSellerBehaviour extends ContractNetInitiator {
-		ArrayList<Task2d> tasks;
-		
-		public TaskSellerBehaviour(ArrayList<Task2d> t) {
-			super(null, null);
-		}
-		
-		/**
-		 * Prepare call for proposal will be send to all agents
-		 * @param cfp Empty ACLMessage which will be filled
-		 * @return Vector of CFPs, though we'll only need one
-		 */
-		protected Vector<ACLMessage> prepareCfps(ACLMessage cfp) {
-			// create CFP message with tasks as content and send out to
-			// all buyer agents
-			cfp = new ACLMessage(ACLMessage.CFP);
-			String message = createTaskString(tasks_for_sale);
-			cfp.setContent(message);
-			cfp.setProtocol("fipa-contract-net");
-			cfp.setReplyByDate(new Date(System.currentTimeMillis() + MAX_WAIT_TIME_FOR_RESPONSES_MS));
-			log(DEBUG.SPAM, "TaskSellerBehaviour::prepareCfps: message for buyers is:\n" + message);
-			for (AID r: buyer_robots) {
-				cfp.addReceiver(r);
-			}
-			
-			// we could send a bunch of CFPs at once, e.g. for sending
-			// out customised messages to each agent
-			Vector<ACLMessage> v = new Vector<ACLMessage>();
-			v.add(cfp);
-			return v;
-		}
-		
-		/**
-		 * 
-		 */
-		protected void handleAllResponses(Vector responses,
-																			Vector acceptances)
-		{
-			HashMap< ACLMessage, ArrayList<Bundle2d> > bids = new HashMap< ACLMessage, ArrayList<Bundle2d> >();
-			
-			// extract bundles from all proposal messages
-			// (silently ignoring not-understoods and refusals)
-			for (int i = 0; i < responses.size(); i++) {
-				ACLMessage r = (ACLMessage) responses.get(i);
-				if (r.getPerformative() == ACLMessage.PROPOSE) {
-					bids.put(r, extractBundles(r.getContent()));
-				}
-			}
-			log(DEBUG.NOTE, "TaskSellerBehaviour::handleAllResponses: received bids from " + bids.size() + " agents.");
-			
-			HashMap<ACLMessage, Bundle2d> winners = selectWinningBundles(bids);
-			
-			// send accept-proposals
-			Set< Map.Entry<ACLMessage, Bundle2d> > set = winners.entrySet();
-			for (Map.Entry<ACLMessage, Bundle2d> me : set) {
-				ACLMessage offer = me.getKey();
-				ACLMessage accept = offer.createReply();
-				accept.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-				Bundle2d[] accepted_bundles = { me.getValue() };
-				String bundle_string = createBundleString(accepted_bundles);
-				accept.setContent(bundle_string);
-				acceptances.add(accept);
-
-				log(DEBUG.INFO, String.format("TaskSellerBehaviour::handleAllResponses: Selling the following bundle to " + offer.getSender().getName() + ":\n" + bundle_string));
-			}
-			
-			// done
-			/*
-			if (tasks_for_sale.size() > 0 && buyer_robots.size() > 0) {
-				log(DEBUG.SPAM, "TaskSellerBehaviour::handleAllResponses: re-starting TaskSaleBehaviour");
-				active_auction_counter = MAX_WAIT_CYCLE_FOR_AUCTION_START;
-				myAgent.addBehaviour(new TaskSellerBehaviour(tasks_for_sale));
-			} else
-			*/
-				active_auction_counter = 0;
-		}
-		
 	}
 	
 	// CyclicBehaviour which listens for CFPs to start the TaskBuyerBehaviour
@@ -1241,76 +819,4 @@ public class GenericRobot extends Agent {
 		}		
 	}
 	
-	// TickerBehaviour which occasionally tries to start the TaskSellerBehaviour
-	private class TriggerSaleBehaviour extends TickerBehaviour {
-		/**
-		 * Constructor
-		 * @param a 			Agent this behaviour belongs to
-		 * @param period	Milliseconds between ticks
-		 */
-		public TriggerSaleBehaviour(Agent a, long period) {
-			super(a, period);
-		}
-		
-		protected void onTick() {
-			if (--active_auction_counter < 0 && tasks_for_sale.size() > 0) {
-				if (buyer_robots.size() == 0) {
-					log(DEBUG.WARNING, "TriggerSaleBehaviour: there are no robots to sell my tasks to.");
-				} else {
-					log(DEBUG.SPAM, "TriggerSaleBehaviour: starting TaskSaleBehaviour");
-					active_auction_counter = MAX_WAIT_CYCLE_FOR_AUCTION_START;
-					myAgent.addBehaviour(new TaskSellerBehaviour(tasks_for_sale));
-				}
-
-			} else if (active_auction_counter >= 0 && tasks_for_sale.size() > 0) {
-				log(DEBUG.SPAM, "TriggerSaleBehaviour: can't start new auction, as old auction still busy (counter: " + active_auction_counter + ")");
-
-			} else {
-				active_auction_counter = 0;
-			}
-		}
-	}
-	
-	// TickerBehaviour which checks the DF to update it's list of nearby agents
-	private class UpdateNeighbourBehaviour extends TickerBehaviour {
-		/**
-		 * Constructor
-		 * @param a 			Agent this behaviour belongs to
-		 * @param period	Milliseconds between ticks
-		 */
-		public UpdateNeighbourBehaviour(Agent a, long period) {
-			super(a, period);
-		}
-		
-		/**
-		 * Updates list of nearby agents
-		 */
-		protected void onTick() {
-			DFAgentDescription template = new DFAgentDescription();
-			ServiceDescription sd = new ServiceDescription();
-			sd.setType("task-buying");
-			template.addServices(sd);
-			
-			int prev = buyer_robots.size();
-
-			try {
-				DFAgentDescription[] result = DFService.search(this.myAgent, template);
-				buyer_robots.clear();
-				for (DFAgentDescription d: result)
-					//if (!d.getName().getName().equals(this.myAgent.getAID().getName()))
-						buyer_robots.add(d.getName());
-					
-				log(DEBUG.SPAM, "UpdateNeighbourBehaviour: I have " + result.length + " neighbours.");
-				int diff = buyer_robots.size() - prev;
-				if (diff < 0)
-					log(DEBUG.INFO, "UpdateNeighbourBehaviour: Lost contact to " + Math.abs(diff) + " agent(s).");
-				else if (diff > 0)
-					log(DEBUG.INFO, "UpdateNeighbourBehaviour: Got contact to  " + diff + " new agent(s).");
-
-			} catch(FIPAException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 }

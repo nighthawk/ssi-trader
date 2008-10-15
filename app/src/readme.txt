@@ -6,10 +6,9 @@
 		slice2java -I/home/adrian/Desktop/orca/orca/src/interfaces/slice/ pathevaluator.ice
 
 - set environment variables
-		export ICEJ_PATH=/usr/share/java
-		export CLASSPATH=$CLASSPATH:.:../lib/jade/jade.jar:$ICEJ_PATH/Ice.jar:../classes
+		export ICEJ_PATH=../lib/ice
+		export CLASSPATH=$CLASSPATH:.:../lib/jade/jade.jar:../lib/ice/Ice.jar:../classes
 		
-		export ICEJ_PATH=/Volumes/vm-ubuntu/usr/share/java
 
 
 ##### compile
