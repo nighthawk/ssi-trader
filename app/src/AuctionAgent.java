@@ -16,6 +16,7 @@ public class AuctionAgent extends Agent {
 	// Constants
 	/////////////////////////////////////////////////////////////////////////////
 	enum DEBUG 									{ SPAM, NOTE, INFO, WARNING, ERROR };
+	enum OBJECTIVE							{ MINISUM, MINIMAX };
 	enum WINNER_DETERMINATION 	{ MIN_COST, REGRET_CLEARING, ALL };
 	enum DYNAMIC_ALLOCATION 		{ SSI, REPLAN, RESELL, ALL };
 
@@ -33,7 +34,7 @@ public class AuctionAgent extends Agent {
 	protected WINNER_DETERMINATION 	WINNER_DETERMINATION_METHOD;
 	protected String[]							AGENT_NAMES;
 
-	protected DEBUG 								debug_level 		= DEBUG.SPAM;
+	protected DEBUG 								debug_level 		= DEBUG.ERROR;
 	protected ArrayList<Task2d> 		all_possible_tasks = new ArrayList<Task2d>();;
 	protected ArrayList<Task2d>			tasks_for_sale	= new ArrayList<Task2d>();
 	protected ArrayList<AID> 				buyer_robots		= new ArrayList<AID>();
@@ -66,22 +67,37 @@ public class AuctionAgent extends Agent {
 	 * @return true if config successfully loaded, false otherwise
 	 */
 	protected boolean loadConfig(String class_name) {
-		log(DEBUG.SPAM, "loadConfig(): loading file '" + class_name + ".cfg'.");
-		
-		// load config
-		Properties def = new Properties(this.properties);
-		try {
-			FileInputStream default_fis = new FileInputStream(class_name + ".cfg");
-			def.load(default_fis);
-		} catch (Exception e) {
+		if (loadConfig(class_name, true) != null) {
+			return true;
+		} else {
 			log(DEBUG.ERROR, "Could not load default configuration file '" + class_name + ".cfg'. Terminating agent...");
 			return false;
 		}
-		
-		this.properties = def;
-		
-		return true;
 	}
+	protected Properties loadConfig(String class_name, boolean into_defaults) {
+		log(DEBUG.SPAM, "loadConfig(): loading file '" + class_name + ".cfg'.");
+		
+		// load config
+		Properties def;
+		if (into_defaults)
+			def = new Properties(this.properties);
+		else
+			def = new Properties();
+
+
+		try {
+			FileInputStream default_fis = new FileInputStream(class_name + ".cfg");
+			def.load(default_fis);
+			default_fis.close();
+		} catch (Exception e) {
+			return null;
+		}
+		
+		if (into_defaults)
+			this.properties = def;
+
+		return def;
+	}	
 	
 	protected boolean loadConfigValues() {
 		// set variables according to config files
@@ -109,6 +125,16 @@ public class AuctionAgent extends Agent {
 		return true;
 	}
 	
+	protected void saveConfig(Properties prop, String file_name) {
+		try {
+			FileOutputStream output = new FileOutputStream(file_name + ".cfg");
+			prop.store(output, null);
+			output.close();
+		} catch (Exception e) {
+			log(DEBUG.ERROR, "Could not save configuration file '" + file_name + ".cfg'.");
+		}
+	}
+
 	/**
 	 * Prints messages depending on debug level. Message is only printed if it's
 	 * debug level is equal or higher than the one specified when constructing
@@ -420,6 +446,9 @@ public class AuctionAgent extends Agent {
 	 * @return Index of similar tasks to needle in haystack or -1 if none found
 	 */
 	protected int getTaskIndex(Task2d needle, Task2d[] haystack) {
+		if (haystack == null)
+			return -1;
+		
 		for (int i = 0; i < haystack.length; i++) {
 			Task2d for_sale = haystack[i];
 			if (closeEnough(for_sale, needle))
@@ -435,10 +464,8 @@ public class AuctionAgent extends Agent {
 	
 	// ContractNetInitiator, which sells tasks 
 	protected class TaskSellerBehaviour extends ContractNetInitiator {
-		ArrayList<Task2d> tasks;
-		
-		public TaskSellerBehaviour(ArrayList<Task2d> t) {
-			super(null, null);
+		public TaskSellerBehaviour(Agent a) {
+			super(a, null);
 		}
 		
 		/**
@@ -447,6 +474,8 @@ public class AuctionAgent extends Agent {
 		 * @return Vector of CFPs, though we'll only need one
 		 */
 		protected Vector<ACLMessage> prepareCfps(ACLMessage cfp) {
+			active_auction_counter = MAX_WAIT_CYCLE_FOR_AUCTION_START;
+
 			// create CFP message with tasks as content and send out to
 			// all buyer agents
 			cfp = new ACLMessage(ACLMessage.CFP);
@@ -484,6 +513,9 @@ public class AuctionAgent extends Agent {
 			}
 			log(DEBUG.NOTE, "TaskSellerBehaviour::handleAllResponses: received bids from " + bids.size() + " agents.");
 			
+			if (bids.size() != buyer_robots.size())
+				log(DEBUG.WARNING, String.format("TaskSellerBehaviour::handleAllResponses: Only received bids from %d out of %d agents", bids.size(), buyer_robots.size()));
+			
 			HashMap<ACLMessage, Bundle2d> winners = selectWinningBundles(bids);
 			
 			// send accept-proposals
@@ -497,18 +529,19 @@ public class AuctionAgent extends Agent {
 				accept.setContent(bundle_string);
 				acceptances.add(accept);
 
-				log(DEBUG.INFO, String.format("TaskSellerBehaviour::handleAllResponses: Selling the following bundle to " + offer.getSender().getLocalName() + ":\n" + bundle_string));
+				log(DEBUG.NOTE, String.format("TaskSellerBehaviour::handleAllResponses: Selling the following bundle to " + offer.getSender().getLocalName() + ":\n" + bundle_string));
 			}
 		}
 		
 		protected void handleInform(ACLMessage inform) {
-			log(DEBUG.SPAM, "TaskSellerBehaviour::handleInform()");
 			if (tasks_for_sale.size() > 0 && buyer_robots.size() > 0) {
-				log(DEBUG.SPAM, "TaskSellerBehaviour::handleInform: re-starting TaskSaleBehaviour");
+				log(DEBUG.SPAM, String.format("TaskSellerBehaviour::handleInform: re-starting TaskSaleBehaviour (%d tasks left).", tasks_for_sale.size()));
 				active_auction_counter = MAX_WAIT_CYCLE_FOR_AUCTION_START;
 				reset();
-			} else
+			} else {
 				active_auction_counter = 0;
+				myAgent.doWake();
+			}
 		}
 		
 	}
@@ -530,8 +563,7 @@ public class AuctionAgent extends Agent {
 					log(DEBUG.WARNING, "TriggerSaleBehaviour: there are no robots to sell my tasks to.");
 				} else {
 					log(DEBUG.SPAM, "TriggerSaleBehaviour: starting TaskSaleBehaviour");
-					active_auction_counter = MAX_WAIT_CYCLE_FOR_AUCTION_START;
-					myAgent.addBehaviour(new TaskSellerBehaviour(tasks_for_sale));
+					myAgent.addBehaviour(new TaskSellerBehaviour(myAgent));
 				}
 
 			} else if (active_auction_counter >= 0 && tasks_for_sale.size() > 0) {
@@ -575,9 +607,9 @@ public class AuctionAgent extends Agent {
 				log(DEBUG.SPAM, "UpdateNeighbourBehaviour: I have " + result.length + " neighbours.");
 				int diff = buyer_robots.size() - prev;
 				if (diff < 0)
-					log(DEBUG.INFO, "UpdateNeighbourBehaviour: Lost contact to " + Math.abs(diff) + " agent(s).");
+					log(DEBUG.NOTE, "UpdateNeighbourBehaviour: Lost contact to " + Math.abs(diff) + " agent(s).");
 				else if (diff > 0)
-					log(DEBUG.INFO, "UpdateNeighbourBehaviour: Got contact to  " + diff + " new agent(s).");
+					log(DEBUG.NOTE, "UpdateNeighbourBehaviour: Got contact to  " + diff + " new agent(s).");
 
 			} catch(FIPAException e) {
 				e.printStackTrace();

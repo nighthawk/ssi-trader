@@ -8,7 +8,6 @@
 - set environment variables
 		export ICEJ_PATH=../lib/ice
 		export CLASSPATH=$CLASSPATH:.:../lib/jade/jade.jar:../lib/ice/Ice.jar:../classes
-		
 
 
 ##### compile
@@ -16,10 +15,25 @@
 
 
 ##### running
-
 - run with proper options
 		java jade.Boot "<nickname>:<ClassName>(<param1> <param2> <...>)"
+
+- running an experiment
+		java jade.Boot "<nickname>:Experiment(<#runs> <#robot> <#task> <#tasks per round> [<debug> <winner allocation method> <dynamic allocation method>])"
+		
+	where
+		debug: spam, note, info, warning, error
+		winner allocation: min_cost, regret_clearing, all
+		dynamic allocation: ssi, replan, resell, all
+		
+	example:
+		
+
+- running individual robots
+		java.jade.Book "<nickname>:GenericRobot(<colour> [<debug> <x coord> <y coord>])"
+
 	example:
 		java jade.Boot "red:GenericRobot(red info)"
 		
 		java jade.Boot -gui "red:GenericRobot(red spam) blue:GenericRobot(blue info) green:GenericRobot(green info) yellow:GenericRobot(yellow info) black:GenericRobot(black info)"
+

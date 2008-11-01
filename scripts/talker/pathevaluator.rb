@@ -179,8 +179,9 @@ module Talker
 
     if not defined?(::Talker::PathEvaluatorTask)
         class PathEvaluatorTask
-            def initialize(id='', maxBundles=0, bundleSize=0, newTasks=nil, committedTasks=nil, start=::Orca::Frame2d.new, prx=nil)
+            def initialize(id='', sender='', maxBundles=0, bundleSize=0, newTasks=nil, committedTasks=nil, start=::Orca::Frame2d.new, prx=nil)
                 @id = id
+                @sender = sender
                 @maxBundles = maxBundles
                 @bundleSize = bundleSize
                 @newTasks = newTasks
@@ -192,6 +193,7 @@ module Talker
             def hash
                 _h = 0
                 _h = 5 * _h + @id.hash
+                _h = 5 * _h + @sender.hash
                 _h = 5 * _h + @maxBundles.hash
                 _h = 5 * _h + @bundleSize.hash
                 _h = 5 * _h + @newTasks.hash
@@ -204,6 +206,7 @@ module Talker
             def ==(other)
                 return false if
                     @id != other.id or
+                    @sender != other.sender or
                     @maxBundles != other.maxBundles or
                     @bundleSize != other.bundleSize or
                     @newTasks != other.newTasks or
@@ -217,11 +220,12 @@ module Talker
                 ::Ice::__stringify(self, T_PathEvaluatorTask)
             end
 
-            attr_accessor :id, :maxBundles, :bundleSize, :newTasks, :committedTasks, :start, :prx
+            attr_accessor :id, :sender, :maxBundles, :bundleSize, :newTasks, :committedTasks, :start, :prx
         end
 
         T_PathEvaluatorTask = ::Ice::__defineStruct('::talker::PathEvaluatorTask', PathEvaluatorTask, [
             ["id", ::Ice::T_string],
+            ["sender", ::Ice::T_string],
             ["maxBundles", ::Ice::T_int],
             ["bundleSize", ::Ice::T_int],
             ["newTasks", ::Talker::T_TaskList2d],
@@ -247,7 +251,7 @@ module Talker
             # Operation signatures.
             #
             # def setTask(task, current=nil)
-            # def getData(current=nil)
+            # def getData(sender, current=nil)
             # def subscribe(subscriber, current=nil)
             # def unsubscribe(subscriber, current=nil)
 
@@ -264,8 +268,8 @@ module Talker
                 PathEvaluator_mixin::OP_setTask.invoke(self, [task], _ctx)
             end
 
-            def getData(_ctx=nil)
-                PathEvaluator_mixin::OP_getData.invoke(self, [], _ctx)
+            def getData(sender, _ctx=nil)
+                PathEvaluator_mixin::OP_getData.invoke(self, [sender], _ctx)
             end
 
             def subscribe(subscriber, _ctx=nil)
@@ -300,7 +304,7 @@ module Talker
         PathEvaluatorPrx::ICE_TYPE = T_PathEvaluatorPrx
 
         PathEvaluator_mixin::OP_setTask = ::Ice::__defineOperation('setTask', ::Ice::OperationMode::Normal, ::Ice::OperationMode::Normal, false, [::Talker::T_PathEvaluatorTask], [], ::Ice::T_int, [::Orca::T_BusyException, ::Orca::T_RequiredInterfaceFailedException])
-        PathEvaluator_mixin::OP_getData = ::Ice::__defineOperation('getData', ::Ice::OperationMode::Idempotent, ::Ice::OperationMode::Idempotent, false, [], [], ::Talker::T_PathEvaluatorResult, [])
+        PathEvaluator_mixin::OP_getData = ::Ice::__defineOperation('getData', ::Ice::OperationMode::Idempotent, ::Ice::OperationMode::Idempotent, false, [::Ice::T_string], [], ::Talker::T_PathEvaluatorResult, [])
         PathEvaluator_mixin::OP_subscribe = ::Ice::__defineOperation('subscribe', ::Ice::OperationMode::Normal, ::Ice::OperationMode::Normal, false, [::Talker::T_PathEvaluatorConsumerPrx], [], nil, [::Orca::T_SubscriptionFailedException])
         PathEvaluator_mixin::OP_unsubscribe = ::Ice::__defineOperation('unsubscribe', ::Ice::OperationMode::Idempotent, ::Ice::OperationMode::Idempotent, false, [::Talker::T_PathEvaluatorConsumerPrx], [], nil, [])
     end

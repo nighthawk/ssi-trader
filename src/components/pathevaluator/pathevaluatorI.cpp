@@ -39,24 +39,59 @@ PathEvaluatorI::setTask(const PathEvaluatorTask& task, const ::Ice::Current&) {
 }
 
 talker::PathEvaluatorResult
-PathEvaluatorI::getData(const Ice::Current& current ) const  {
+PathEvaluatorI::getData(const string& sender, const Ice::Current& current ) const  {
     // we don't need to pop the data here because we don't block on it.
-    if ( pathEvaluatorDataStore_.isEmpty() )
-        throw orca::DataNotExistException( "try again later." );
 
+		gbxiceutilacfr::Store<PathEvaluatorResult> * dataStore = NULL;
+		map<string, gbxiceutilacfr::Store<talker::PathEvaluatorResult> * >::const_iterator iter;
+		for (iter = pathEvaluatorDataStoreMap_.begin(); iter != pathEvaluatorDataStoreMap_.end(); ++iter) {
+			if (iter->first == sender) {
+				dataStore = iter->second;
+			}
+		}
+		
     PathEvaluatorResult data;
-    pathEvaluatorDataStore_.get( data );
+		if (dataStore != NULL) {
+	    if ( dataStore->isEmpty() )
+				throw orca::DataNotExistException( "try again later." );
+			else
+	    	dataStore->get( data );
+		}
 
     return data;
 }
 
 void 
-PathEvaluatorI::localSetData( const PathEvaluatorResult& data ) {
-    pathEvaluatorDataStore_.set( data );
+PathEvaluatorI::localSetData(const string& sender, const PathEvaluatorResult& data ) {
+		gbxiceutilacfr::Store<PathEvaluatorResult> * dataStore = NULL;
+		map<string, gbxiceutilacfr::Store<talker::PathEvaluatorResult> * >::iterator iter;
+		for (iter = pathEvaluatorDataStoreMap_.begin(); iter != pathEvaluatorDataStoreMap_.end(); ++iter) {
+			if (iter->first == sender) {
+				dataStore = iter->second;
+
+	      stringstream ssPath;
+	      ssPath << "PathEvaluatorI::localSetData: Re-using data store for " << sender << endl;
+	      context_.tracer().debug( ssPath.str() );
+	
+				break;
+			}
+		}
+		
+		if (dataStore == NULL) {
+      stringstream ssPath;
+      ssPath << "PathEvaluatorI::localSetData: Creating data store for " << sender << endl;
+      context_.tracer().debug( ssPath.str() );
+
+			dataStore = new gbxiceutilacfr::Store<PathEvaluatorResult>();
+
+			pathEvaluatorDataStoreMap_.insert(make_pair(sender, dataStore));
+		}
+
+		dataStore->set(data);
 
     // Try to push it out to IceStorm too
     try {
-        consumerPrx_->setData( data );
+			consumerPrx_->setData( data );
     }
     catch ( Ice::ConnectionRefusedException &e )
     {
@@ -65,6 +100,23 @@ PathEvaluatorI::localSetData( const PathEvaluatorResult& data ) {
         // this is expected (our co-located IceStorm is obviously going down).
         context_.tracer().warning( "PathEvaluatorI::localSetData: Failed push to IceStorm." );
     }
+}
+
+void
+PathEvaluatorI::cleanStores() {
+	int i = 0;
+	
+	map<string, gbxiceutilacfr::Store<talker::PathEvaluatorResult> * >::iterator iter;
+	for (iter = pathEvaluatorDataStoreMap_.begin(); iter != pathEvaluatorDataStoreMap_.end(); ++iter) {
+		if (! iter->second->isNewData()) {
+			pathEvaluatorDataStoreMap_.erase(iter);
+			i++;
+		}
+	}
+	
+  stringstream ssPath;
+  ssPath << "PathEvaluatorI::cleanStores: " << i << " stores flushed." << endl;
+  context_.tracer().info( ssPath.str() );
 }
 
 void 

@@ -43,6 +43,9 @@ private:
 
 	float computePathCost( talker::Task2d start, talker::TaskList2d &tasks );
 
+	talker::Bundle2d packBundle( talker::Task2d &start, talker::TaskList2d &result);
+
+
 	// filters tasks by removing "helpless" ones, i.e. those that
 	// are unlikely to result in a competitive bundle
 	void filterTasks( talker::Task2d &cur, talker::TaskList2d &tasks,
@@ -69,6 +72,9 @@ private:
 
 	// If the path planner takes more than this amount of time, assume something's wrong.
 	double pathPlanTimeout_;
+	
+	// How many tasks at the end of committed should be included in the permutations
+	unsigned int permutateLastCommitted_;
 
 	orcaice::Context context_;
 

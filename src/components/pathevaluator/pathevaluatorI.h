@@ -13,10 +13,14 @@
 
 #include <IceStorm/IceStorm.h>
 
+#include <map>
+#include <string>
 #include <gbxsickacfr/gbxiceutilacfr/store.h>
 #include <gbxsickacfr/gbxiceutilacfr/buffer.h>
 
 #include <talker/pathevaluator.h>
+
+using namespace std;
 
 namespace pathevaluator
 {
@@ -33,16 +37,18 @@ public:
     virtual void subscribe(const talker::PathEvaluatorConsumerPrx&, const ::Ice::Current& = ::Ice::Current());
     virtual void unsubscribe(const talker::PathEvaluatorConsumerPrx&, const ::Ice::Current& = ::Ice::Current());
 
-    virtual talker::PathEvaluatorResult getData(const ::Ice::Current& ) const;
+    virtual talker::PathEvaluatorResult getData(const string &sender, const ::Ice::Current& ) const;
 
     // local calls
-    void localSetData( const talker::PathEvaluatorResult &data );
+    void localSetData(const string &sender, const talker::PathEvaluatorResult &data );
+		void cleanStores();
+
 
 private:
     gbxiceutilacfr::Buffer<talker::PathEvaluatorTask>& pathEvaluatorTaskBuffer_;
 
     // the driver puts the latest computed path into here using localSetData
-    gbxiceutilacfr::Store<talker::PathEvaluatorResult> pathEvaluatorDataStore_;
+		map<string, gbxiceutilacfr::Store<talker::PathEvaluatorResult> * > pathEvaluatorDataStoreMap_;
 
     // The topic to which we'll publish
     IceStorm::TopicPrx topicPrx_;

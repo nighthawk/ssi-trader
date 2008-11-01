@@ -24,39 +24,56 @@ def get_test_results
   # trying ping to see if remote proxy exists
   puts base.ice_ping
 
-  p = Talker::PathEvaluatorPrx::checkedCast(base)
-  puts p
+  @p = Talker::PathEvaluatorPrx::checkedCast(base)
+  puts @p
 
   # create a task for the path evaluator
   task = Talker::PathEvaluatorTask.new
 
   # our current location
   start = Orca::Frame2d.new
-  start.p.x = -1
-  start.p.y = 0
+
+  # THIS COMBINATION CAUSES DUPLICATES WITH HIGH PERMUTATE_LAST
+  start.p.x = -7
+  start.p.y = 7
   start.o		= 0
 
   tasks = []
-=begin
-  tasks << create_task( -9,  0, 0);
-  tasks << create_task( -1,  3, 0);
-  tasks << create_task( 23, -4, 0);
-=end
+  tasks << create_task( -6, -5, 0);
 
   committed = []
-  committed << create_task( 11,  0, 0);
-  committed << create_task(-23,  8, 0);
+  committed << create_task( -7,  7, 0);
+  committed << create_task( -5, -1, 0);
+  committed << create_task( 11, -8, 0);
 
-  task.maxBundles 		= 1;
+  task.maxBundles 		= 25;
+
+
   task.bundleSize 		= 1;
   task.start 					= start;
   task.committedTasks = committed;
   task.newTasks 			= tasks;
+  task.sender         = "ruby_test"
+  task.id             = "ruby_id"
 
-  p.setTask(task)
+  @p.setTask(task)
   
-  return p.getData
+  continue = true
+  while(continue)
+    @data = @p.getData(task.sender)
+    continue = (@data.id != task.id)
+  end
+  
+  return @data
 end
 
-puts get_test_results
+def print results
+  results.data.each do |e|
+    out = "#{e.cost}: "
+    e.tasks.each { |t| out += " [#{t.target.p.x} #{t.target.p.y}]"  }
+    puts out
+  end
+end
+
+print get_test_results
 

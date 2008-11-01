@@ -53,6 +53,7 @@ interface PathEvaluatorConsumer {
 
 struct PathEvaluatorTask {
 	string			id;
+	string			sender;
 	//! maximum number of bundles to be computed
 	int					maxBundles;
 	//! maximum size of subset of tasks to be considered
@@ -77,7 +78,7 @@ interface PathEvaluator
             throws orca::BusyException, orca::RequiredInterfaceFailedException;   
 
     //! Returns the most-recently-computed computed path
-    ["cpp:const"] idempotent PathEvaluatorResult getData();
+    ["cpp:const"] idempotent PathEvaluatorResult getData(string sender);
 
     /*!
      * Mimics IceStorm's subscribe().  The implementation may choose to

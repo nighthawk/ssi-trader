@@ -103,6 +103,11 @@ MainThread::MainThread( const orcaice::Context & context )
     Ice::PropertiesPtr prop = context_.properties();
     std::string prefix = context_.tag()+".Config.";
     pathPlanTimeout_ = orcaice::getPropertyAsDoubleWithDefault( prop, prefix+"PathPlanTimeout", 10.0 );
+		permutateLastCommitted_ = orcaice::getPropertyAsIntWithDefault( prop, prefix+"PermutateLastCommitted", 1 );
+
+    stringstream ss;
+    ss << "MainThread: Path planner time out is " << pathPlanTimeout_ << "s and we permutate the last " << permutateLastCommitted_ << " committed tasks." << endl;
+    context_.tracer().info( ss.str() );
 }
 
 void
@@ -206,114 +211,118 @@ MainThread::filterTasks( Task2d &cur,
 	// TODO: implement
 }
 
+Bundle2d
+MainThread::packBundle(  Task2d &start,
+												 TaskList2d &result)
+{
+	Bundle2d bundle;
+	bundle.tasks = result;
+	bundle.cost  = computePathCost(start, bundle.tasks);
+
+  stringstream ss;
+  ss << "MainThread::findBundles: ";
+	for(TaskList2d::iterator it = result.begin(); it!=result.end(); ++it) {
+		Task2d t = *it;
+		ss << t.target.p.x << " " << t.target.p.y << " | ";
+	}
+	ss << bundle.cost;
+
+  context_.tracer().debug( ss.str() );
+
+	return bundle;													
+}
+
 BundleList2d
-MainThread::findBundles( Task2d &start, 
-												 TaskList2d &committed, 
+MainThread::findBundles( Task2d &start,
+												 TaskList2d &committed,
 												 TaskList2d &tasks,
 												 unsigned int bundleSize,
 												 unsigned int maxBundles ) 
 {
-	bool permutate_committed = false;
-	
 	// queue storing all computed bundles sorted by cost
 	priority_queue<Bundle2d, BundleList2d, greater<BundleList2d::value_type> > queue;
 
-	// if bundleSize is greater than the actual size of tasks, only create
-	// subsets up to the size of the tasks
-	// if (tasks.size() < bundleSize) bundleSize = tasks.size();
-	
 	// for all bundle sizes less than the max
 	for(unsigned int k = 1; k <= bundleSize; k++) {
-		
+		// determine size of each subset of tasks: max(k, tasks.size);
 		unsigned int size = k;
 		if (size > tasks.size()) size = tasks.size();
+
+		// check if size of last committed
+		unsigned int permutate_last = permutateLastCommitted_;
+		if (permutate_last > committed.size() || permutate_last > 1)
+			permutate_last = committed.size();
 		
-		// create starting subset
+		cout << "Permutate last: " << permutate_last << endl;
+		
+		// subsets of new tasks
 		TaskList2d subset(size);
+		// tasks which order stays fixed
+		TaskList2d fixed(committed.size());
+		// tasks which get inserted in all possible combinations into fixed
+		TaskList2d permut(size + permutate_last);
+
+		// create starting subset of tasks
 		for(unsigned int i = 0; i < size; i++)
 			subset.at(i) = tasks.at(i);
 	
-		// iterate over k-subsets
+		// iterate over k-subsets of tasks
 		do {
-			TaskList2d permut(size);
+			// included in the permutations is at least the current subset
 			permut = subset;
-			
-			// add tasks that the agent already committed to for inclusion
-			// in permutations if necessary
-			if (permutate_committed) {
-				for(TaskList2d::iterator it = committed.begin();it!=committed.end();++it) {
+			fixed = committed;
+
+			// move last x tasks from fixed to permut if desired
+			if (permutate_last > 0) {
+				TaskList2d::iterator it = fixed.begin() + committed.size() - permutate_last;
+				while(it != fixed.end()) {
 					Task2d t = *it;
 					permut.push_back(t);
+					fixed.erase(it); // this also advances the iterator
 				}
 			}
 			
-			int combinations;
-			if (permutate_committed)
-				combinations = fac(permut.size());
-			else
-				combinations = fac(committed.size() + permut.size()) / fac(committed.size());
-			
-			for (int magic = 1; magic <= combinations; magic++) {
-				TaskList2d result;
-				if (!permutate_committed)
-					result = committed;
+			if (fixed.size() > 0) {
+				// use high-performance calcuation of permutations (only for permut.size() <= 3)
+				cout << "high perf." << endl;
+
+				assert(fixed.size() == committed.size() - permutate_last);
+				assert(fixed.size() + permut.size() == committed.size() + size);
+
+				int combinations = fac(fixed.size() + permut.size()) / fac(fixed.size());
 				
-				// add all tasks to result
-				// this adds all tasks to any possible position within _committed_
-				// tasks, keeping committed in fixed order and using all possible
-				// permutations of _tasks_
-				int n = result.size();
-				for (unsigned int i = 0; i < permut.size(); i++) {
-					int at = magic % (n + i + 1);
+				for (int magic = 1; magic <= combinations; magic++) {
+					TaskList2d result = fixed;
+
+					// add all tasks to result
+					// this adds all tasks in _permut_ to any possible position within
+					// _fixed_, thus keeping _committed_ in fixed order and using all
+					// possible permutations of _tasks_
+					int n = result.size();
+					for (unsigned int i = 0; i < permut.size(); i++) {
+						int at = magic % (n + i + 1);
+						result.insert(result.begin() + at, permut.at(i));
+					}
 					
-					TaskList2d::iterator it = result.begin();
-					result.insert(it + at, permut.at(i));
+					queue.push(packBundle(start, result));
 				}
 				
-				Bundle2d bundle;
-				bundle.tasks = result;
-				bundle.cost  = computePathCost(start, bundle.tasks);
+			} else {
+				// use low-performance calcuations of all permutation
+				cout << "low perf." << endl;
+				
+				// iterate over permutations of this subset, actual number of permutations
+				// has to be calculated by hand (fac...) as next_permutation might stop
+				// prematurely if we use a while(next_permutation...) loop
+				for(unsigned int j = 0; j < (unsigned int) fac(permut.size()); j++) {
+					next_permutation(permut.begin(), permut.end());
 
-				queue.push(bundle);
-
-        stringstream ss;
-        ss << "MainThread::findBundles: ";
-				for(TaskList2d::iterator it = result.begin(); it!=result.end(); ++it) {
-					Task2d t = *it;
-					ss << t.target.p.x << " " << t.target.p.y << " | ";
+					// create bundle and evaluate
+					queue.push(packBundle(start, permut));
 				}
-				ss << bundle.cost;
-        context_.tracer().debug( ss.str() );
 			}
 
-			/*
-			// iterate over permutations of this subset, actual number of permutations
-			// has to be calculated by hand (fac...) as next_permutation might stop
-			// prematurely if we use a while(next_permutation...) loop
-			for(unsigned int j = 0; j < (unsigned int) fac(permut.size()); j++)
-			{
-  			next_permutation(permut.begin(), permut.end());
-
-				// create bundle and evaluate
-				Bundle2d bundle;
-				bundle.tasks = permut;
-				bundle.cost  = computePathCost(start, bundle.tasks);
-			
-				queue.push(bundle);
-
-        stringstream ss;
-        ss << "MainThread::findBundles: ";
-				for(TaskList2d::iterator it = permut.begin();it!=permut.end();++it)
-				{
-					Task2d t = *it;
-					ss << t.target.p.x << " " << t.target.p.y << " | ";
-				}
-				ss << bundle.cost << endl;
-        context_.tracer().debug( ss.str() );
-
-			}
-			*/
-		}
+		} // keep iterating over subsets
 		while( tasks.size() > 0 && subset.size() > 0 && stdcomb::next_combination(tasks.begin(),	tasks.end(), subset.begin(),subset.end()) );
 	}			
 
@@ -357,6 +366,7 @@ MainThread::walk()
 		initNetwork();
     
 		PathEvaluatorTask task;
+		int cycle_count = 0;
 
     while ( !isStopping() )
     {
@@ -366,10 +376,10 @@ MainThread::walk()
             //  ======== waiting for a task (blocking) =======
             //
             context_.tracer().info("MainThread: Waiting for a new task.");
-            bool haveTask=false;
-
-/*
-        		// Test data
+            bool haveTask = false;
+						cycle_count++;
+						
+/*        		// Test data
         		orca::Frame2d start;
         		start.p.x = -1.;
         		start.p.y = 0.;
@@ -414,6 +424,12 @@ MainThread::walk()
             // the only way of getting out of the above loop without a task
             // is if the user pressed Ctrl+C, ie we have to quit
             if (!haveTask) break;
+
+            //
+            // ===== Clean stores every now and then ========
+            //
+						if (cycle_count % 100 == 0) pathEvaluatorI_->cleanStores();
+
             //
             // ===== process tasks and compute best bundles ========
             //
@@ -437,7 +453,7 @@ MainThread::walk()
                 context_.tracer().warning( "MainThread: task.prx was zero!" );
 
             // 2. and 3.: use getData or icestorm
-            pathEvaluatorI_->localSetData( result );
+            pathEvaluatorI_->localSetData( task.sender, result );
     
             // resize the bundle data: future tasks might not compute a path successfully and we would resend the old ones
 						bundles.resize(0);

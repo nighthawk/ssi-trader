@@ -43,12 +43,15 @@ public class GenericRobot extends AuctionAgent {
 	
 	private long		 GOAL_EVAL_TIMEOUT_MS;
 	private int			 GOAL_EVAL_MAX_TRY_COUNT;
+	private double	 GOAL_EVAL_BACKOFF;
 	private long		 LOCALISER_TIMEOUT_MS;
 	private String[] DEFAULT_ARGS = {""};
 
 	private String 	 ORCA_NAME_GOAL_EVAL;
 	private String 	 ORCA_NAME_PATH_FOLLOWER;
 	private String 	 ORCA_NAME_LOCALISER;
+	
+	private OBJECTIVE OBJECTIVE_TYPE;
 
 	// Instance variables
 	/////////////////////////////////////////////////////////////////////////////
@@ -275,7 +278,6 @@ public class GenericRobot extends AuctionAgent {
 
 	/**
 	 * Loads settings from .cfg files
-	 * @param robo_colour Colour of the robot to load robot specific configuration
 	 * @return true if config successfully loaded, false otherwise
 	 */
 	protected boolean loadConfigValues() {
@@ -290,9 +292,12 @@ public class GenericRobot extends AuctionAgent {
 
 			MAX_BUNDLES = Integer.parseInt(properties.getProperty("auction.bidding.max_bundles"));
 			BUNDLE_SIZE = Integer.parseInt(properties.getProperty("auction.bidding.bundle_size"));
+			
+			OBJECTIVE_TYPE = OBJECTIVE.valueOf(properties.getProperty("auction.objective.type").toUpperCase());
 
 			GOAL_EVAL_TIMEOUT_MS = Long.parseLong(properties.getProperty("robot.component.goal_eval.timeout"));
 			GOAL_EVAL_MAX_TRY_COUNT = Integer.parseInt(properties.getProperty("robot.component.goal_eval.retries"));
+			GOAL_EVAL_BACKOFF = Double.parseDouble(properties.getProperty("robot.component.goal_eval.backoff"));
 			LOCALISER_TIMEOUT_MS = Long.parseLong(properties.getProperty("robot.component.localiser.timeout"));
 			DEFAULT_ARGS[0] = properties.getProperty("robot.ice");
 			
@@ -438,71 +443,59 @@ public class GenericRobot extends AuctionAgent {
 		// create random id
 		Random r = new Random();
 		int some_number = r.nextInt(100000);
-		task.id							= getAID().getName() + "-" + some_number;
+		task.sender			= getLocalName();
+		task.id					= task.sender + "-" + some_number;
 
 		// run goal evaluator and give it a couple of chances
 		PathEvaluatorResult result = null;
 
-		for (int i = 0; i < GOAL_EVAL_MAX_TRY_COUNT; i++) {
+		// set task for goale valuator
+		try {
+		  this.patheval.setTask(task);
+		} catch (Ice.TimeoutException e) {
+			log(DEBUG.ERROR, "getBundlesWithCosts: Goal evaluator timed out.");
+			return new Bundle2d[0];
+		} catch (orca.BusyException e) {
+			log(DEBUG.ERROR, "getBundlesWithCosts: Goal evaluator is too busy for us :-(");
+			return new Bundle2d[0];
+		} catch (orca.RequiredInterfaceFailedException e) {
+			throw new Error(e.getMessage());
+		}
+
+		// wait a while for computation
+		boolean keep_looking = true;
+		long start_time = Calendar.getInstance().getTimeInMillis();
+		long now = start_time;
+
+		while(keep_looking) {
 			try {
-			  this.patheval.setTask(task);
-			} catch (Ice.TimeoutException e) {
-				log(DEBUG.ERROR, "getBundlesWithCosts: Goal evaluator timed out.");
-				break;
-			} catch (orca.BusyException e) {
-				log(DEBUG.ERROR, "getBundlesWithCosts: Goal evaluator is too busy for us :-(");
-				break;
-			} catch (orca.RequiredInterfaceFailedException e) {
-				throw new Error(e.getMessage());
+				result = this.patheval.getData(task.sender);
+			} catch (Ice.UnknownUserException e) {
+				// fall through
 			}
 
-			// wait a while for computation
-			boolean keep_looking = true;
-			long start_time = Calendar.getInstance().getTimeInMillis();
-			long now = start_time;
-
-			while(keep_looking) {
-				try {
-					result = this.patheval.getData();
-				} catch (Ice.UnknownUserException e) {
-					continue;
-/*
-				} catch (orca.DataNotExistException e) {
-					log(DEBUG.WARNING, "getBundlesWithCosts: Goal Evaluator did not find result.");
-					return new Bundle2d[0];
-*/
-				}
-
+			if (result != null) {
 				// we might be lucky
-				if (result != null) {
-					now = Calendar.getInstance().getTimeInMillis();
-					if (result.id.equals(task.id) || now - start_time > GOAL_EVAL_TIMEOUT_MS)
-						keep_looking = false;
-				}
+				now = Calendar.getInstance().getTimeInMillis();
+				if (result.id.equals(task.id) || now - start_time > GOAL_EVAL_TIMEOUT_MS)
+					keep_looking = false;
 			}
-
-			if (result.id.equals(task.id)) {
-				log(DEBUG.NOTE, String.format("getBundlesWithCosts: Goal evaluator returned result in %.1fs.", (now - start_time) / 1000.0));
-				break;
-
-			} else {
-				int wait_for = r.nextInt(1000);
-				log(DEBUG.SPAM, String.format("getBundlesWithCosts: try %d to contact goal evaluator failed. retrying in %.1fs...", i + 1, wait_for / 1000.0));
-
+			
+			// wait a tiny little while before asking again
+			if (keep_looking) {
 				try {
-					Thread.sleep(wait_for);
+					Thread.sleep(50);
 				} catch (InterruptedException e) {
 					break;
 				}
 			}
 		}
 
-		if (result != null) {
-			log(DEBUG.SPAM, "getBundlesWithCosts: result id is " + result.id + ", I want: " + task.id);
-		}
-
 		if (result != null && result.id.equals(task.id)) {
+			log(DEBUG.SPAM, "getBundlesWithCosts: result id is " + result.id + ", I want: " + task.id);
+			log(DEBUG.NOTE, String.format("getBundlesWithCosts: Goal evaluator returned result in %.1fs.", (now - start_time) / 1000.0));
 			return result.data;
+
 		} else {
 			log(DEBUG.ERROR, String.format("getBundlesWithCosts: Goal evaluator did not return any results within %.1fs. Something must be wrong.", GOAL_EVAL_TIMEOUT_MS / 1000.0));
 			return new Bundle2d[0];
@@ -593,7 +586,10 @@ public class GenericRobot extends AuctionAgent {
 
 			int diff_count = new_bundle.tasks.length - bundle.tasks.length;
 			float diff_cost  = new_bundle.cost;
-			new_bundle.cost += bundle.cost;	// sum up costs
+			
+			if (OBJECTIVE_TYPE == OBJECTIVE.MINISUM)
+				new_bundle.cost += bundle.cost;	// sum up costs
+			
 			log(DEBUG.INFO, String.format("TaskBuyerBehaviour::handleAcceptProposal: bought %d new tasks for cost of %.2f.", diff_count, diff_cost));
 			bundle = new_bundle;
 
@@ -712,8 +708,9 @@ public class GenericRobot extends AuctionAgent {
 			if (tasks.size() == 0)
 				throw new NotUnderstoodException("There are no tasks in this CFP.");
 			
-			// get all bundles with relative costs
-			Bundle2d[] bids = getBundlesWithCosts(tasks, true);
+			// get all bundles with relative costs for MiniSum objective
+			boolean relative_costs = (OBJECTIVE_TYPE == OBJECTIVE.MINISUM);
+			Bundle2d[] bids = getBundlesWithCosts(tasks, relative_costs);
 			
 			ACLMessage response;
 			if(bids.length > 0) {
@@ -774,6 +771,8 @@ public class GenericRobot extends AuctionAgent {
 					send(response);
 					
 					bundle = new Bundle2d();
+					bundle.tasks = new Task2d[0];
+					bundle.cost  = 0;
 					
 				} else {
 					// check if we just got a bunch of new tasks assigned

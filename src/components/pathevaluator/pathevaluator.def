@@ -1,3 +1,5 @@
+Orca.Tracer.DebugToDisplay=1
+
 DefaultComponentTag=PathEvaluator
 
 # Provided Interfaces
@@ -11,4 +13,5 @@ Requires.PathPlanner2d.DefaultProxy=pathplanner2d@local/pathplanner
 
 # Config Parameters
 Config.PathPlanTimeout.Default=10.0
+Config.PermutateLastCommitted.Default=0
 
