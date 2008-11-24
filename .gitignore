@@ -2,4 +2,6 @@
 *~
 .DS_Store
 CMakeFiles
+app/classes/*
+build/*
 sim/hospital/.*
