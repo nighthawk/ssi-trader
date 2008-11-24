@@ -11,9 +11,10 @@ public class Bid implements Comparable {
 	}
 	
 	public int compareTo(Object another_bid) throws ClassCastException {
-    if (!(another_bid instanceof Bid))
-      throw new ClassCastException("Bid::compareTo(): A Bid object expected.");
+	    if (!(another_bid instanceof Bid))
+	      throw new ClassCastException("Bid::compareTo(): A Bid object expected.");
 
-    return (int) (this.bundle.cost - ((Bid) another_bid).bundle.cost);
+		// multiply with high number to make diff significant on an int level
+	    return (int) ((this.bundle.cost - ((Bid) another_bid).bundle.cost) * 1000.0);
 	}
 }

@@ -240,7 +240,7 @@ MainThread::findBundles( Task2d &start,
 												 unsigned int maxBundles ) 
 {
 	// queue storing all computed bundles sorted by cost
-	priority_queue<Bundle2d, BundleList2d, greater<BundleList2d::value_type> > queue;
+	priority_queue<Bundle2d, BundleList2d, greater<BundleList2d::value_type> > final_queue;
 
 	// for all bundle sizes less than the max
 	for(unsigned int k = 1; k <= bundleSize; k++) {
@@ -252,8 +252,6 @@ MainThread::findBundles( Task2d &start,
 		unsigned int permutate_last = permutateLastCommitted_;
 		if (permutate_last > committed.size() || permutate_last > 1)
 			permutate_last = committed.size();
-		
-		cout << "Permutate last: " << permutate_last << endl;
 		
 		// subsets of new tasks
 		TaskList2d subset(size);
@@ -268,10 +266,12 @@ MainThread::findBundles( Task2d &start,
 	
 		// iterate over k-subsets of tasks
 		do {
-			// included in the permutations is at least the current subset
+			// included in the permutations are at least the tasks of the current subset
 			permut = subset;
 			fixed = committed;
 
+			priority_queue<Bundle2d, BundleList2d, greater<BundleList2d::value_type> > subset_queue;
+			
 			// move last x tasks from fixed to permut if desired
 			if (permutate_last > 0) {
 				TaskList2d::iterator it = fixed.begin() + committed.size() - permutate_last;
@@ -284,8 +284,6 @@ MainThread::findBundles( Task2d &start,
 			
 			if (fixed.size() > 0) {
 				// use high-performance calcuation of permutations (only for permut.size() <= 3)
-				cout << "high perf." << endl;
-
 				assert(fixed.size() == committed.size() - permutate_last);
 				assert(fixed.size() + permut.size() == committed.size() + size);
 
@@ -304,13 +302,12 @@ MainThread::findBundles( Task2d &start,
 						result.insert(result.begin() + at, permut.at(i));
 					}
 					
-					queue.push(packBundle(start, result));
+					// queue.push(packBundle(start, result));
+					subset_queue.push(packBundle(start, result));
 				}
 				
 			} else {
 				// use low-performance calcuations of all permutation
-				cout << "low perf." << endl;
-				
 				// iterate over permutations of this subset, actual number of permutations
 				// has to be calculated by hand (fac...) as next_permutation might stop
 				// prematurely if we use a while(next_permutation...) loop
@@ -318,9 +315,14 @@ MainThread::findBundles( Task2d &start,
 					next_permutation(permut.begin(), permut.end());
 
 					// create bundle and evaluate
-					queue.push(packBundle(start, permut));
+					//queue.push(packBundle(start, permut));
+					subset_queue.push(packBundle(start, permut));
 				}
 			}
+			
+			// add cheapest one to final queue
+			final_queue.push(subset_queue.top());
+			
 
 		} // keep iterating over subsets
 		while( tasks.size() > 0 && subset.size() > 0 && stdcomb::next_combination(tasks.begin(),	tasks.end(), subset.begin(),subset.end()) );
@@ -328,10 +330,10 @@ MainThread::findBundles( Task2d &start,
 
 	// return the cheapest $maxBundles bundles
 	BundleList2d bundles;
-	if (maxBundles > queue.size()) maxBundles = queue.size();
+	if (maxBundles > final_queue.size()) maxBundles = final_queue.size();
 	for (unsigned int i = 0; i < maxBundles; i++) {
-		bundles.push_back(queue.top());
-		queue.pop();
+		bundles.push_back(final_queue.top());
+		final_queue.pop();
 	}
 	return bundles;
 }

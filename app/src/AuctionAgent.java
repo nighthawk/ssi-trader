@@ -11,7 +11,7 @@ import jade.proto.*;
 
 import talker.*;
 
-public class AuctionAgent extends Agent {
+public abstract class AuctionAgent extends Agent {
 
 	// Constants
 	/////////////////////////////////////////////////////////////////////////////
@@ -209,12 +209,16 @@ public class AuctionAgent extends Agent {
 				
 				// put bid into queue of bids for the task this bid is for
 				Integer task_index = task_indices.get(0);
+
+				log(DEBUG.SPAM, "sWB: this is a bid for task #" + task_index + " with cost " + bundle.cost);
+
 				if (!task_bid_map.containsKey(task_index)) {
 					task_bid_map.put(task_index, new PriorityQueue<Bid>());
+					log(DEBUG.SPAM, "sWB: first bid for this task, total of " + task_bid_map.size() + " tasks");
 				}
 				
 				task_bid_map.get(task_index).add(new Bid(bidder, bundle));
-				
+				log(DEBUG.SPAM, String.format("sWB: bid #%d for this task", task_bid_map.get(task_index).size()));
 			}
 		}
 		
@@ -245,14 +249,23 @@ public class AuctionAgent extends Agent {
 				break;
 				
 			case REGRET_CLEARING:
-				// the bid we regret the least wins, i.e. the bid that maximises the difference of
-				// the costs from the best and the second best bidders
+				// the bid we regret the least wins, i.e. the bid that maximises
+				// the difference of the costs from the best and the second best
+				// bidders
 				best_cost = Float.NEGATIVE_INFINITY;
 
 				for (Map.Entry< Integer, PriorityQueue<Bid> > me : task_bid_set) {
 					Integer i 	= me.getKey();
+
+					log(DEBUG.SPAM, String.format("sWB: checking %d bids for task #%d", me.getValue().size(), i));
+
 					Bid first 	= me.getValue().poll();
 					Bid second 	= me.getValue().poll();
+					
+					// if second bidder is same for first, keep looping
+					while (second != null && second.bidder == first.bidder) {
+						second = me.getValue().poll();
+					}
 					
 					float diff;
 					if (second != null) {
