@@ -5,4 +5,4 @@ MESSAGE( STATUS "== UTILITIES ==" )
 # when adding new directories, please maintain alphabetical order 
 # unless there are inter-dependencies.
 
-ADD_SUBDIRECTORY( someutil )
+# ADD_SUBDIRECTORY( someutil )

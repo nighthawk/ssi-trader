@@ -35,7 +35,7 @@ public abstract class AuctionAgent extends Agent {
 	protected String[]							AGENT_NAMES;
 
 	protected DEBUG 								debug_level 		= DEBUG.ERROR;
-	protected ArrayList<Task2d> 		all_possible_tasks = new ArrayList<Task2d>();;
+	protected ArrayList<Task2d> 		all_possible_tasks = new ArrayList<Task2d>();
 	protected ArrayList<Task2d>			tasks_for_sale	= new ArrayList<Task2d>();
 	protected ArrayList<AID> 				buyer_robots		= new ArrayList<AID>();
 	protected int										active_auction_counter	= 0;

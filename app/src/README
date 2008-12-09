@@ -1,9 +1,9 @@
 ##### prepare
-- convert them to ruby using slice2java command
+- convert them to Java using slice2java command
 		slice2java -I<path to find included files> <files.ice>
 	example:
 		cd slice
-		slice2java -I/home/adrian/Desktop/orca/orca/src/interfaces/slice/ pathevaluator.ice
+		slice2java -I/home/adrian/Desktop/orca/src/interfaces/slice/ *.ice
 
 - set environment variables
 		export ICEJ_PATH=../lib/ice

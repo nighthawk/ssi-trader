@@ -1,0 +1,1368 @@
+^CDeep-Thought:classes adrian$ java jade.Boot "x:Experiment(100 3 15 3 info all ssi)"
+Dec 3, 2008 5:55:04 PM jade.core.Runtime beginContainer
+INFO: ----------------------------------
+    This is JADE 3.6 - revision 6032 of 2008/05/05 14:07:10
+    downloaded in Open Source, under LGPL restrictions,
+    at http://jade.tilab.com/
+----------------------------------------
+Dec 3, 2008 5:55:05 PM jade.core.BaseService init
+INFO: Service jade.core.management.AgentManagement initialized
+Dec 3, 2008 5:55:05 PM jade.core.BaseService init
+INFO: Service jade.core.messaging.Messaging initialized
+Dec 3, 2008 5:55:05 PM jade.core.BaseService init
+INFO: Service jade.core.mobility.AgentMobility initialized
+Dec 3, 2008 5:55:05 PM jade.core.BaseService init
+INFO: Service jade.core.event.Notification initialized
+Dec 3, 2008 5:55:05 PM jade.core.messaging.MessagingService clearCachedSlice
+INFO: Clearing cache
+Dec 3, 2008 5:55:05 PM jade.mtp.http.HTTPServer <init>
+INFO: HTTP-MTP Using XML parser com.sun.org.apache.xerces.internal.parsers.SAXParser
+Dec 3, 2008 5:55:05 PM jade.core.messaging.MessagingService boot
+INFO: MTP addresses:
+http://10.0.0.94:7778/acc
+Dec 3, 2008 5:55:05 PM jade.core.AgentContainerImpl joinPlatform
+INFO: --------------------------------------
+Agent container Main-Container@Deep-Thought.local is ready.
+--------------------------------------------
+       x     info - New experiment with 100 runs, 3 robots, 15 tasks (3 per round), ALL and SSI.
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1127)
+	at java.util.regex.Matcher.reset(Matcher.java:284)
+	at java.util.regex.Matcher.<init>(Matcher.java:205)
+	at java.util.regex.Pattern.matcher(Pattern.java:879)
+	at AuctionAgent.findAll(AuctionAgent.java:426)
+	at AuctionAgent.extractTasks(AuctionAgent.java:390)
+	at Experiment$ExperimentContainer.initialise(Experiment.java:183)
+	at Experiment$ExperimentManager.<init>(Experiment.java:400)
+	at Experiment.setup(Experiment.java:82)
+	at jade.core.Agent$ActiveLifeCycle.init(Agent.java:1519)
+	at jade.core.Agent.run(Agent.java:1465)
+	at java.lang.Thread.run(Thread.java:613)
+       x     info - Setting: MIN_COST - SSI, runtime: 1252.52, total cost: 208.40, max cost: 80.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1207.13, total cost: 208.50, max cost: 80.33.
+       x     info - Setting: MIN_COST - SSI, runtime: 1100.74, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1077.34, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1211.76, total cost: 243.63, max cost: 87.70.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1147.79, total cost: 241.21, max cost: 87.09.
+       x     info - Setting: MIN_COST - SSI, runtime: 1172.34, total cost: 207.66, max cost: 83.15.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1224.34, total cost: 212.74, max cost: 88.18.
+       x     info - Setting: MIN_COST - SSI, runtime: 1148.19, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1168.96, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: MIN_COST - SSI, runtime: 1136.51, total cost: 203.88, max cost: 72.95.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1064.88, total cost: 195.53, max cost: 70.87.
+       x     info - Setting: MIN_COST - SSI, runtime: 1165.94, total cost: 205.44, max cost: 81.17.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1162.16, total cost: 172.85, max cost: 63.80.
+       x     info - Setting: MIN_COST - SSI, runtime: 1089.90, total cost: 217.51, max cost: 83.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1170.30, total cost: 202.83, max cost: 73.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1159.73, total cost: 189.45, max cost: 71.36.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1156.97, total cost: 154.69, max cost: 65.83.
+       x     info - Setting: MIN_COST - SSI, runtime: 1103.19, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1155.87, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: MIN_COST - SSI, runtime: 1151.96, total cost: 224.34, max cost: 83.98.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1158.71, total cost: 189.75, max cost: 76.10.
+       x     info - Setting: MIN_COST - SSI, runtime: 1150.70, total cost: 222.54, max cost: 83.26.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1196.58, total cost: 212.18, max cost: 77.41.
+       x     info - Setting: MIN_COST - SSI, runtime: 1149.88, total cost: 238.95, max cost: 87.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1257.17, total cost: 216.20, max cost: 78.06.
+       x     info - Setting: MIN_COST - SSI, runtime: 1151.85, total cost: 219.86, max cost: 89.38.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1203.54, total cost: 225.36, max cost: 86.35.
+       x     info - Setting: MIN_COST - SSI, runtime: 1152.81, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1102.22, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: MIN_COST - SSI, runtime: 1101.33, total cost: 216.87, max cost: 75.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1156.79, total cost: 216.62, max cost: 75.08.
+       x     info - Setting: MIN_COST - SSI, runtime: 1153.65, total cost: 226.43, max cost: 88.24.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1148.27, total cost: 219.57, max cost: 85.91.
+       x     info - Setting: MIN_COST - SSI, runtime: 1165.42, total cost: 204.13, max cost: 73.61.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1147.95, total cost: 182.33, max cost: 63.86.
+       x     info - Setting: MIN_COST - SSI, runtime: 1156.80, total cost: 207.08, max cost: 81.92.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1107.79, total cost: 215.00, max cost: 79.93.
+       x     info - Setting: MIN_COST - SSI, runtime: 1106.91, total cost: 211.79, max cost: 87.24.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1162.13, total cost: 211.79, max cost: 87.24.
+       x     info - Setting: MIN_COST - SSI, runtime: 1152.27, total cost: 204.65, max cost: 71.06.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1098.73, total cost: 197.80, max cost: 68.39.
+       x     info - Setting: MIN_COST - SSI, runtime: 1147.75, total cost: 220.36, max cost: 74.45.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1047.20, total cost: 214.76, max cost: 79.71.
+       x     info - Setting: MIN_COST - SSI, runtime: 1150.66, total cost: 256.76, max cost: 97.06.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1150.60, total cost: 259.41, max cost: 93.04.
+       x     info - Setting: MIN_COST - SSI, runtime: 1147.15, total cost: 252.72, max cost: 93.32.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1147.25, total cost: 236.87, max cost: 97.67.
+       x     info - Setting: MIN_COST - SSI, runtime: 1154.17, total cost: 218.32, max cost: 90.85.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1150.16, total cost: 209.28, max cost: 90.92.
+       x     info - Setting: MIN_COST - SSI, runtime: 1150.47, total cost: 190.45, max cost: 71.80.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1149.98, total cost: 184.23, max cost: 66.21.
+       x     info - Setting: MIN_COST - SSI, runtime: 1106.34, total cost: 191.03, max cost: 80.00.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1152.60, total cost: 183.31, max cost: 72.05.
+       x     info - Setting: MIN_COST - SSI, runtime: 1093.15, total cost: 179.71, max cost: 68.56.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1151.95, total cost: 174.46, max cost: 58.98.
+       x     info - Setting: MIN_COST - SSI, runtime: 1151.18, total cost: 217.46, max cost: 80.74.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1147.52, total cost: 209.34, max cost: 82.40.
+       x     info - Setting: MIN_COST - SSI, runtime: 1149.86, total cost: 181.38, max cost: 66.60.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1202.05, total cost: 188.38, max cost: 76.98.
+       x     info - Setting: MIN_COST - SSI, runtime: 1118.73, total cost: 197.71, max cost: 84.90.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1149.94, total cost: 183.41, max cost: 76.45.
+       x     info - Setting: MIN_COST - SSI, runtime: 1147.27, total cost: 229.75, max cost: 86.55.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1160.87, total cost: 245.68, max cost: 86.23.
+       x     info - Setting: MIN_COST - SSI, runtime: 1098.75, total cost: 183.69, max cost: 65.27.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1145.78, total cost: 189.89, max cost: 68.62.
+       x     info - Setting: MIN_COST - SSI, runtime: 1146.15, total cost: 175.96, max cost: 80.08.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1144.66, total cost: 175.71, max cost: 79.83.
+       x     info - Setting: MIN_COST - SSI, runtime: 1046.16, total cost: 221.15, max cost: 79.61.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1164.87, total cost: 189.64, max cost: 66.76.
+       x     info - Setting: MIN_COST - SSI, runtime: 1150.75, total cost: 219.33, max cost: 81.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1151.62, total cost: 227.16, max cost: 77.75.
+       x     info - Setting: MIN_COST - SSI, runtime: 1145.65, total cost: 263.35, max cost: 94.75.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1141.82, total cost: 253.14, max cost: 91.39.
+       x     info - Setting: MIN_COST - SSI, runtime: 1145.84, total cost: 221.60, max cost: 81.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1146.50, total cost: 237.22, max cost: 85.41.
+       x     info - Setting: MIN_COST - SSI, runtime: 1143.75, total cost: 244.55, max cost: 87.53.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1154.51, total cost: 246.73, max cost: 92.89.
+       x     info - Setting: MIN_COST - SSI, runtime: 1100.01, total cost: 148.26, max cost: 55.44.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1098.92, total cost: 154.53, max cost: 58.67.
+       x     info - Setting: MIN_COST - SSI, runtime: 1091.02, total cost: 227.72, max cost: 86.00.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1214.39, total cost: 210.51, max cost: 84.57.
+       x     info - Setting: MIN_COST - SSI, runtime: 1101.70, total cost: 177.33, max cost: 69.49.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1097.39, total cost: 197.71, max cost: 76.69.
+       x     info - Setting: MIN_COST - SSI, runtime: 1145.15, total cost: 196.63, max cost: 71.45.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1042.09, total cost: 190.28, max cost: 69.96.
+       x     info - Setting: MIN_COST - SSI, runtime: 1157.47, total cost: 191.98, max cost: 69.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1148.78, total cost: 191.98, max cost: 69.33.
+       x     info - Setting: MIN_COST - SSI, runtime: 1145.24, total cost: 211.53, max cost: 74.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1095.49, total cost: 199.57, max cost: 68.86.
+       x     info - Setting: MIN_COST - SSI, runtime: 1160.69, total cost: 201.74, max cost: 79.93.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1148.66, total cost: 201.74, max cost: 79.93.
+       x     info - Setting: MIN_COST - SSI, runtime: 1151.95, total cost: 242.37, max cost: 92.52.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1144.14, total cost: 232.27, max cost: 87.12.
+       x     info - Setting: MIN_COST - SSI, runtime: 1096.91, total cost: 182.80, max cost: 70.89.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1207.28, total cost: 183.96, max cost: 64.85.
+       x     info - Setting: MIN_COST - SSI, runtime: 1143.36, total cost: 215.89, max cost: 87.25.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1145.33, total cost: 202.81, max cost: 74.15.
+       x     info - Setting: MIN_COST - SSI, runtime: 1144.20, total cost: 180.21, max cost: 71.75.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1094.59, total cost: 185.25, max cost: 65.87.
+       x     info - Setting: MIN_COST - SSI, runtime: 1093.63, total cost: 172.03, max cost: 60.29.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1094.37, total cost: 169.23, max cost: 60.51.
+       x     info - Setting: MIN_COST - SSI, runtime: 1092.77, total cost: 223.64, max cost: 85.34.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1150.87, total cost: 209.47, max cost: 85.34.
+       x     info - Setting: MIN_COST - SSI, runtime: 1172.14, total cost: 210.98, max cost: 78.89.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1201.39, total cost: 216.35, max cost: 82.10.
+       x     info - Setting: MIN_COST - SSI, runtime: 1145.17, total cost: 193.13, max cost: 67.75.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1150.17, total cost: 193.58, max cost: 72.59.
+       x     info - Setting: MIN_COST - SSI, runtime: 1140.87, total cost: 175.90, max cost: 61.17.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1146.24, total cost: 176.35, max cost: 66.01.
+       x     info - Setting: MIN_COST - SSI, runtime: 1036.31, total cost: 195.61, max cost: 72.07.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1094.50, total cost: 204.59, max cost: 71.29.
+       x     info - Setting: MIN_COST - SSI, runtime: 1148.30, total cost: 226.43, max cost: 84.32.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1196.99, total cost: 223.93, max cost: 84.32.
+       x     info - Setting: MIN_COST - SSI, runtime: 1154.50, total cost: 203.44, max cost: 72.45.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1150.73, total cost: 210.52, max cost: 75.99.
+       x     info - Setting: MIN_COST - SSI, runtime: 1197.79, total cost: 217.04, max cost: 98.64.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1148.18, total cost: 239.37, max cost: 87.06.
+       x     info - Setting: MIN_COST - SSI, runtime: 1147.99, total cost: 215.50, max cost: 87.10.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1139.71, total cost: 205.80, max cost: 82.18.
+       x     info - Setting: MIN_COST - SSI, runtime: 1096.05, total cost: 242.52, max cost: 89.80.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1096.80, total cost: 224.70, max cost: 78.75.
+       x     info - Setting: MIN_COST - SSI, runtime: 1211.31, total cost: 254.54, max cost: 89.81.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1144.19, total cost: 232.03, max cost: 79.87.
+       x     info - Setting: MIN_COST - SSI, runtime: 1136.77, total cost: 273.20, max cost: 99.79.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1199.17, total cost: 233.80, max cost: 90.94.
+       x     info - Setting: MIN_COST - SSI, runtime: 1148.11, total cost: 214.05, max cost: 83.51.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1247.50, total cost: 217.83, max cost: 78.07.
+       x     info - Setting: MIN_COST - SSI, runtime: 1049.38, total cost: 178.24, max cost: 68.75.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1097.91, total cost: 199.77, max cost: 76.58.
+       x     info - Setting: MIN_COST - SSI, runtime: 1304.16, total cost: 214.55, max cost: 78.36.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1147.23, total cost: 185.16, max cost: 67.85.
+       x     info - Setting: MIN_COST - SSI, runtime: 1143.81, total cost: 233.26, max cost: 81.05.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1141.71, total cost: 231.12, max cost: 85.05.
+       x     info - Setting: MIN_COST - SSI, runtime: 1148.43, total cost: 205.80, max cost: 72.13.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1091.69, total cost: 209.56, max cost: 75.26.
+       x     info - Setting: MIN_COST - SSI, runtime: 1143.63, total cost: 230.10, max cost: 85.98.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1195.13, total cost: 244.62, max cost: 87.00.
+       x     info - Setting: MIN_COST - SSI, runtime: 1161.60, total cost: 214.62, max cost: 75.99.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1178.37, total cost: 214.62, max cost: 75.99.
+       x     info - Setting: MIN_COST - SSI, runtime: 1147.41, total cost: 188.02, max cost: 65.86.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1147.95, total cost: 201.27, max cost: 73.78.
+       x     info - Setting: MIN_COST - SSI, runtime: 1141.94, total cost: 185.71, max cost: 67.25.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1102.84, total cost: 191.15, max cost: 71.51.
+       x     info - Setting: MIN_COST - SSI, runtime: 1144.48, total cost: 183.07, max cost: 69.95.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1095.97, total cost: 176.33, max cost: 60.10.
+       x     info - Setting: MIN_COST - SSI, runtime: 1146.97, total cost: 198.28, max cost: 75.45.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1153.28, total cost: 211.60, max cost: 79.26.
+       x     info - Setting: MIN_COST - SSI, runtime: 1091.92, total cost: 171.64, max cost: 65.54.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1101.68, total cost: 171.70, max cost: 70.04.
+       x     info - Setting: MIN_COST - SSI, runtime: 1100.54, total cost: 202.64, max cost: 81.82.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1097.46, total cost: 202.64, max cost: 81.82.
+       x     info - Setting: MIN_COST - SSI, runtime: 1154.68, total cost: 212.77, max cost: 83.14.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1211.95, total cost: 214.40, max cost: 81.34.
+       x     info - Setting: MIN_COST - SSI, runtime: 1142.17, total cost: 203.00, max cost: 71.29.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1144.64, total cost: 201.88, max cost: 68.68.
+       x     info - Setting: MIN_COST - SSI, runtime: 1146.92, total cost: 263.72, max cost: 96.14.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1140.80, total cost: 245.60, max cost: 88.62.
+       x     info - Setting: MIN_COST - SSI, runtime: 1099.86, total cost: 188.77, max cost: 88.97.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1141.51, total cost: 208.64, max cost: 76.06.
+       x     info - Setting: MIN_COST - SSI, runtime: 1150.73, total cost: 175.36, max cost: 68.51.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1150.10, total cost: 180.67, max cost: 63.48.
+       x     info - Setting: MIN_COST - SSI, runtime: 1097.43, total cost: 200.13, max cost: 73.07.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1149.88, total cost: 207.43, max cost: 73.07.
+       x     info - Setting: MIN_COST - SSI, runtime: 1147.13, total cost: 216.35, max cost: 80.95.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1212.91, total cost: 210.97, max cost: 76.10.
+       x     info - Setting: MIN_COST - SSI, runtime: 1135.30, total cost: 251.37, max cost: 87.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1145.78, total cost: 247.20, max cost: 89.49.
+       x     info - Setting: MIN_COST - SSI, runtime: 1093.21, total cost: 189.28, max cost: 63.68.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1051.12, total cost: 193.26, max cost: 80.66.
+       x     info - Setting: MIN_COST - SSI, runtime: 1142.90, total cost: 224.48, max cost: 79.95.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1145.82, total cost: 215.98, max cost: 77.31.
+       x     info - Setting: MIN_COST - SSI, runtime: 1147.88, total cost: 219.06, max cost: 82.37.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1350.72, total cost: 219.06, max cost: 79.65.
+       x     info - Setting: MIN_COST - SSI, runtime: 1195.92, total cost: 240.55, max cost: 94.67.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1140.96, total cost: 225.57, max cost: 82.70.
+       x     info - Setting: MIN_COST - SSI, runtime: 1147.20, total cost: 194.72, max cost: 75.13.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1145.75, total cost: 194.72, max cost: 75.13.
+       x     info - Setting: MIN_COST - SSI, runtime: 1149.00, total cost: 187.61, max cost: 69.89.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1149.54, total cost: 199.42, max cost: 75.27.
+       x     info - Setting: MIN_COST - SSI, runtime: 1150.62, total cost: 182.07, max cost: 65.72.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1094.41, total cost: 182.07, max cost: 65.72.
+       x     info - Setting: MIN_COST - SSI, runtime: 1160.43, total cost: 219.19, max cost: 74.32.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1097.71, total cost: 207.94, max cost: 70.91.
+       x     info - Setting: MIN_COST - SSI, runtime: 1151.51, total cost: 219.52, max cost: 83.36.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1106.25, total cost: 209.30, max cost: 72.36.
+       x     info - Setting: MIN_COST - SSI, runtime: 1142.82, total cost: 212.92, max cost: 78.21.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1098.38, total cost: 212.60, max cost: 85.21.
+       x     info - Setting: MIN_COST - SSI, runtime: 1091.22, total cost: 168.40, max cost: 59.66.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1098.27, total cost: 168.40, max cost: 59.66.
+       x     info - Setting: MIN_COST - SSI, runtime: 1198.51, total cost: 250.05, max cost: 87.12.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1150.04, total cost: 250.05, max cost: 87.12.
+       x     info - Setting: MIN_COST - SSI, runtime: 1140.74, total cost: 224.37, max cost: 88.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1096.05, total cost: 218.57, max cost: 77.34.
+       x     info - Setting: MIN_COST - SSI, runtime: 1139.53, total cost: 179.44, max cost: 71.82.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1139.29, total cost: 216.70, max cost: 75.34.
+       x     info - Setting: MIN_COST - SSI, runtime: 1194.98, total cost: 225.78, max cost: 101.38.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1152.77, total cost: 208.95, max cost: 87.29.
+       x     info - Setting: MIN_COST - SSI, runtime: 1098.56, total cost: 153.62, max cost: 57.64.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1093.23, total cost: 153.31, max cost: 56.58.
+       x     info -           win.det.   dyn.all.   run time      sum      max
+       x     info -           MIN_COST        SSI    1140.31   209.40    78.77
+       x     info -    REGRET_CLEARING        SSI    1144.92   206.43    76.76
+^CDeep-Thought:classes adrian$ java jade.Boot "x:Experiment(50 3 15 3 info all ssi)"
+Dec 3, 2008 6:07:33 PM jade.core.Runtime beginContainer
+INFO: ----------------------------------
+    This is JADE 3.6 - revision 6032 of 2008/05/05 14:07:10
+    downloaded in Open Source, under LGPL restrictions,
+    at http://jade.tilab.com/
+----------------------------------------
+Dec 3, 2008 6:07:34 PM jade.core.BaseService init
+INFO: Service jade.core.management.AgentManagement initialized
+Dec 3, 2008 6:07:34 PM jade.core.BaseService init
+INFO: Service jade.core.messaging.Messaging initialized
+Dec 3, 2008 6:07:34 PM jade.core.BaseService init
+INFO: Service jade.core.mobility.AgentMobility initialized
+Dec 3, 2008 6:07:34 PM jade.core.BaseService init
+INFO: Service jade.core.event.Notification initialized
+Dec 3, 2008 6:07:34 PM jade.core.messaging.MessagingService clearCachedSlice
+INFO: Clearing cache
+Dec 3, 2008 6:07:34 PM jade.mtp.http.HTTPServer <init>
+INFO: HTTP-MTP Using XML parser com.sun.org.apache.xerces.internal.parsers.SAXParser
+Dec 3, 2008 6:07:34 PM jade.core.messaging.MessagingService boot
+INFO: MTP addresses:
+http://10.0.0.94:7778/acc
+Dec 3, 2008 6:07:34 PM jade.core.AgentContainerImpl joinPlatform
+INFO: --------------------------------------
+Agent container Main-Container@Deep-Thought.local is ready.
+--------------------------------------------
+       x     info - New experiment with 50 runs, 3 robots, 15 tasks (3 per round), ALL and SSI.
+       x     info - Setting: MIN_COST - SSI, runtime: 1297.39, total cost: 208.40, max cost: 80.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1230.03, total cost: 208.50, max cost: 80.33.
+       x     info - Setting: MIN_COST - SSI, runtime: 1148.74, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1184.24, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1173.70, total cost: 243.63, max cost: 87.70.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1180.07, total cost: 241.21, max cost: 87.09.
+       x     info - Setting: MIN_COST - SSI, runtime: 1166.61, total cost: 207.66, max cost: 83.15.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1185.08, total cost: 212.74, max cost: 88.18.
+       x     info - Setting: MIN_COST - SSI, runtime: 1174.63, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1170.05, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: MIN_COST - SSI, runtime: 1138.84, total cost: 203.88, max cost: 72.95.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1167.80, total cost: 195.53, max cost: 70.87.
+       x     info - Setting: MIN_COST - SSI, runtime: 1151.38, total cost: 205.44, max cost: 81.17.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1155.53, total cost: 172.85, max cost: 63.80.
+       x     info - Setting: MIN_COST - SSI, runtime: 1112.28, total cost: 217.51, max cost: 83.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1157.16, total cost: 202.83, max cost: 73.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1095.71, total cost: 189.45, max cost: 71.36.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1098.34, total cost: 154.69, max cost: 65.83.
+       x     info - Setting: MIN_COST - SSI, runtime: 1269.36, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1150.50, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: MIN_COST - SSI, runtime: 1156.85, total cost: 224.34, max cost: 83.98.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1203.31, total cost: 189.75, max cost: 76.10.
+       x     info - Setting: MIN_COST - SSI, runtime: 1195.96, total cost: 222.54, max cost: 83.26.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1097.94, total cost: 212.18, max cost: 77.41.
+       x     info - Setting: MIN_COST - SSI, runtime: 1332.37, total cost: 238.95, max cost: 87.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1163.48, total cost: 216.20, max cost: 78.06.
+       x     info - Setting: MIN_COST - SSI, runtime: 1208.25, total cost: 219.86, max cost: 89.38.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1193.67, total cost: 225.36, max cost: 86.35.
+       x     info - Setting: MIN_COST - SSI, runtime: 1103.96, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1101.04, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: MIN_COST - SSI, runtime: 1102.85, total cost: 216.87, max cost: 75.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1101.60, total cost: 216.62, max cost: 75.08.
+       x     info - Setting: MIN_COST - SSI, runtime: 1102.23, total cost: 226.43, max cost: 88.24.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1107.21, total cost: 219.57, max cost: 85.91.
+       x     info - Setting: MIN_COST - SSI, runtime: 1196.58, total cost: 204.13, max cost: 73.61.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1154.93, total cost: 182.33, max cost: 63.86.
+       x     info - Setting: MIN_COST - SSI, runtime: 1159.11, total cost: 207.08, max cost: 81.92.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1154.90, total cost: 215.00, max cost: 79.93.
+       x     info - Setting: MIN_COST - SSI, runtime: 1200.36, total cost: 211.79, max cost: 87.24.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1157.54, total cost: 211.79, max cost: 87.24.
+       x     info - Setting: MIN_COST - SSI, runtime: 1103.16, total cost: 204.65, max cost: 71.06.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1150.10, total cost: 197.80, max cost: 68.39.
+       x     info - Setting: MIN_COST - SSI, runtime: 1145.14, total cost: 220.36, max cost: 74.45.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1096.25, total cost: 214.76, max cost: 79.71.
+       x     info - Setting: MIN_COST - SSI, runtime: 1153.79, total cost: 256.76, max cost: 97.06.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1247.16, total cost: 259.41, max cost: 93.04.
+       x     info - Setting: MIN_COST - SSI, runtime: 1207.30, total cost: 252.72, max cost: 93.32.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1147.60, total cost: 236.87, max cost: 97.67.
+       x     info - Setting: MIN_COST - SSI, runtime: 1148.45, total cost: 218.32, max cost: 90.85.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1156.74, total cost: 209.28, max cost: 90.92.
+       x     info - Setting: MIN_COST - SSI, runtime: 1151.88, total cost: 190.45, max cost: 71.80.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1147.64, total cost: 184.23, max cost: 66.21.
+       x     info - Setting: MIN_COST - SSI, runtime: 1100.31, total cost: 191.03, max cost: 80.00.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1109.45, total cost: 183.31, max cost: 72.05.
+       x     info - Setting: MIN_COST - SSI, runtime: 1097.98, total cost: 179.71, max cost: 68.56.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1097.83, total cost: 174.46, max cost: 58.98.
+       x     info - Setting: MIN_COST - SSI, runtime: 1096.20, total cost: 217.46, max cost: 80.74.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1102.27, total cost: 209.34, max cost: 82.40.
+       x     info - Setting: MIN_COST - SSI, runtime: 1102.25, total cost: 181.38, max cost: 66.60.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1100.78, total cost: 188.38, max cost: 76.98.
+       x     info - Setting: MIN_COST - SSI, runtime: 1139.11, total cost: 197.71, max cost: 84.90.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1146.31, total cost: 183.41, max cost: 76.45.
+       x     info - Setting: MIN_COST - SSI, runtime: 1146.56, total cost: 229.75, max cost: 86.55.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1149.23, total cost: 245.68, max cost: 86.23.
+       x     info - Setting: MIN_COST - SSI, runtime: 1153.45, total cost: 183.69, max cost: 65.27.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1047.61, total cost: 189.89, max cost: 68.62.
+       x     info - Setting: MIN_COST - SSI, runtime: 1147.34, total cost: 175.96, max cost: 80.08.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1150.26, total cost: 175.71, max cost: 79.83.
+       x     info - Setting: MIN_COST - SSI, runtime: 1090.93, total cost: 221.15, max cost: 79.61.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1146.12, total cost: 189.64, max cost: 66.76.
+       x     info - Setting: MIN_COST - SSI, runtime: 1154.89, total cost: 219.33, max cost: 81.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1158.29, total cost: 227.16, max cost: 77.75.
+       x     info - Setting: MIN_COST - SSI, runtime: 1145.24, total cost: 263.35, max cost: 94.75.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1194.32, total cost: 253.14, max cost: 91.39.
+       x     info - Setting: MIN_COST - SSI, runtime: 1144.10, total cost: 221.60, max cost: 81.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1153.37, total cost: 237.22, max cost: 85.41.
+       x     info - Setting: MIN_COST - SSI, runtime: 1152.13, total cost: 244.55, max cost: 87.53.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1147.98, total cost: 246.73, max cost: 92.89.
+       x     info - Setting: MIN_COST - SSI, runtime: 1042.81, total cost: 148.26, max cost: 55.44.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1040.39, total cost: 154.53, max cost: 58.67.
+       x     info - Setting: MIN_COST - SSI, runtime: 1059.38, total cost: 227.72, max cost: 86.00.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1162.79, total cost: 210.51, max cost: 84.57.
+       x     info - Setting: MIN_COST - SSI, runtime: 1093.69, total cost: 177.33, max cost: 69.49.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1106.72, total cost: 197.71, max cost: 76.69.
+       x     info - Setting: MIN_COST - SSI, runtime: 1092.56, total cost: 196.63, max cost: 71.45.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1096.10, total cost: 190.28, max cost: 69.96.
+       x     info - Setting: MIN_COST - SSI, runtime: 1140.00, total cost: 191.98, max cost: 69.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1193.11, total cost: 191.98, max cost: 69.33.
+       x     info - Setting: MIN_COST - SSI, runtime: 1212.77, total cost: 211.53, max cost: 74.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1145.67, total cost: 199.57, max cost: 68.86.
+       x     info - Setting: MIN_COST - SSI, runtime: 1138.70, total cost: 201.74, max cost: 79.93.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1151.02, total cost: 201.74, max cost: 79.93.
+       x     info - Setting: MIN_COST - SSI, runtime: 1146.12, total cost: 242.37, max cost: 92.52.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1199.29, total cost: 232.27, max cost: 87.12.
+       x     info - Setting: MIN_COST - SSI, runtime: 1095.04, total cost: 182.80, max cost: 70.89.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1154.92, total cost: 183.96, max cost: 64.85.
+       x     info - Setting: MIN_COST - SSI, runtime: 1099.82, total cost: 215.89, max cost: 87.25.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1141.10, total cost: 202.81, max cost: 74.15.
+       x     info - Setting: MIN_COST - SSI, runtime: 1197.07, total cost: 180.21, max cost: 71.75.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1099.47, total cost: 185.25, max cost: 65.87.
+       x     info -           win.det.   dyn.all.   run time      sum      max
+       x     info -           MIN_COST        SSI    1147.71   210.26    79.51
+       x     info -    REGRET_CLEARING        SSI    1145.09   205.06    77.03
+^CDeep-Thought:classes adrian$ java jade.Boot "x:Experiment(35 3 15 3 info all ssi)"
+Dec 3, 2008 6:14:30 PM jade.core.Runtime beginContainer
+INFO: ----------------------------------
+    This is JADE 3.6 - revision 6032 of 2008/05/05 14:07:10
+    downloaded in Open Source, under LGPL restrictions,
+    at http://jade.tilab.com/
+----------------------------------------
+Dec 3, 2008 6:14:30 PM jade.core.BaseService init
+INFO: Service jade.core.management.AgentManagement initialized
+Dec 3, 2008 6:14:30 PM jade.core.BaseService init
+INFO: Service jade.core.messaging.Messaging initialized
+Dec 3, 2008 6:14:30 PM jade.core.BaseService init
+INFO: Service jade.core.mobility.AgentMobility initialized
+Dec 3, 2008 6:14:30 PM jade.core.BaseService init
+INFO: Service jade.core.event.Notification initialized
+Dec 3, 2008 6:14:30 PM jade.core.messaging.MessagingService clearCachedSlice
+INFO: Clearing cache
+Dec 3, 2008 6:14:30 PM jade.mtp.http.HTTPServer <init>
+INFO: HTTP-MTP Using XML parser com.sun.org.apache.xerces.internal.parsers.SAXParser
+Dec 3, 2008 6:14:30 PM jade.core.messaging.MessagingService boot
+INFO: MTP addresses:
+http://10.0.0.94:7778/acc
+Dec 3, 2008 6:14:30 PM jade.core.AgentContainerImpl joinPlatform
+INFO: --------------------------------------
+Agent container Main-Container@Deep-Thought.local is ready.
+--------------------------------------------
+       x     info - New experiment with 35 runs, 3 robots, 15 tasks (3 per round), ALL and SSI.
+       x     info - Setting: MIN_COST - SSI, runtime: 1268.33, total cost: 208.40, max cost: 80.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1172.04, total cost: 208.50, max cost: 80.33.
+       x     info - Setting: MIN_COST - SSI, runtime: 1199.21, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1110.86, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1215.23, total cost: 243.63, max cost: 87.70.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1171.93, total cost: 241.21, max cost: 87.09.
+       x     info - Setting: MIN_COST - SSI, runtime: 1163.69, total cost: 207.66, max cost: 83.15.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1209.86, total cost: 212.74, max cost: 88.18.
+       x     info - Setting: MIN_COST - SSI, runtime: 1116.72, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1159.51, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: MIN_COST - SSI, runtime: 1200.54, total cost: 203.88, max cost: 72.95.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1182.46, total cost: 195.53, max cost: 70.87.
+       x     info - Setting: MIN_COST - SSI, runtime: 1165.79, total cost: 205.44, max cost: 81.17.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1156.94, total cost: 172.85, max cost: 63.80.
+       x     info - Setting: MIN_COST - SSI, runtime: 1062.63, total cost: 217.51, max cost: 83.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1102.23, total cost: 202.83, max cost: 73.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1159.03, total cost: 189.45, max cost: 71.36.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1155.86, total cost: 154.69, max cost: 65.83.
+       x     info - Setting: MIN_COST - SSI, runtime: 1100.55, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1139.83, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: MIN_COST - SSI, runtime: 1144.60, total cost: 224.34, max cost: 83.98.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1161.64, total cost: 189.75, max cost: 76.10.
+       x     info - Setting: MIN_COST - SSI, runtime: 1152.81, total cost: 222.54, max cost: 83.26.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1146.64, total cost: 212.18, max cost: 77.41.
+       x     info - Setting: MIN_COST - SSI, runtime: 1151.19, total cost: 238.95, max cost: 87.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1150.81, total cost: 216.20, max cost: 78.06.
+       x     info - Setting: MIN_COST - SSI, runtime: 1154.84, total cost: 219.86, max cost: 89.38.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1155.68, total cost: 225.36, max cost: 86.35.
+       x     info - Setting: MIN_COST - SSI, runtime: 1150.98, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1094.88, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: MIN_COST - SSI, runtime: 1151.27, total cost: 216.87, max cost: 75.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1157.69, total cost: 216.62, max cost: 75.08.
+       x     info - Setting: MIN_COST - SSI, runtime: 1149.16, total cost: 226.43, max cost: 88.24.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1160.09, total cost: 219.57, max cost: 85.91.
+       x     info - Setting: MIN_COST - SSI, runtime: 1146.80, total cost: 204.13, max cost: 73.61.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1155.35, total cost: 182.33, max cost: 63.86.
+       x     info - Setting: MIN_COST - SSI, runtime: 1149.64, total cost: 207.08, max cost: 81.92.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1283.20, total cost: 215.00, max cost: 79.93.
+       x     info - Setting: MIN_COST - SSI, runtime: 1162.96, total cost: 211.79, max cost: 87.24.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1061.50, total cost: 211.79, max cost: 87.24.
+       x     info - Setting: MIN_COST - SSI, runtime: 1094.50, total cost: 204.65, max cost: 71.06.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1204.06, total cost: 197.80, max cost: 68.39.
+       x     info - Setting: MIN_COST - SSI, runtime: 1150.01, total cost: 220.36, max cost: 74.45.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1159.40, total cost: 214.76, max cost: 79.71.
+       x     info - Setting: MIN_COST - SSI, runtime: 1198.28, total cost: 256.76, max cost: 97.06.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1146.65, total cost: 259.41, max cost: 93.04.
+       x     info - Setting: MIN_COST - SSI, runtime: 1302.99, total cost: 252.72, max cost: 93.32.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1154.34, total cost: 236.87, max cost: 97.67.
+       x     info - Setting: MIN_COST - SSI, runtime: 1143.75, total cost: 218.32, max cost: 90.85.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1147.16, total cost: 209.28, max cost: 90.92.
+       x     info - Setting: MIN_COST - SSI, runtime: 1369.73, total cost: 190.45, max cost: 71.80.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1149.95, total cost: 184.23, max cost: 66.21.
+       x     info - Setting: MIN_COST - SSI, runtime: 1102.84, total cost: 191.03, max cost: 80.00.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1152.86, total cost: 183.31, max cost: 72.05.
+       x     info - Setting: MIN_COST - SSI, runtime: 1102.16, total cost: 179.71, max cost: 68.56.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1108.19, total cost: 174.46, max cost: 58.98.
+       x     info - Setting: MIN_COST - SSI, runtime: 1144.33, total cost: 217.46, max cost: 80.74.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1204.77, total cost: 209.34, max cost: 82.40.
+       x     info - Setting: MIN_COST - SSI, runtime: 1151.31, total cost: 181.38, max cost: 66.60.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1142.19, total cost: 188.38, max cost: 76.98.
+       x     info - Setting: MIN_COST - SSI, runtime: 1153.13, total cost: 197.71, max cost: 84.90.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1145.51, total cost: 183.41, max cost: 76.45.
+       x     info - Setting: MIN_COST - SSI, runtime: 1151.69, total cost: 229.75, max cost: 86.55.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1147.76, total cost: 245.68, max cost: 86.23.
+       x     info - Setting: MIN_COST - SSI, runtime: 1101.72, total cost: 183.69, max cost: 65.27.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1097.84, total cost: 189.89, max cost: 68.62.
+       x     info - Setting: MIN_COST - SSI, runtime: 1196.80, total cost: 175.96, max cost: 80.08.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1148.65, total cost: 175.71, max cost: 79.83.
+       x     info - Setting: MIN_COST - SSI, runtime: 1110.46, total cost: 221.15, max cost: 79.61.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1095.35, total cost: 189.64, max cost: 66.76.
+       x     info -           win.det.   dyn.all.   run time      sum      max
+       x     info -           MIN_COST        SSI    1161.13   211.08    80.07
+       x     info -    REGRET_CLEARING        SSI    1151.25   203.94    77.26
+^CDeep-Thought:classes adrian$ java jade.Boot "x:Experiment(25 3 15 3 info all ssi)"
+Dec 3, 2008 6:18:41 PM jade.core.Runtime beginContainer
+INFO: ----------------------------------
+    This is JADE 3.6 - revision 6032 of 2008/05/05 14:07:10
+    downloaded in Open Source, under LGPL restrictions,
+    at http://jade.tilab.com/
+----------------------------------------
+Dec 3, 2008 6:18:41 PM jade.core.BaseService init
+INFO: Service jade.core.management.AgentManagement initialized
+Dec 3, 2008 6:18:41 PM jade.core.BaseService init
+INFO: Service jade.core.messaging.Messaging initialized
+Dec 3, 2008 6:18:41 PM jade.core.BaseService init
+INFO: Service jade.core.mobility.AgentMobility initialized
+Dec 3, 2008 6:18:41 PM jade.core.BaseService init
+INFO: Service jade.core.event.Notification initialized
+Dec 3, 2008 6:18:41 PM jade.core.messaging.MessagingService clearCachedSlice
+INFO: Clearing cache
+Dec 3, 2008 6:18:41 PM jade.mtp.http.HTTPServer <init>
+INFO: HTTP-MTP Using XML parser com.sun.org.apache.xerces.internal.parsers.SAXParser
+Dec 3, 2008 6:18:41 PM jade.core.messaging.MessagingService boot
+INFO: MTP addresses:
+http://10.0.0.94:7778/acc
+Dec 3, 2008 6:18:41 PM jade.core.AgentContainerImpl joinPlatform
+INFO: --------------------------------------
+Agent container Main-Container@Deep-Thought.local is ready.
+--------------------------------------------
+       x     info - New experiment with 25 runs, 3 robots, 15 tasks (3 per round), ALL and SSI.
+^CDeep-Thought:classes adrian$ java jade.Boot "x:Experiment(25 3 15 3 info all ssi)"
+Dec 3, 2008 6:20:25 PM jade.core.Runtime beginContainer
+INFO: ----------------------------------
+    This is JADE 3.6 - revision 6032 of 2008/05/05 14:07:10
+    downloaded in Open Source, under LGPL restrictions,
+    at http://jade.tilab.com/
+----------------------------------------
+Dec 3, 2008 6:20:25 PM jade.core.BaseService init
+INFO: Service jade.core.management.AgentManagement initialized
+Dec 3, 2008 6:20:25 PM jade.core.BaseService init
+INFO: Service jade.core.messaging.Messaging initialized
+Dec 3, 2008 6:20:25 PM jade.core.BaseService init
+INFO: Service jade.core.mobility.AgentMobility initialized
+Dec 3, 2008 6:20:25 PM jade.core.BaseService init
+INFO: Service jade.core.event.Notification initialized
+Dec 3, 2008 6:20:25 PM jade.core.messaging.MessagingService clearCachedSlice
+INFO: Clearing cache
+Dec 3, 2008 6:20:25 PM jade.mtp.http.HTTPServer <init>
+INFO: HTTP-MTP Using XML parser com.sun.org.apache.xerces.internal.parsers.SAXParser
+Dec 3, 2008 6:20:26 PM jade.core.messaging.MessagingService boot
+INFO: MTP addresses:
+http://10.0.0.94:7778/acc
+Dec 3, 2008 6:20:26 PM jade.core.AgentContainerImpl joinPlatform
+INFO: --------------------------------------
+Agent container Main-Container@Deep-Thought.local is ready.
+--------------------------------------------
+       x     info - New experiment with 25 runs, 3 robots, 15 tasks (3 per round), ALL and SSI.
+       x     info - Setting: MIN_COST - SSI, runtime: 1285.26, total cost: 208.40, max cost: 80.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1217.04, total cost: 208.50, max cost: 80.33.
+       x     info - Setting: MIN_COST - SSI, runtime: 1188.90, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1180.64, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1284.75, total cost: 243.63, max cost: 87.70.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1228.88, total cost: 241.21, max cost: 87.09.
+       x     info - Setting: MIN_COST - SSI, runtime: 1170.81, total cost: 207.66, max cost: 83.15.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1183.70, total cost: 212.74, max cost: 88.18.
+       x     info - Setting: MIN_COST - SSI, runtime: 1164.60, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1165.53, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: MIN_COST - SSI, runtime: 1227.85, total cost: 203.88, max cost: 72.95.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1160.33, total cost: 195.53, max cost: 70.87.
+       x     info - Setting: MIN_COST - SSI, runtime: 1213.82, total cost: 205.44, max cost: 81.17.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1163.17, total cost: 172.85, max cost: 63.80.
+       x     info - Setting: MIN_COST - SSI, runtime: 1144.38, total cost: 217.51, max cost: 83.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1113.23, total cost: 202.83, max cost: 73.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1146.05, total cost: 189.45, max cost: 71.36.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1194.36, total cost: 154.69, max cost: 65.83.
+       x     info - Setting: MIN_COST - SSI, runtime: 1105.48, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1155.84, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: MIN_COST - SSI, runtime: 1145.80, total cost: 224.34, max cost: 83.98.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1220.54, total cost: 189.75, max cost: 76.10.
+       x     info - Setting: MIN_COST - SSI, runtime: 1203.17, total cost: 222.54, max cost: 83.26.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1149.01, total cost: 212.18, max cost: 77.41.
+       x     info - Setting: MIN_COST - SSI, runtime: 1208.81, total cost: 238.95, max cost: 87.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1149.85, total cost: 216.20, max cost: 78.06.
+       x     info - Setting: MIN_COST - SSI, runtime: 1150.99, total cost: 219.86, max cost: 89.38.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1145.49, total cost: 225.36, max cost: 86.35.
+       x     info - Setting: MIN_COST - SSI, runtime: 1158.10, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1156.77, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: MIN_COST - SSI, runtime: 1232.86, total cost: 216.87, max cost: 75.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1062.20, total cost: 216.62, max cost: 75.08.
+       x     info - Setting: MIN_COST - SSI, runtime: 1190.59, total cost: 226.43, max cost: 88.24.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1099.89, total cost: 219.57, max cost: 85.91.
+       x     info - Setting: MIN_COST - SSI, runtime: 1160.25, total cost: 204.13, max cost: 73.61.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1149.25, total cost: 182.33, max cost: 63.86.
+       x     info - Setting: MIN_COST - SSI, runtime: 1096.32, total cost: 207.08, max cost: 81.92.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1110.74, total cost: 215.00, max cost: 79.93.
+       x     info - Setting: MIN_COST - SSI, runtime: 1154.73, total cost: 211.79, max cost: 87.24.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1208.67, total cost: 211.79, max cost: 87.24.
+       x     info - Setting: MIN_COST - SSI, runtime: 1154.91, total cost: 204.65, max cost: 71.06.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1104.97, total cost: 197.80, max cost: 68.39.
+       x     info - Setting: MIN_COST - SSI, runtime: 1112.07, total cost: 220.36, max cost: 74.45.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1144.17, total cost: 214.76, max cost: 79.71.
+       x     info - Setting: MIN_COST - SSI, runtime: 1200.39, total cost: 256.76, max cost: 97.06.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1152.95, total cost: 259.41, max cost: 93.04.
+       x     info - Setting: MIN_COST - SSI, runtime: 1207.00, total cost: 252.72, max cost: 93.32.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1154.45, total cost: 236.87, max cost: 97.67.
+       x     info - Setting: MIN_COST - SSI, runtime: 1152.30, total cost: 218.32, max cost: 90.85.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1162.18, total cost: 209.28, max cost: 90.92.
+       x     info -           win.det.   dyn.all.   run time      sum      max
+       x     info -           MIN_COST        SSI    1178.41   216.78    81.53
+       x     info -    REGRET_CLEARING        SSI    1157.35   208.56    78.78
+^CDeep-Thought:classes adrian$ java jade.Boot "x:Experiment(15 3 15 3 info all ssi)"
+Dec 3, 2008 6:26:33 PM jade.core.Runtime beginContainer
+INFO: ----------------------------------
+    This is JADE 3.6 - revision 6032 of 2008/05/05 14:07:10
+    downloaded in Open Source, under LGPL restrictions,
+    at http://jade.tilab.com/
+----------------------------------------
+Dec 3, 2008 6:26:34 PM jade.core.BaseService init
+INFO: Service jade.core.management.AgentManagement initialized
+Dec 3, 2008 6:26:34 PM jade.core.BaseService init
+INFO: Service jade.core.messaging.Messaging initialized
+Dec 3, 2008 6:26:34 PM jade.core.BaseService init
+INFO: Service jade.core.mobility.AgentMobility initialized
+Dec 3, 2008 6:26:34 PM jade.core.BaseService init
+INFO: Service jade.core.event.Notification initialized
+Dec 3, 2008 6:26:34 PM jade.core.messaging.MessagingService clearCachedSlice
+INFO: Clearing cache
+Dec 3, 2008 6:26:34 PM jade.mtp.http.HTTPServer <init>
+INFO: HTTP-MTP Using XML parser com.sun.org.apache.xerces.internal.parsers.SAXParser
+Dec 3, 2008 6:26:34 PM jade.core.messaging.MessagingService boot
+INFO: MTP addresses:
+http://10.0.0.94:7778/acc
+Dec 3, 2008 6:26:34 PM jade.core.AgentContainerImpl joinPlatform
+INFO: --------------------------------------
+Agent container Main-Container@Deep-Thought.local is ready.
+--------------------------------------------
+       x     info - New experiment with 15 runs, 3 robots, 15 tasks (3 per round), ALL and SSI.
+       x     info - Setting: MIN_COST - SSI, runtime: 1308.80, total cost: 208.40, max cost: 80.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1218.30, total cost: 208.50, max cost: 80.33.
+       x     info - Setting: MIN_COST - SSI, runtime: 1182.14, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1184.26, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1125.18, total cost: 243.63, max cost: 87.70.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1180.99, total cost: 241.21, max cost: 87.09.
+       x     info - Setting: MIN_COST - SSI, runtime: 1118.74, total cost: 207.66, max cost: 83.15.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1126.50, total cost: 212.74, max cost: 88.18.
+       x     info - Setting: MIN_COST - SSI, runtime: 1162.88, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1116.75, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: MIN_COST - SSI, runtime: 1142.36, total cost: 203.88, max cost: 72.95.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1208.61, total cost: 195.53, max cost: 70.87.
+       x     info - Setting: MIN_COST - SSI, runtime: 1213.91, total cost: 205.44, max cost: 81.17.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1167.18, total cost: 172.85, max cost: 63.80.
+       x     info - Setting: MIN_COST - SSI, runtime: 1203.43, total cost: 217.51, max cost: 83.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1155.78, total cost: 202.83, max cost: 73.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1155.26, total cost: 189.45, max cost: 71.36.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1101.34, total cost: 154.69, max cost: 65.83.
+       x     info - Setting: MIN_COST - SSI, runtime: 1151.17, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1104.28, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: MIN_COST - SSI, runtime: 1102.20, total cost: 224.34, max cost: 83.98.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1160.17, total cost: 189.75, max cost: 76.10.
+       x     info - Setting: MIN_COST - SSI, runtime: 1151.58, total cost: 222.54, max cost: 83.26.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1247.78, total cost: 212.18, max cost: 77.41.
+       x     info - Setting: MIN_COST - SSI, runtime: 1148.97, total cost: 238.95, max cost: 87.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1153.24, total cost: 216.20, max cost: 78.06.
+       x     info - Setting: MIN_COST - SSI, runtime: 1143.70, total cost: 219.86, max cost: 89.38.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1195.09, total cost: 225.36, max cost: 86.35.
+       x     info - Setting: MIN_COST - SSI, runtime: 1213.52, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1154.29, total cost: 182.41, max cost: 64.31.
+       x     info -           win.det.   dyn.all.   run time      sum      max
+       x     info -           MIN_COST        SSI    1168.25   213.36    80.33
+       x     info -    REGRET_CLEARING        SSI    1164.97   203.37    76.52
+^CDeep-Thought:classes adrian$ java jade.Boot "x:Experiment(10 3 15 3 info all ssi)"
+Dec 3, 2008 6:29:42 PM jade.core.Runtime beginContainer
+INFO: ----------------------------------
+    This is JADE 3.6 - revision 6032 of 2008/05/05 14:07:10
+    downloaded in Open Source, under LGPL restrictions,
+    at http://jade.tilab.com/
+----------------------------------------
+Dec 3, 2008 6:29:42 PM jade.core.BaseService init
+INFO: Service jade.core.management.AgentManagement initialized
+Dec 3, 2008 6:29:42 PM jade.core.BaseService init
+INFO: Service jade.core.messaging.Messaging initialized
+Dec 3, 2008 6:29:42 PM jade.core.BaseService init
+INFO: Service jade.core.mobility.AgentMobility initialized
+Dec 3, 2008 6:29:42 PM jade.core.BaseService init
+INFO: Service jade.core.event.Notification initialized
+Dec 3, 2008 6:29:42 PM jade.core.messaging.MessagingService clearCachedSlice
+INFO: Clearing cache
+Dec 3, 2008 6:29:42 PM jade.mtp.http.HTTPServer <init>
+INFO: HTTP-MTP Using XML parser com.sun.org.apache.xerces.internal.parsers.SAXParser
+Dec 3, 2008 6:29:42 PM jade.core.messaging.MessagingService boot
+INFO: MTP addresses:
+http://10.0.0.94:7778/acc
+Dec 3, 2008 6:29:42 PM jade.core.AgentContainerImpl joinPlatform
+INFO: --------------------------------------
+Agent container Main-Container@Deep-Thought.local is ready.
+--------------------------------------------
+       x     info - New experiment with 10 runs, 3 robots, 15 tasks (3 per round), ALL and SSI.
+       x     info - Setting: MIN_COST - SSI, runtime: 1295.45, total cost: 208.40, max cost: 80.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1317.07, total cost: 208.50, max cost: 80.33.
+       x     info - Setting: MIN_COST - SSI, runtime: 1148.42, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1228.82, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1230.45, total cost: 243.63, max cost: 87.70.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1193.47, total cost: 241.21, max cost: 87.09.
+       x     info - Setting: MIN_COST - SSI, runtime: 1171.44, total cost: 207.66, max cost: 83.15.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1182.11, total cost: 212.74, max cost: 88.18.
+       x     info - Setting: MIN_COST - SSI, runtime: 1115.79, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1171.55, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: MIN_COST - SSI, runtime: 1261.51, total cost: 203.88, max cost: 72.95.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1112.66, total cost: 195.53, max cost: 70.87.
+       x     info - Setting: MIN_COST - SSI, runtime: 1177.68, total cost: 205.44, max cost: 81.17.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1154.15, total cost: 172.85, max cost: 63.80.
+       x     info - Setting: MIN_COST - SSI, runtime: 1116.45, total cost: 217.51, max cost: 83.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1209.15, total cost: 202.83, max cost: 73.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1157.41, total cost: 189.45, max cost: 71.36.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1159.99, total cost: 154.69, max cost: 65.83.
+       x     info - Setting: MIN_COST - SSI, runtime: 1156.77, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1162.20, total cost: 190.47, max cost: 74.78.
+       x     info -           win.det.   dyn.all.   run time      sum      max
+       x     info -           MIN_COST        SSI    1183.14   211.23    79.65
+       x     info -    REGRET_CLEARING        SSI    1189.12   202.46    76.56
+^CDeep-Thought:classes adrian$ java jade.Boot "x:Experiment(5 3 15 3 info all ssi)"
+Dec 3, 2008 6:31:13 PM jade.core.Runtime beginContainer
+INFO: ----------------------------------
+    This is JADE 3.6 - revision 6032 of 2008/05/05 14:07:10
+    downloaded in Open Source, under LGPL restrictions,
+    at http://jade.tilab.com/
+----------------------------------------
+Dec 3, 2008 6:31:13 PM jade.core.BaseService init
+INFO: Service jade.core.management.AgentManagement initialized
+Dec 3, 2008 6:31:13 PM jade.core.BaseService init
+INFO: Service jade.core.messaging.Messaging initialized
+Dec 3, 2008 6:31:13 PM jade.core.BaseService init
+INFO: Service jade.core.mobility.AgentMobility initialized
+Dec 3, 2008 6:31:13 PM jade.core.BaseService init
+INFO: Service jade.core.event.Notification initialized
+Dec 3, 2008 6:31:13 PM jade.core.messaging.MessagingService clearCachedSlice
+INFO: Clearing cache
+Dec 3, 2008 6:31:13 PM jade.mtp.http.HTTPServer <init>
+INFO: HTTP-MTP Using XML parser com.sun.org.apache.xerces.internal.parsers.SAXParser
+Dec 3, 2008 6:31:13 PM jade.core.messaging.MessagingService boot
+INFO: MTP addresses:
+http://10.0.0.94:7778/acc
+Dec 3, 2008 6:31:14 PM jade.core.AgentContainerImpl joinPlatform
+INFO: --------------------------------------
+Agent container Main-Container@Deep-Thought.local is ready.
+--------------------------------------------
+       x     info - New experiment with 5 runs, 3 robots, 15 tasks (3 per round), ALL and SSI.
+       x     info - Setting: MIN_COST - SSI, runtime: 1322.25, total cost: 208.40, max cost: 80.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1230.89, total cost: 208.50, max cost: 80.33.
+       x     info - Setting: MIN_COST - SSI, runtime: 1324.41, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1193.50, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1227.74, total cost: 243.63, max cost: 87.70.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1231.79, total cost: 241.21, max cost: 87.09.
+       x     info - Setting: MIN_COST - SSI, runtime: 1174.16, total cost: 207.66, max cost: 83.15.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1226.27, total cost: 212.74, max cost: 88.18.
+       x     info - Setting: MIN_COST - SSI, runtime: 1277.03, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1226.90, total cost: 236.19, max cost: 87.64.
+       x     info -           win.det.   dyn.all.   run time      sum      max
+       x     info -           MIN_COST        SSI    1265.12   221.10    82.57
+       x     info -    REGRET_CLEARING        SSI    1221.87   221.65    83.45
+^CDeep-Thought:classes adrian$ 

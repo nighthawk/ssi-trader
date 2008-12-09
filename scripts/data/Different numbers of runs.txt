@@ -1,0 +1,312 @@
+Last login: Wed Dec  3 14:46:10 on ttys007
+Deep-Thought:~ adrian$ cd Projects/Multi-robots/code/talker/app/classes/
+Deep-Thought:classes adrian$ mate ../..
+Deep-Thought:classes adrian$ export ICEJ_PATH=../lib/ice
+Deep-Thought:classes adrian$ export CLASSPATH=$CLASSPATH:.:../lib/jade/jade.jar:../lib/ice/Ice.jar:../classes
+
+
+Deep-Thought:classes adrian$ java jade.Boot "x:Experiment(50 3 15 3 info all ssi)"
+INFO: --------------------------------------
+Agent container Main-Container@Deep-Thought.local is ready.
+--------------------------------------------
+       x     info - New experiment with 50 runs, 3 robots, 15 tasks (3 per round), ALL and SSI.
+       x     info - Setting: MIN_COST - SSI, runtime: 1235.53, total cost: 208.40, max cost: 80.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1351.91, total cost: 208.50, max cost: 80.33.
+       x     info - Setting: MIN_COST - SSI, runtime: 1247.57, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1188.41, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1176.19, total cost: 243.63, max cost: 87.70.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1242.31, total cost: 241.21, max cost: 87.09.
+       x     info - Setting: MIN_COST - SSI, runtime: 1236.67, total cost: 207.66, max cost: 83.15.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1221.00, total cost: 212.74, max cost: 88.18.
+       x     info - Setting: MIN_COST - SSI, runtime: 1186.61, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1187.74, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: MIN_COST - SSI, runtime: 1201.25, total cost: 203.88, max cost: 72.95.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1215.89, total cost: 195.53, max cost: 70.87.
+       x     info - Setting: MIN_COST - SSI, runtime: 1174.47, total cost: 205.44, max cost: 81.17.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1241.38, total cost: 172.85, max cost: 63.80.
+       x     info - Setting: MIN_COST - SSI, runtime: 1220.88, total cost: 217.51, max cost: 83.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1121.46, total cost: 202.83, max cost: 73.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1160.49, total cost: 189.45, max cost: 71.36.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1172.06, total cost: 154.69, max cost: 65.83.
+       x     info - Setting: MIN_COST - SSI, runtime: 1214.25, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1125.68, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: MIN_COST - SSI, runtime: 1165.92, total cost: 224.34, max cost: 83.98.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1170.12, total cost: 189.75, max cost: 76.10.
+       x     info - Setting: MIN_COST - SSI, runtime: 1159.59, total cost: 222.54, max cost: 83.26.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1164.82, total cost: 212.18, max cost: 77.41.
+       x     info - Setting: MIN_COST - SSI, runtime: 1160.29, total cost: 238.95, max cost: 87.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1164.15, total cost: 216.20, max cost: 78.06.
+       x     info - Setting: MIN_COST - SSI, runtime: 1256.65, total cost: 219.86, max cost: 89.38.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1170.23, total cost: 225.36, max cost: 86.35.
+       x     info - Setting: MIN_COST - SSI, runtime: 1205.67, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1154.40, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: MIN_COST - SSI, runtime: 1163.30, total cost: 216.87, max cost: 75.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1157.45, total cost: 216.62, max cost: 75.08.
+       x     info - Setting: MIN_COST - SSI, runtime: 1211.55, total cost: 226.43, max cost: 88.24.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1210.30, total cost: 219.57, max cost: 85.91.
+       x     info - Setting: MIN_COST - SSI, runtime: 1174.89, total cost: 204.13, max cost: 73.61.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1211.16, total cost: 182.33, max cost: 63.86.
+       x     info - Setting: MIN_COST - SSI, runtime: 1161.73, total cost: 207.08, max cost: 81.92.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1160.70, total cost: 215.00, max cost: 79.93.
+       x     info - Setting: MIN_COST - SSI, runtime: 1207.12, total cost: 211.79, max cost: 87.24.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1228.51, total cost: 211.79, max cost: 87.24.
+       x     info - Setting: MIN_COST - SSI, runtime: 1389.39, total cost: 204.65, max cost: 71.06.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1326.79, total cost: 197.80, max cost: 68.39.
+       x     info - Setting: MIN_COST - SSI, runtime: 1158.22, total cost: 220.36, max cost: 74.45.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1220.63, total cost: 214.76, max cost: 79.71.
+       x     info - Setting: MIN_COST - SSI, runtime: 1210.84, total cost: 256.76, max cost: 97.06.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1220.78, total cost: 259.41, max cost: 93.04.
+       x     info - Setting: MIN_COST - SSI, runtime: 1207.81, total cost: 252.72, max cost: 93.32.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1162.78, total cost: 236.87, max cost: 97.67.
+       x     info - Setting: MIN_COST - SSI, runtime: 1208.37, total cost: 218.32, max cost: 90.85.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1413.59, total cost: 209.28, max cost: 90.92.
+       x     info - Setting: MIN_COST - SSI, runtime: 1215.82, total cost: 190.45, max cost: 71.80.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1264.58, total cost: 184.23, max cost: 66.21.
+       x     info - Setting: MIN_COST - SSI, runtime: 1160.26, total cost: 191.03, max cost: 80.00.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1158.21, total cost: 183.31, max cost: 72.05.
+       x     info - Setting: MIN_COST - SSI, runtime: 1109.51, total cost: 179.71, max cost: 68.56.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1073.30, total cost: 174.46, max cost: 58.98.
+       x     info - Setting: MIN_COST - SSI, runtime: 1216.07, total cost: 217.46, max cost: 80.74.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1167.57, total cost: 209.34, max cost: 82.40.
+       x     info - Setting: MIN_COST - SSI, runtime: 1162.28, total cost: 181.38, max cost: 66.60.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1153.42, total cost: 188.38, max cost: 76.98.
+       x     info - Setting: MIN_COST - SSI, runtime: 1154.18, total cost: 197.71, max cost: 84.90.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1158.95, total cost: 183.41, max cost: 76.45.
+       x     info - Setting: MIN_COST - SSI, runtime: 1167.80, total cost: 229.75, max cost: 86.55.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1153.37, total cost: 245.68, max cost: 86.23.
+       x     info - Setting: MIN_COST - SSI, runtime: 1111.70, total cost: 183.69, max cost: 65.27.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1109.25, total cost: 189.89, max cost: 68.62.
+       x     info - Setting: MIN_COST - SSI, runtime: 1295.01, total cost: 175.96, max cost: 80.08.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1150.54, total cost: 175.71, max cost: 79.83.
+       x     info - Setting: MIN_COST - SSI, runtime: 1105.77, total cost: 221.15, max cost: 79.61.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1099.64, total cost: 189.64, max cost: 66.76.
+       x     info - Setting: MIN_COST - SSI, runtime: 1157.16, total cost: 219.33, max cost: 81.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1155.97, total cost: 227.16, max cost: 77.75.
+       x     info - Setting: MIN_COST - SSI, runtime: 1210.22, total cost: 263.35, max cost: 94.75.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1111.93, total cost: 253.14, max cost: 91.39.
+       x     info - Setting: MIN_COST - SSI, runtime: 1148.71, total cost: 221.60, max cost: 81.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1163.35, total cost: 237.22, max cost: 85.41.
+       x     info - Setting: MIN_COST - SSI, runtime: 1214.68, total cost: 244.55, max cost: 87.53.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1161.43, total cost: 246.73, max cost: 92.89.
+       x     info - Setting: MIN_COST - SSI, runtime: 1147.67, total cost: 148.26, max cost: 55.44.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1223.37, total cost: 154.53, max cost: 58.67.
+       x     info - Setting: MIN_COST - SSI, runtime: 1352.33, total cost: 227.72, max cost: 86.00.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1157.04, total cost: 210.51, max cost: 84.57.
+       x     info - Setting: MIN_COST - SSI, runtime: 1164.61, total cost: 177.33, max cost: 69.49.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1104.32, total cost: 197.71, max cost: 76.69.
+       x     info - Setting: MIN_COST - SSI, runtime: 1101.51, total cost: 196.63, max cost: 71.45.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1154.04, total cost: 190.28, max cost: 69.96.
+       x     info - Setting: MIN_COST - SSI, runtime: 1204.24, total cost: 191.98, max cost: 69.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1419.47, total cost: 191.98, max cost: 69.33.
+       x     info - Setting: MIN_COST - SSI, runtime: 1235.76, total cost: 211.53, max cost: 74.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1154.01, total cost: 199.57, max cost: 68.86.
+       x     info - Setting: MIN_COST - SSI, runtime: 1204.82, total cost: 201.74, max cost: 79.93.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1150.56, total cost: 201.74, max cost: 79.93.
+       x     info - Setting: MIN_COST - SSI, runtime: 1164.56, total cost: 242.37, max cost: 92.52.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1208.87, total cost: 232.27, max cost: 87.12.
+       x     info - Setting: MIN_COST - SSI, runtime: 1161.34, total cost: 182.80, max cost: 70.89.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1178.30, total cost: 183.96, max cost: 64.85.
+       x     info - Setting: MIN_COST - SSI, runtime: 1148.41, total cost: 215.89, max cost: 87.25.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1156.66, total cost: 202.81, max cost: 74.15.
+       x     info - Setting: MIN_COST - SSI, runtime: 1168.15, total cost: 180.21, max cost: 71.75.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1120.84, total cost: 185.25, max cost: 65.87.
+       x     info -           win.det.   dyn.all.   run time      sum      max
+       x     info -           MIN_COST        SSI    1191.56   210.26    79.51
+       x     info -    REGRET_CLEARING        SSI    1186.26   205.06    77.03
+       
+Deep-Thought:classes adrian$ java jade.Boot "x:Experiment(35 3 15 3 info all ssi)"
+INFO: --------------------------------------
+Agent container Main-Container@Deep-Thought.local is ready.
+--------------------------------------------
+       x     info - New experiment with 35 runs, 3 robots, 15 tasks (3 per round), ALL and SSI.
+       x     info - Setting: MIN_COST - SSI, runtime: 1320.64, total cost: 208.40, max cost: 80.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1219.86, total cost: 208.50, max cost: 80.33.
+       x     info - Setting: MIN_COST - SSI, runtime: 1458.84, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1252.77, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1225.50, total cost: 243.63, max cost: 87.70.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1192.50, total cost: 241.21, max cost: 87.09.
+       x     info - Setting: MIN_COST - SSI, runtime: 1340.16, total cost: 207.66, max cost: 83.15.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1231.38, total cost: 212.74, max cost: 88.18.
+       x     info - Setting: MIN_COST - SSI, runtime: 1187.70, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1173.09, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: MIN_COST - SSI, runtime: 1188.71, total cost: 203.88, max cost: 72.95.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1246.03, total cost: 195.53, max cost: 70.87.
+       x     info - Setting: MIN_COST - SSI, runtime: 1172.23, total cost: 205.44, max cost: 81.17.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1169.41, total cost: 172.85, max cost: 63.80.
+       x     info - Setting: MIN_COST - SSI, runtime: 1251.59, total cost: 217.51, max cost: 83.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1228.86, total cost: 202.83, max cost: 73.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1218.26, total cost: 189.45, max cost: 71.36.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1217.54, total cost: 154.69, max cost: 65.83.
+       x     info - Setting: MIN_COST - SSI, runtime: 1213.29, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1226.66, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: MIN_COST - SSI, runtime: 1172.76, total cost: 224.34, max cost: 83.98.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1319.98, total cost: 189.75, max cost: 76.10.
+       x     info - Setting: MIN_COST - SSI, runtime: 1529.36, total cost: 222.54, max cost: 83.26.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1421.76, total cost: 212.18, max cost: 77.41.
+       x     info - Setting: MIN_COST - SSI, runtime: 1213.38, total cost: 238.95, max cost: 87.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1254.90, total cost: 216.20, max cost: 78.06.
+       x     info - Setting: MIN_COST - SSI, runtime: 1105.96, total cost: 219.86, max cost: 89.38.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1265.30, total cost: 225.36, max cost: 86.35.
+       x     info - Setting: MIN_COST - SSI, runtime: 1159.63, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1177.60, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: MIN_COST - SSI, runtime: 1203.81, total cost: 216.87, max cost: 75.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1154.19, total cost: 216.62, max cost: 75.08.
+       x     info - Setting: MIN_COST - SSI, runtime: 1158.96, total cost: 226.43, max cost: 88.24.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1158.76, total cost: 219.57, max cost: 85.91.
+       x     info - Setting: MIN_COST - SSI, runtime: 1152.16, total cost: 204.13, max cost: 73.61.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1165.18, total cost: 182.33, max cost: 63.86.
+       x     info - Setting: MIN_COST - SSI, runtime: 1152.10, total cost: 207.08, max cost: 81.92.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1157.94, total cost: 215.00, max cost: 79.93.
+       x     info - Setting: MIN_COST - SSI, runtime: 1204.17, total cost: 211.79, max cost: 87.24.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1212.00, total cost: 211.79, max cost: 87.24.
+       x     info - Setting: MIN_COST - SSI, runtime: 1201.09, total cost: 204.65, max cost: 71.06.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1208.93, total cost: 197.80, max cost: 68.39.
+       x     info - Setting: MIN_COST - SSI, runtime: 1167.67, total cost: 220.36, max cost: 74.45.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1152.00, total cost: 214.76, max cost: 79.71.
+       x     info - Setting: MIN_COST - SSI, runtime: 1381.36, total cost: 256.76, max cost: 97.06.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1178.96, total cost: 259.41, max cost: 93.04.
+       x     info - Setting: MIN_COST - SSI, runtime: 1265.65, total cost: 252.72, max cost: 93.32.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1258.76, total cost: 236.87, max cost: 97.67.
+       x     info - Setting: MIN_COST - SSI, runtime: 1205.10, total cost: 218.32, max cost: 90.85.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1155.54, total cost: 209.28, max cost: 90.92.
+       x     info - Setting: MIN_COST - SSI, runtime: 1162.81, total cost: 190.45, max cost: 71.80.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1234.04, total cost: 184.23, max cost: 66.21.
+       x     info - Setting: MIN_COST - SSI, runtime: 1158.99, total cost: 191.03, max cost: 80.00.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1164.38, total cost: 183.31, max cost: 72.05.
+       x     info - Setting: MIN_COST - SSI, runtime: 1097.93, total cost: 179.71, max cost: 68.56.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1104.81, total cost: 174.46, max cost: 58.98.
+       x     info - Setting: MIN_COST - SSI, runtime: 1101.32, total cost: 217.46, max cost: 80.74.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1156.26, total cost: 209.34, max cost: 82.40.
+       x     info - Setting: MIN_COST - SSI, runtime: 1244.64, total cost: 181.38, max cost: 66.60.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1180.15, total cost: 188.38, max cost: 76.98.
+       x     info - Setting: MIN_COST - SSI, runtime: 1101.83, total cost: 197.71, max cost: 84.90.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1153.76, total cost: 183.41, max cost: 76.45.
+       x     info - Setting: MIN_COST - SSI, runtime: 1248.68, total cost: 229.75, max cost: 86.55.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1159.49, total cost: 245.68, max cost: 86.23.
+       x     info - Setting: MIN_COST - SSI, runtime: 1149.38, total cost: 183.69, max cost: 65.27.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1154.42, total cost: 189.89, max cost: 68.62.
+       x     info - Setting: MIN_COST - SSI, runtime: 1162.84, total cost: 175.96, max cost: 80.08.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1157.46, total cost: 175.71, max cost: 79.83.
+       x     info - Setting: MIN_COST - SSI, runtime: 1150.00, total cost: 221.15, max cost: 79.61.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1159.09, total cost: 189.64, max cost: 66.76.
+       x     info -           win.det.   dyn.all.   run time      sum      max
+       x     info -           MIN_COST        SSI    1212.24   211.08    80.07
+       x     info -    REGRET_CLEARING        SSI    1200.68   203.94    77.26
+
+Deep-Thought:classes adrian$ java jade.Boot "x:Experiment(25 3 15 3 info all ssi)"
+INFO: --------------------------------------
+Agent container Main-Container@Deep-Thought.local is ready.
+--------------------------------------------
+       x     info - New experiment with 25 runs, 3 robots, 15 tasks (3 per round), ALL and SSI.
+       x     info - Setting: MIN_COST - SSI, runtime: 1356.64, total cost: 208.40, max cost: 80.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1222.06, total cost: 208.50, max cost: 80.33.
+       x     info - Setting: MIN_COST - SSI, runtime: 1248.80, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1187.31, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1233.47, total cost: 243.63, max cost: 87.70.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1240.15, total cost: 241.21, max cost: 87.09.
+       x     info - Setting: MIN_COST - SSI, runtime: 1171.82, total cost: 207.66, max cost: 83.15.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1215.52, total cost: 212.74, max cost: 88.18.
+       x     info - Setting: MIN_COST - SSI, runtime: 1306.26, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1178.10, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: MIN_COST - SSI, runtime: 1280.90, total cost: 203.88, max cost: 72.95.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1153.99, total cost: 195.53, max cost: 70.87.
+       x     info - Setting: MIN_COST - SSI, runtime: 1128.24, total cost: 205.44, max cost: 81.17.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1164.95, total cost: 172.85, max cost: 63.80.
+       x     info - Setting: MIN_COST - SSI, runtime: 1204.89, total cost: 217.51, max cost: 83.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1162.51, total cost: 202.83, max cost: 73.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1164.78, total cost: 189.45, max cost: 71.36.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1157.91, total cost: 154.69, max cost: 65.83.
+       x     info - Setting: MIN_COST - SSI, runtime: 1257.57, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1109.31, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: MIN_COST - SSI, runtime: 1155.73, total cost: 224.34, max cost: 83.98.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1166.62, total cost: 189.75, max cost: 76.10.
+       x     info - Setting: MIN_COST - SSI, runtime: 1207.02, total cost: 222.54, max cost: 83.26.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1306.90, total cost: 212.18, max cost: 77.41.
+       x     info - Setting: MIN_COST - SSI, runtime: 1156.96, total cost: 238.95, max cost: 87.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1161.92, total cost: 216.20, max cost: 78.06.
+       x     info - Setting: MIN_COST - SSI, runtime: 1232.88, total cost: 219.86, max cost: 89.38.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1163.76, total cost: 225.36, max cost: 86.35.
+       x     info - Setting: MIN_COST - SSI, runtime: 1159.40, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1116.06, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: MIN_COST - SSI, runtime: 1149.22, total cost: 216.87, max cost: 75.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1158.62, total cost: 216.62, max cost: 75.08.
+       x     info - Setting: MIN_COST - SSI, runtime: 1199.71, total cost: 226.43, max cost: 88.24.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1148.29, total cost: 219.57, max cost: 85.91.
+       x     info - Setting: MIN_COST - SSI, runtime: 1258.42, total cost: 204.13, max cost: 73.61.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1237.80, total cost: 182.33, max cost: 63.86.
+       x     info - Setting: MIN_COST - SSI, runtime: 1205.07, total cost: 207.08, max cost: 81.92.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1155.18, total cost: 215.00, max cost: 79.93.
+       x     info - Setting: MIN_COST - SSI, runtime: 1158.57, total cost: 211.79, max cost: 87.24.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1208.59, total cost: 211.79, max cost: 87.24.
+       x     info - Setting: MIN_COST - SSI, runtime: 1258.47, total cost: 204.65, max cost: 71.06.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1149.86, total cost: 197.80, max cost: 68.39.
+       x     info - Setting: MIN_COST - SSI, runtime: 1157.63, total cost: 220.36, max cost: 74.45.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1052.95, total cost: 214.76, max cost: 79.71.
+       x     info - Setting: MIN_COST - SSI, runtime: 1208.26, total cost: 256.76, max cost: 97.06.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1157.02, total cost: 259.41, max cost: 93.04.
+       x     info - Setting: MIN_COST - SSI, runtime: 1265.23, total cost: 252.72, max cost: 93.32.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1216.32, total cost: 236.87, max cost: 97.67.
+       x     info - Setting: MIN_COST - SSI, runtime: 1211.11, total cost: 218.32, max cost: 90.85.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1164.23, total cost: 209.28, max cost: 90.92.
+       x     info -           win.det.   dyn.all.   run time      sum      max
+       x     info -           MIN_COST        SSI    1213.48   216.78    81.53
+       x     info -    REGRET_CLEARING        SSI    1174.24   208.56    78.78
+       
+Deep-Thought:classes adrian$ java jade.Boot "x:Experiment(15 3 15 3 info all ssi)"
+INFO: --------------------------------------
+Agent container Main-Container@Deep-Thought.local is ready.
+--------------------------------------------
+       x     info - New experiment with 15 runs, 3 robots, 15 tasks (3 per round), ALL and SSI.
+       x     info - Setting: MIN_COST - SSI, runtime: 1340.02, total cost: 208.40, max cost: 80.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1226.23, total cost: 208.50, max cost: 80.33.
+       x     info - Setting: MIN_COST - SSI, runtime: 1208.44, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1218.38, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1182.66, total cost: 243.63, max cost: 87.70.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1179.48, total cost: 241.21, max cost: 87.09.
+       x     info - Setting: MIN_COST - SSI, runtime: 1170.55, total cost: 207.66, max cost: 83.15.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1185.55, total cost: 212.74, max cost: 88.18.
+       x     info - Setting: MIN_COST - SSI, runtime: 1198.11, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1184.76, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: MIN_COST - SSI, runtime: 1264.19, total cost: 203.88, max cost: 72.95.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1228.14, total cost: 195.53, max cost: 70.87.
+       x     info - Setting: MIN_COST - SSI, runtime: 1173.88, total cost: 205.44, max cost: 81.17.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1156.91, total cost: 172.85, max cost: 63.80.
+       x     info - Setting: MIN_COST - SSI, runtime: 1160.62, total cost: 217.51, max cost: 83.41.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1215.70, total cost: 202.83, max cost: 73.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1156.82, total cost: 189.45, max cost: 71.36.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1155.21, total cost: 154.69, max cost: 65.83.
+       x     info - Setting: MIN_COST - SSI, runtime: 1162.57, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1222.78, total cost: 190.47, max cost: 74.78.
+       x     info - Setting: MIN_COST - SSI, runtime: 1520.94, total cost: 224.34, max cost: 83.98.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1176.03, total cost: 189.75, max cost: 76.10.
+       x     info - Setting: MIN_COST - SSI, runtime: 1216.34, total cost: 222.54, max cost: 83.26.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1111.66, total cost: 212.18, max cost: 77.41.
+       x     info - Setting: MIN_COST - SSI, runtime: 1155.06, total cost: 238.95, max cost: 87.58.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1164.42, total cost: 216.20, max cost: 78.06.
+       x     info - Setting: MIN_COST - SSI, runtime: 1210.27, total cost: 219.86, max cost: 89.38.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1153.85, total cost: 225.36, max cost: 86.35.
+       x     info - Setting: MIN_COST - SSI, runtime: 1173.00, total cost: 182.41, max cost: 64.31.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1213.74, total cost: 182.41, max cost: 64.31.
+       x     info -           win.det.   dyn.all.   run time      sum      max
+       x     info -           MIN_COST        SSI    1219.56   213.36    80.33
+       x     info -    REGRET_CLEARING        SSI    1186.19   203.37    76.52
+       
+Deep-Thought:classes adrian$ java jade.Boot "x:Experiment(5 3 15 3 info all ssi)"
+INFO: --------------------------------------
+Agent container Main-Container@Deep-Thought.local is ready.
+--------------------------------------------
+       x     info - New experiment with 5 runs, 3 robots, 15 tasks (3 per round), ALL and SSI.
+       x     info - Setting: MIN_COST - SSI, runtime: 1567.53, total cost: 208.40, max cost: 80.33.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1334.12, total cost: 208.50, max cost: 80.33.
+       x     info - Setting: MIN_COST - SSI, runtime: 1304.53, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1207.43, total cost: 209.63, max cost: 74.03.
+       x     info - Setting: MIN_COST - SSI, runtime: 1305.64, total cost: 243.63, max cost: 87.70.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1286.64, total cost: 241.21, max cost: 87.09.
+       x     info - Setting: MIN_COST - SSI, runtime: 1191.66, total cost: 207.66, max cost: 83.15.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1228.64, total cost: 212.74, max cost: 88.18.
+       x     info - Setting: MIN_COST - SSI, runtime: 1181.44, total cost: 236.19, max cost: 87.64.
+       x     info - Setting: REGRET_CLEARING - SSI, runtime: 1173.53, total cost: 236.19, max cost: 87.64.
+       x     info -           win.det.   dyn.all.   run time      sum      max
+       x     info -           MIN_COST        SSI    1310.16   221.10    82.57
+       x     info -    REGRET_CLEARING        SSI    1246.07   221.65    83.45
+

@@ -61,7 +61,7 @@ public class GenericRobot extends AuctionAgent {
 
 	// Orca interfaces
 	private Ice.Communicator 		ic;
-	private PathEvaluatorPrx 		patheval; // used to find best bundles
+	private GoalEvaluatorPrx 		goaleval; // used to find best bundles
 	private orca.Localise2dPrx	localiser; // used to get position of robot
 	private orca.PathFollower2dPrx follower; // used to drive robot around
 
@@ -233,18 +233,18 @@ public class GenericRobot extends AuctionAgent {
 		log(DEBUG.SPAM, "initProxies: Ice is connecting to " + DEFAULT_ARGS[0]);
 		this.ic = Ice.Util.initialize(DEFAULT_ARGS);
 		
-		String patheval_name 	= ORCA_NAME_GOAL_EVAL.replace("<robo_colour>", robo_colour);
+		String goaleval_name 	= ORCA_NAME_GOAL_EVAL.replace("<robo_colour>", robo_colour);
 		String localiser_name = ORCA_NAME_PATH_FOLLOWER.replace("<robo_colour>", robo_colour);
 		String follower_name 	= ORCA_NAME_LOCALISER.replace("<robo_colour>", robo_colour);
 
-		// Interface to PathEvaluator (same for all robots)
+		// Interface to GoalEvaluator (same for all robots)
 		try {
-			Ice.ObjectPrx patheval_base = this.ic.stringToProxy(patheval_name);
-			if (null == (this.patheval = PathEvaluatorPrxHelper.checkedCast(patheval_base)))
+			Ice.ObjectPrx goaleval_base = this.ic.stringToProxy(goaleval_name);
+			if (null == (this.goaleval = GoalEvaluatorPrxHelper.checkedCast(goaleval_base)))
 				throw new Error("Goal Evaluator proxy could not be based.");
 				
 		} catch (Exception e) {
-			log(DEBUG.ERROR, "initProxies: could not connect to goal evaluator component (" + patheval_name + ").");
+			log(DEBUG.ERROR, "initProxies: could not connect to goal evaluator component (" + goaleval_name + ").");
 			e.printStackTrace();
 			return false;
 		}
@@ -433,7 +433,7 @@ public class GenericRobot extends AuctionAgent {
 	
 	protected Bundle2d[] getBundlesWithCosts(orca.Frame2d start, Task2d[] committed, Task2d[] new_tasks, int bundle_size, int max_bundles) {
 		// set up task for goal evaluator
-		PathEvaluatorTask task = new PathEvaluatorTask();
+		GoalEvaluatorTask task = new GoalEvaluatorTask();
 	  task.maxBundles 		= max_bundles;
 	  task.bundleSize 		= bundle_size;
 	  task.start 					= start;
@@ -447,11 +447,11 @@ public class GenericRobot extends AuctionAgent {
 		task.id					= task.sender + "-" + some_number;
 
 		// run goal evaluator and give it a couple of chances
-		PathEvaluatorResult result = null;
+		GoalEvaluatorResult result = null;
 
 		// set task for goale valuator
 		try {
-		  this.patheval.setTask(task);
+		  this.goaleval.setTask(task);
 		} catch (Ice.TimeoutException e) {
 			log(DEBUG.ERROR, "getBundlesWithCosts: Goal evaluator timed out.");
 			return new Bundle2d[0];
@@ -469,7 +469,7 @@ public class GenericRobot extends AuctionAgent {
 
 		while(keep_looking) {
 			try {
-				result = this.patheval.getData(task.sender);
+				result = this.goaleval.getData(task.sender);
 			} catch (Ice.UnknownUserException e) {
 				// fall through
 			}

@@ -8,7 +8,7 @@
 # **********************************************************************
 
 # Ice version 3.2.1
-# Generated from file `pathevaluator.ice'
+# Generated from file `goalevaluator.ice'
 
 require 'Ice'
 require 'orca/common.rb'
@@ -87,8 +87,8 @@ module Talker
         T_BundleList2d = ::Ice::__defineSequence('::talker::BundleList2d', ::Talker::T_Bundle2d)
     end
 
-    if not defined?(::Talker::PathEvaluatorResult)
-        class PathEvaluatorResult
+    if not defined?(::Talker::GoalEvaluatorResult)
+        class GoalEvaluatorResult
             def initialize(id='', data=nil)
                 @id = id
                 @data = data
@@ -109,28 +109,28 @@ module Talker
             end
 
             def inspect
-                ::Ice::__stringify(self, T_PathEvaluatorResult)
+                ::Ice::__stringify(self, T_GoalEvaluatorResult)
             end
 
             attr_accessor :id, :data
         end
 
-        T_PathEvaluatorResult = ::Ice::__defineStruct('::talker::PathEvaluatorResult', PathEvaluatorResult, [
+        T_GoalEvaluatorResult = ::Ice::__defineStruct('::talker::GoalEvaluatorResult', GoalEvaluatorResult, [
             ["id", ::Ice::T_string],
             ["data", ::Talker::T_BundleList2d]
         ])
     end
 
-    if not defined?(::Talker::PathEvaluatorConsumer_mixin)
-        module PathEvaluatorConsumer_mixin
+    if not defined?(::Talker::GoalEvaluatorConsumer_mixin)
+        module GoalEvaluatorConsumer_mixin
             include ::Ice::Object_mixin
 
             def ice_ids(current=nil)
-                ['::Ice::Object', '::talker::PathEvaluatorConsumer']
+                ['::Ice::Object', '::talker::GoalEvaluatorConsumer']
             end
 
             def ice_id(current=nil)
-                '::talker::PathEvaluatorConsumer'
+                '::talker::GoalEvaluatorConsumer'
             end
 
             #
@@ -139,46 +139,46 @@ module Talker
             # def setData(obj, current=nil)
 
             def inspect
-                ::Ice::__stringify(self, T_PathEvaluatorConsumer)
+                ::Ice::__stringify(self, T_GoalEvaluatorConsumer)
             end
         end
-        class PathEvaluatorConsumer
-            include PathEvaluatorConsumer_mixin
+        class GoalEvaluatorConsumer
+            include GoalEvaluatorConsumer_mixin
         end
-        module PathEvaluatorConsumerPrx_mixin
+        module GoalEvaluatorConsumerPrx_mixin
 
             def setData(obj, _ctx=nil)
-                PathEvaluatorConsumer_mixin::OP_setData.invoke(self, [obj], _ctx)
+                GoalEvaluatorConsumer_mixin::OP_setData.invoke(self, [obj], _ctx)
             end
         end
-        class PathEvaluatorConsumerPrx < ::Ice::ObjectPrx
-            include PathEvaluatorConsumerPrx_mixin
+        class GoalEvaluatorConsumerPrx < ::Ice::ObjectPrx
+            include GoalEvaluatorConsumerPrx_mixin
 
-            def PathEvaluatorConsumerPrx.checkedCast(proxy, facetOrCtx=nil, _ctx=nil)
-                ice_checkedCast(proxy, '::talker::PathEvaluatorConsumer', facetOrCtx, _ctx)
+            def GoalEvaluatorConsumerPrx.checkedCast(proxy, facetOrCtx=nil, _ctx=nil)
+                ice_checkedCast(proxy, '::talker::GoalEvaluatorConsumer', facetOrCtx, _ctx)
             end
 
-            def PathEvaluatorConsumerPrx.uncheckedCast(proxy, facet=nil)
+            def GoalEvaluatorConsumerPrx.uncheckedCast(proxy, facet=nil)
                 ice_uncheckedCast(proxy, facet)
             end
         end
 
-        if not defined?(::Talker::T_PathEvaluatorConsumer)
-            T_PathEvaluatorConsumer = ::Ice::__declareClass('::talker::PathEvaluatorConsumer')
-            T_PathEvaluatorConsumerPrx = ::Ice::__declareProxy('::talker::PathEvaluatorConsumer')
+        if not defined?(::Talker::T_GoalEvaluatorConsumer)
+            T_GoalEvaluatorConsumer = ::Ice::__declareClass('::talker::GoalEvaluatorConsumer')
+            T_GoalEvaluatorConsumerPrx = ::Ice::__declareProxy('::talker::GoalEvaluatorConsumer')
         end
 
-        T_PathEvaluatorConsumer.defineClass(PathEvaluatorConsumer, true, nil, [], [])
-        PathEvaluatorConsumer_mixin::ICE_TYPE = T_PathEvaluatorConsumer
+        T_GoalEvaluatorConsumer.defineClass(GoalEvaluatorConsumer, true, nil, [], [])
+        GoalEvaluatorConsumer_mixin::ICE_TYPE = T_GoalEvaluatorConsumer
 
-        T_PathEvaluatorConsumerPrx.defineProxy(PathEvaluatorConsumerPrx, T_PathEvaluatorConsumer)
-        PathEvaluatorConsumerPrx::ICE_TYPE = T_PathEvaluatorConsumerPrx
+        T_GoalEvaluatorConsumerPrx.defineProxy(GoalEvaluatorConsumerPrx, T_GoalEvaluatorConsumer)
+        GoalEvaluatorConsumerPrx::ICE_TYPE = T_GoalEvaluatorConsumerPrx
 
-        PathEvaluatorConsumer_mixin::OP_setData = ::Ice::__defineOperation('setData', ::Ice::OperationMode::Normal, ::Ice::OperationMode::Normal, false, [::Talker::T_PathEvaluatorResult], [], nil, [])
+        GoalEvaluatorConsumer_mixin::OP_setData = ::Ice::__defineOperation('setData', ::Ice::OperationMode::Normal, ::Ice::OperationMode::Normal, false, [::Talker::T_GoalEvaluatorResult], [], nil, [])
     end
 
-    if not defined?(::Talker::PathEvaluatorTask)
-        class PathEvaluatorTask
+    if not defined?(::Talker::GoalEvaluatorTask)
+        class GoalEvaluatorTask
             def initialize(id='', sender='', maxBundles=0, bundleSize=0, newTasks=nil, committedTasks=nil, start=::Orca::Frame2d.new, prx=nil)
                 @id = id
                 @sender = sender
@@ -217,13 +217,13 @@ module Talker
             end
 
             def inspect
-                ::Ice::__stringify(self, T_PathEvaluatorTask)
+                ::Ice::__stringify(self, T_GoalEvaluatorTask)
             end
 
             attr_accessor :id, :sender, :maxBundles, :bundleSize, :newTasks, :committedTasks, :start, :prx
         end
 
-        T_PathEvaluatorTask = ::Ice::__defineStruct('::talker::PathEvaluatorTask', PathEvaluatorTask, [
+        T_GoalEvaluatorTask = ::Ice::__defineStruct('::talker::GoalEvaluatorTask', GoalEvaluatorTask, [
             ["id", ::Ice::T_string],
             ["sender", ::Ice::T_string],
             ["maxBundles", ::Ice::T_int],
@@ -231,20 +231,20 @@ module Talker
             ["newTasks", ::Talker::T_TaskList2d],
             ["committedTasks", ::Talker::T_TaskList2d],
             ["start", ::Orca::T_Frame2d],
-            ["prx", ::Talker::T_PathEvaluatorConsumerPrx]
+            ["prx", ::Talker::T_GoalEvaluatorConsumerPrx]
         ])
     end
 
-    if not defined?(::Talker::PathEvaluator_mixin)
-        module PathEvaluator_mixin
+    if not defined?(::Talker::GoalEvaluator_mixin)
+        module GoalEvaluator_mixin
             include ::Ice::Object_mixin
 
             def ice_ids(current=nil)
-                ['::Ice::Object', '::talker::PathEvaluator']
+                ['::Ice::Object', '::talker::GoalEvaluator']
             end
 
             def ice_id(current=nil)
-                '::talker::PathEvaluator'
+                '::talker::GoalEvaluator'
             end
 
             #
@@ -256,56 +256,56 @@ module Talker
             # def unsubscribe(subscriber, current=nil)
 
             def inspect
-                ::Ice::__stringify(self, T_PathEvaluator)
+                ::Ice::__stringify(self, T_GoalEvaluator)
             end
         end
-        class PathEvaluator
-            include PathEvaluator_mixin
+        class GoalEvaluator
+            include GoalEvaluator_mixin
         end
-        module PathEvaluatorPrx_mixin
+        module GoalEvaluatorPrx_mixin
 
             def setTask(task, _ctx=nil)
-                PathEvaluator_mixin::OP_setTask.invoke(self, [task], _ctx)
+                GoalEvaluator_mixin::OP_setTask.invoke(self, [task], _ctx)
             end
 
             def getData(sender, _ctx=nil)
-                PathEvaluator_mixin::OP_getData.invoke(self, [sender], _ctx)
+                GoalEvaluator_mixin::OP_getData.invoke(self, [sender], _ctx)
             end
 
             def subscribe(subscriber, _ctx=nil)
-                PathEvaluator_mixin::OP_subscribe.invoke(self, [subscriber], _ctx)
+                GoalEvaluator_mixin::OP_subscribe.invoke(self, [subscriber], _ctx)
             end
 
             def unsubscribe(subscriber, _ctx=nil)
-                PathEvaluator_mixin::OP_unsubscribe.invoke(self, [subscriber], _ctx)
+                GoalEvaluator_mixin::OP_unsubscribe.invoke(self, [subscriber], _ctx)
             end
         end
-        class PathEvaluatorPrx < ::Ice::ObjectPrx
-            include PathEvaluatorPrx_mixin
+        class GoalEvaluatorPrx < ::Ice::ObjectPrx
+            include GoalEvaluatorPrx_mixin
 
-            def PathEvaluatorPrx.checkedCast(proxy, facetOrCtx=nil, _ctx=nil)
-                ice_checkedCast(proxy, '::talker::PathEvaluator', facetOrCtx, _ctx)
+            def GoalEvaluatorPrx.checkedCast(proxy, facetOrCtx=nil, _ctx=nil)
+                ice_checkedCast(proxy, '::talker::GoalEvaluator', facetOrCtx, _ctx)
             end
 
-            def PathEvaluatorPrx.uncheckedCast(proxy, facet=nil)
+            def GoalEvaluatorPrx.uncheckedCast(proxy, facet=nil)
                 ice_uncheckedCast(proxy, facet)
             end
         end
 
-        if not defined?(::Talker::T_PathEvaluator)
-            T_PathEvaluator = ::Ice::__declareClass('::talker::PathEvaluator')
-            T_PathEvaluatorPrx = ::Ice::__declareProxy('::talker::PathEvaluator')
+        if not defined?(::Talker::T_GoalEvaluator)
+            T_GoalEvaluator = ::Ice::__declareClass('::talker::GoalEvaluator')
+            T_GoalEvaluatorPrx = ::Ice::__declareProxy('::talker::GoalEvaluator')
         end
 
-        T_PathEvaluator.defineClass(PathEvaluator, true, nil, [], [])
-        PathEvaluator_mixin::ICE_TYPE = T_PathEvaluator
+        T_GoalEvaluator.defineClass(GoalEvaluator, true, nil, [], [])
+        GoalEvaluator_mixin::ICE_TYPE = T_GoalEvaluator
 
-        T_PathEvaluatorPrx.defineProxy(PathEvaluatorPrx, T_PathEvaluator)
-        PathEvaluatorPrx::ICE_TYPE = T_PathEvaluatorPrx
+        T_GoalEvaluatorPrx.defineProxy(GoalEvaluatorPrx, T_GoalEvaluator)
+        GoalEvaluatorPrx::ICE_TYPE = T_GoalEvaluatorPrx
 
-        PathEvaluator_mixin::OP_setTask = ::Ice::__defineOperation('setTask', ::Ice::OperationMode::Normal, ::Ice::OperationMode::Normal, false, [::Talker::T_PathEvaluatorTask], [], ::Ice::T_int, [::Orca::T_BusyException, ::Orca::T_RequiredInterfaceFailedException])
-        PathEvaluator_mixin::OP_getData = ::Ice::__defineOperation('getData', ::Ice::OperationMode::Idempotent, ::Ice::OperationMode::Idempotent, false, [::Ice::T_string], [], ::Talker::T_PathEvaluatorResult, [])
-        PathEvaluator_mixin::OP_subscribe = ::Ice::__defineOperation('subscribe', ::Ice::OperationMode::Normal, ::Ice::OperationMode::Normal, false, [::Talker::T_PathEvaluatorConsumerPrx], [], nil, [::Orca::T_SubscriptionFailedException])
-        PathEvaluator_mixin::OP_unsubscribe = ::Ice::__defineOperation('unsubscribe', ::Ice::OperationMode::Idempotent, ::Ice::OperationMode::Idempotent, false, [::Talker::T_PathEvaluatorConsumerPrx], [], nil, [])
+        GoalEvaluator_mixin::OP_setTask = ::Ice::__defineOperation('setTask', ::Ice::OperationMode::Normal, ::Ice::OperationMode::Normal, false, [::Talker::T_GoalEvaluatorTask], [], ::Ice::T_int, [::Orca::T_BusyException, ::Orca::T_RequiredInterfaceFailedException])
+        GoalEvaluator_mixin::OP_getData = ::Ice::__defineOperation('getData', ::Ice::OperationMode::Idempotent, ::Ice::OperationMode::Idempotent, false, [::Ice::T_string], [], ::Talker::T_GoalEvaluatorResult, [])
+        GoalEvaluator_mixin::OP_subscribe = ::Ice::__defineOperation('subscribe', ::Ice::OperationMode::Normal, ::Ice::OperationMode::Normal, false, [::Talker::T_GoalEvaluatorConsumerPrx], [], nil, [::Orca::T_SubscriptionFailedException])
+        GoalEvaluator_mixin::OP_unsubscribe = ::Ice::__defineOperation('unsubscribe', ::Ice::OperationMode::Idempotent, ::Ice::OperationMode::Idempotent, false, [::Talker::T_GoalEvaluatorConsumerPrx], [], nil, [])
     end
 end

@@ -15,5 +15,5 @@ cd $BASE_DIR/talker/sim
 ogmaploader > ogmaploader.log &
 pathplanner > pathplanner.log &
 
-cd $BASE_DIR/talker/build/src/components/pathevaluator
-./pathevaluator 
+cd $BASE_DIR/talker/build/src/components/goalevaluator
+./goalevaluator 

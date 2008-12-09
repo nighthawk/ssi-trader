@@ -1,10 +1,77 @@
-To modify this empty-project for your needs:
+SSI-Trader
+==========
 
-1) Edit CMakeLists.txt, and modify the stuff in 
-   the 'Start project customization' section.
+SSI-Trader is a multi-robot systems built on the Orca/Ice and JADE frameworks.
 
-2) Add any other project-specific rules in config/proj_rules.cmake
+The motivation behind this implementation is to create an open multi-robot co-ordination system that is build on existing standards to enable easy experimentation with simulated and real robots.
 
-3) Go ahead and start creating new components!  
-   src/components/somecomponent is provided as a template.
+Co-ordination of multiple robots is achieved using a market-based approach. Tasks are traded by robots through sequential single-item (SSI) auctions.
 
+
+Features
+========
+
+* sequential auctions for dynamic or static task allocation
+* can use minimum cost or regret clearing winner determination
+* supports MiniSum and MiniMax team objectives
+* connects to arbitrary Orca components, e.g. to run with Player/Stage or on real robot
+* has special Experiment agent and simulation mode to quickly evaluate different
+  auction schemes or heuristics
+* includes custom GoalEvaluator component for creating bids (approximates solution to
+  the travelling salesman problems) 
+* customisable through command line options and .cfg files
+* compatible with other JADE agents and software that uses Orca, Ice or FIPA messages and
+  can thus interact with software written in Java, Ruby, C++, Objective C, Python, and PHP
+  among others
+
+
+Try it
+======
+
+NOTE: You need to have Ice and Orca installed on your system. This version has been tested with Orca 2.11.0 and Ice 3.2/3.3.
+
+1. Start Ice and Orca using shell scripts in sim/. You might have to adjust the paths in there.
+2. Go to app/class directory
+2. Setup class path for Java to include Jade and Ice libraries (these also are in app/lib):
+  export CLASSPATH=$CLASSPATH:.:../lib/jade/jade.jar:../lib/ice/Ice.jar
+3. Start Java JADE agents from app/class directory
+  java jade.Boot "<nickname>:<ClassName>(<param1> <param2> <...>)"
+
+Experiments
+-----------
+  java jade.Boot "<nickname>:Experiment(<#runs> <#robot> <#task> <#tasks per round> [<debug> <winner allocation method> <dynamic allocation method>])"
+		
+where
+	debug: spam, note, info, warning, error
+	winner allocation: min_cost, regret_clearing, all
+	dynamic allocation: ssi, replan, resell, all
+
+e.g.
+  java jade.Boot "x:Experiment(25 5 25 3 info all ssi)"
+    
+Single robots
+-------------
+	java.jade.Book "<nickname>:GenericRobot(<colour> [<debug> <x coord> <y coord>])"
+
+examples:
+	java jade.Boot "red:GenericRobot(red info -1 0)"	
+	java jade.Boot -gui "red:GenericRobot(red spam) blue:GenericRobot(blue info) green:GenericRobot(green info) yellow:GenericRobot(yellow info) black:GenericRobot(black info)"
+
+
+Version history
+===============
+
+0.1: Initial experimental release. Has been tested with Player/Stage.
+
+
+References
+==========
+
+Ice middle ware: http://www.zeroc.com/ice.html
+JADE framework: http://jade.tilab.com/
+ORCA project: http://orca-robotics.sourceforge.net/
+
+
+
+Available at http://github.com/nighthawk/ssi-trader/tree/master
+Copyright (c) 2008 Adrian Schoenig, released under the MIT license (see LICENSE file).

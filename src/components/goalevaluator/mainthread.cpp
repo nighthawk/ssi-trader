@@ -20,7 +20,7 @@
 using namespace std;
 using namespace talker;
 
-namespace pathevaluator {
+namespace goalevaluator {
 
 // private helper functions
 namespace {
@@ -95,7 +95,7 @@ namespace {
 
 MainThread::MainThread( const orcaice::Context & context )
     : orcaice::SubsystemThread( context.tracer(), context.status(), "MainThread" ),
-			pathEvaluatorTaskBuffer_( 100, gbxiceutilacfr::BufferTypeQueue),
+			goalEvaluatorTaskBuffer_( 100, gbxiceutilacfr::BufferTypeQueue),
       context_(context)
 {
     subStatus().setMaxHeartbeatInterval( 10.0 );
@@ -124,15 +124,15 @@ MainThread::initNetwork() {
     computedPathConsumer_ = new orcaifaceimpl::StoringPathPlanner2dConsumerImpl( context_ );
 
 
-    // PROVIDED INTERFACES: pathevaluator2d
+    // PROVIDED INTERFACES: goalevaluator2d
     
     // create the proxy/buffer for incoming tasks
-    subStatus().initialising("Creating PathEvaluator Interface" );
-    pathEvaluatorI_ = new PathEvaluatorI( pathEvaluatorTaskBuffer_, context_ );
-    Ice::ObjectPtr pathEvaluatorObj = pathEvaluatorI_;
+    subStatus().initialising("Creating GoalEvaluator Interface" );
+    goalEvaluatorI_ = new GoalEvaluatorI( goalEvaluatorTaskBuffer_, context_ );
+    Ice::ObjectPtr goalEvaluatorObj = goalEvaluatorI_;
 
     // two possible exceptions will kill it here, that's what we want
-    orcaice::createInterfaceWithTag( context_, pathEvaluatorObj, "PathEvaluator" );
+    orcaice::createInterfaceWithTag( context_, goalEvaluatorObj, "GoalEvaluator" );
 }
 
 float
@@ -339,7 +339,7 @@ MainThread::findBundles( Task2d &start,
 }
 
 BundleList2d
-MainThread::createBundles( PathEvaluatorTask task ) {
+MainThread::createBundles( GoalEvaluatorTask task ) {
 	// FIXME: start should actually always just be a frame2d
 	Task2d start = createTask( task.start.p.x, task.start.p.y, task.start.o);
 
@@ -367,7 +367,7 @@ MainThread::walk()
     
 		initNetwork();
     
-		PathEvaluatorTask task;
+		GoalEvaluatorTask task;
 		int cycle_count = 0;
 
     while ( !isStopping() )
@@ -408,10 +408,10 @@ MainThread::walk()
                 int timeoutMs = 1000;
                 int ret=0;
                 try {
-                    pathEvaluatorTaskBuffer_.getAndPop( task );
+                    goalEvaluatorTaskBuffer_.getAndPop( task );
                 }
                 catch ( const gbxutilacfr::Exception & e ) {
-                    ret = pathEvaluatorTaskBuffer_.getAndPopNext( task, timeoutMs );
+                    ret = goalEvaluatorTaskBuffer_.getAndPopNext( task, timeoutMs );
                 }
                 if ( ret == 0 ) {
                     haveTask = true;
@@ -430,7 +430,7 @@ MainThread::walk()
             //
             // ===== Clean stores every now and then ========
             //
-						if (cycle_count % 100 == 0) pathEvaluatorI_->cleanStores();
+						if (cycle_count % 100 == 0) goalEvaluatorI_->cleanStores();
 
             //
             // ===== process tasks and compute best bundles ========
@@ -443,7 +443,7 @@ MainThread::walk()
             // ======= send result (including error code) ===============
             //
             context_.tracer().info("MainThread: sending off the resulting bundles.");
-						PathEvaluatorResult result;
+						GoalEvaluatorResult result;
 						result.id = task.id;
 						result.data = bundles;
     
@@ -455,12 +455,12 @@ MainThread::walk()
                 context_.tracer().warning( "MainThread: task.prx was zero!" );
 
             // 2. and 3.: use getData or icestorm
-            pathEvaluatorI_->localSetData( task.sender, result );
+            goalEvaluatorI_->localSetData( task.sender, result );
     
             // resize the bundle data: future tasks might not compute a path successfully and we would resend the old ones
 						bundles.resize(0);
     
-            int numTasksWaiting = pathEvaluatorTaskBuffer_.size();
+            int numTasksWaiting = goalEvaluatorTaskBuffer_.size();
             if ( numTasksWaiting > 1 )
             {
                 stringstream ss;

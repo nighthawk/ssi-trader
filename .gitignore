@@ -3,5 +3,8 @@
 .DS_Store
 CMakeFiles
 app/classes/*
+app/src/slice/orca/*
+app/src/slice/talker/*
 build/*
+sim/*.log
 sim/hospital/.*

@@ -1,4 +1,4 @@
-ORCA_SET_COMPONENT_NAME( PathEvaluator )
+ORCA_SET_COMPONENT_NAME( GoalEvaluator )
 
 SET( build TRUE )
 GBX_REQUIRE_OPTION( build EXE ${APP_NAME} ON )

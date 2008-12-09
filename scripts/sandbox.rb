@@ -1,5 +1,5 @@
 require "Ice"
-require "talker/pathevaluator.rb"
+require "talker/goalevaluator.rb"
 
 def start
 
@@ -19,16 +19,16 @@ def get_test_results
   puts "Connecting with: #{options}"
 
   ic = Ice::initialize(options)
-  base = ic.stringToProxy("pathevaluator@vm-ubuntu/pathevaluator")
+  base = ic.stringToProxy("goalevaluator@vm-ubuntu/goalevaluator")
 
   # trying ping to see if remote proxy exists
   puts base.ice_ping
 
-  @p = Talker::PathEvaluatorPrx::checkedCast(base)
+  @p = Talker::GoalEvaluatorPrx::checkedCast(base)
   puts @p
 
   # create a task for the path evaluator
-  task = Talker::PathEvaluatorTask.new
+  task = Talker::GoalEvaluatorTask.new
 
   # our current location
   start = Orca::Frame2d.new

@@ -1,5 +1,5 @@
-#ifndef TALKER_PATHEVALUATOR_ICE
-#define TALKER_PATHEVALUATOR_ICE
+#ifndef TALKER_GOALEVALUATOR_ICE
+#define TALKER_GOALEVALUATOR_ICE
 
 #include <orca/common.ice>
 #include <orca/bros1.ice>
@@ -10,8 +10,8 @@ module talker
 {
 /*!
     @ingroup ep_interfaces
-    @defgroup ep_interface_pathevaluator PathEvaluator
-    @brief PathEvaluator interface for 2d tasks.
+    @defgroup ep_interface_goalevaluator GoalEvaluator
+    @brief GoalEvaluator interface for 2d tasks.
 
     @{
 */
@@ -38,7 +38,7 @@ struct Bundle2d {
 //! List of bundles
 sequence<Bundle2d> 	BundleList2d;
 
-struct PathEvaluatorResult {
+struct GoalEvaluatorResult {
 	string				id;
 	BundleList2d	data;
 };
@@ -46,12 +46,12 @@ struct PathEvaluatorResult {
 /*!
     @brief Consumer of a planned path
 */
-interface PathEvaluatorConsumer {
+interface GoalEvaluatorConsumer {
     //! Transmits _all_ computed paths to the consumer
-    void setData( PathEvaluatorResult obj );
+    void setData( GoalEvaluatorResult obj );
 };
 
-struct PathEvaluatorTask {
+struct GoalEvaluatorTask {
 	string			id;
 	string			sender;
 	//! maximum number of bundles to be computed
@@ -65,20 +65,20 @@ struct PathEvaluatorTask {
 	//! starting point of all paths
 	orca::Frame2d		start;
 	//! Consumer proxy
-	PathEvaluatorConsumer* prx;
+	GoalEvaluatorConsumer* prx;
 };
 
 
 //! Interface for path evaluator.
-interface PathEvaluator
+interface GoalEvaluator
 {
     //! Set a task.
     //! Returns the number of tasks currently in the queue (not including the one which was just set).
-    int setTask( PathEvaluatorTask task )
+    int setTask( GoalEvaluatorTask task )
             throws orca::BusyException, orca::RequiredInterfaceFailedException;   
 
     //! Returns the most-recently-computed computed path
-    ["cpp:const"] idempotent PathEvaluatorResult getData(string sender);
+    ["cpp:const"] idempotent GoalEvaluatorResult getData(string sender);
 
     /*!
      * Mimics IceStorm's subscribe().  The implementation may choose to
@@ -86,7 +86,7 @@ interface PathEvaluator
      * @param subscriber The subscriber's proxy.
      * @see unsubscribe
      */
-    void subscribe( PathEvaluatorConsumer *subscriber )
+    void subscribe( GoalEvaluatorConsumer *subscriber )
             throws orca::SubscriptionFailedException;
 
     /**
@@ -94,7 +94,7 @@ interface PathEvaluator
      * @param subscriber The proxy of an existing subscriber.
      * @see subscribe
     **/
-    idempotent void unsubscribe( PathEvaluatorConsumer *subscriber );
+    idempotent void unsubscribe( GoalEvaluatorConsumer *subscriber );
 };
 
 /*! @} */

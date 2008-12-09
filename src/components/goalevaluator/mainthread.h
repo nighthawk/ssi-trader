@@ -20,10 +20,10 @@
 #include <memory>
 #include <orcaifaceimpl/storingconsumers.h>
 
-#include <talker/pathevaluator.h>
-#include "pathevaluatorI.h"
+#include <talker/goalevaluator.h>
+#include "goalevaluatorI.h"
 
-namespace pathevaluator
+namespace goalevaluator
 {
 
 class MainThread : public orcaice::SubsystemThread
@@ -39,7 +39,7 @@ public:
 private:
 	void initNetwork();
 
-	talker::BundleList2d createBundles( talker::PathEvaluatorTask task );
+	talker::BundleList2d createBundles( talker::GoalEvaluatorTask task );
 
 	float computePathCost( talker::Task2d start, talker::TaskList2d &tasks );
 
@@ -61,8 +61,8 @@ private:
 																		unsigned int maxBundles );
 
 	// used for provided interface
-	PathEvaluatorI* pathEvaluatorI_;
-	gbxiceutilacfr::Buffer<talker::PathEvaluatorTask> pathEvaluatorTaskBuffer_;
+	GoalEvaluatorI* goalEvaluatorI_;
+	gbxiceutilacfr::Buffer<talker::GoalEvaluatorTask> goalEvaluatorTaskBuffer_;
 
 	// required interface to pathplanner
 	orca::PathPlanner2dPrx pathplanner2dPrx_;

@@ -1,10 +1,10 @@
 Orca.Tracer.DebugToDisplay=1
 
-DefaultComponentTag=PathEvaluator
+DefaultComponentTag=GoalEvaluator
 
 # Provided Interfaces
-Provides.PathEvaluator.Type=PathEvaluator
-Provides.PathEvaluator.DefaultInterface=PathEvaluator
+Provides.GoalEvaluator.Type=GoalEvaluator
+Provides.GoalEvaluator.DefaultInterface=GoalEvaluator
 
 # Required Interfaces
 Requires.PathPlanner2d.Type=Pathplanner2d
